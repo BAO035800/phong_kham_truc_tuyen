@@ -1,0 +1,45 @@
+<div class="row justify-content-center">
+  <div class="col-md-7 col-lg-6">
+    <div class="card p-4">
+      <h4 class="fw-bold mb-3">Đăng ký</h4>
+      <form id="registerForm" novalidate>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <label class="form-label">Tên đăng nhập</label>
+            <input id="username" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Họ tên</label>
+            <input id="fullname" class="form-control" required>
+          </div>
+        </div>
+        <div class="row g-2 mt-1">
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input id="email" type="email" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Số điện thoại</label>
+            <input id="phone" class="form-control" placeholder="+84901234567" required>
+          </div>
+        </div>
+        <div class="row g-2 mt-1">
+          <div class="col-md-6">
+            <label class="form-label">Mật khẩu</label>
+            <input id="password" type="password" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Xác nhận</label>
+            <input id="confirm" type="password" class="form-control" required oninput="this.setCustomValidity(this.value!==document.getElementById('password').value?'Mật khẩu không khớp':'')">
+          </div>
+        </div>
+        <div class="form-check mt-2">
+          <input class="form-check-input" type="checkbox" id="agree" required>
+          <label class="form-check-label small" for="agree">Tôi đồng ý với <a href="#/privacy">Chính sách bảo mật</a></label>
+        </div>
+        <button class="btn btn-primary w-100 mt-3">Tạo tài khoản</button>
+      </form>
+      <p class="small text-center mt-3">Đã có tài khoản? <a href="#/login">Đăng nhập</a></p>
+    </div>
+  </div>
+</div>
