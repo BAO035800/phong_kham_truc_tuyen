@@ -85,8 +85,8 @@ async function loadPartial(selector, url) {
         break;
 
         case "#/register":
-  root.innerHTML = await (await fetch("./pages/register.html?v=" + Date.now(), { cache: "no-store" })).text();
-  break;
+          root.innerHTML = await (await fetch("./pages/register.html?v=" + Date.now(), { cache: "no-store" })).text();
+          break;
 
         case "#/booking":
             if (!user) {
