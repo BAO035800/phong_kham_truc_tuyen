@@ -1,0 +1,118 @@
+<!-- view/pages/patients.html -->
+<section class="py-16 bg-surface text-textmain">
+    <div class="container mx-auto px-4">
+      <!-- Header -->
+      <header class="mb-10 text-center" data-aos="fade-up">
+        <h2 class="text-3xl font-bold text-primary">Danh sách bệnh nhân</h2>
+        <p class="text-textmain/70 mt-2">Xem và quản lý hồ sơ bệnh nhân trong hệ thống.</p>
+      </header>
+  
+      <!-- Bộ lọc và tìm kiếm -->
+      <div class="bg-white rounded-2xl shadow-card border border-border p-4 md:p-5 mb-8" data-aos="fade-up" data-aos-delay="80">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div class="relative">
+            <input id="patientSearch" type="text" placeholder="Tìm tên hoặc mã bệnh nhân..."
+              class="w-72 rounded-2xl border border-border bg-white py-2 pl-10 pr-3 text-sm shadow-sm placeholder:text-textmain/50 focus:outline-none focus:border-primary">
+            <span class="pointer-events-none absolute left-3 top-2.5 text-textmain/50">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+          </div>
+  
+          <select id="patientFilter" class="rounded-2xl border border-border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:border-primary">
+            <option value="all">Tất cả</option>
+            <option value="new">Mới</option>
+            <option value="followup">Tái khám</option>
+            <option value="chronic">Bệnh mãn tính</option>
+          </select>
+  
+          <a href="#/booking" class="rounded-2xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-primary/90">
+            <i class="fa-solid fa-user-plus mr-2"></i>Thêm bệnh nhân
+          </a>
+        </div>
+      </div>
+  
+      <!-- Bảng bệnh nhân -->
+      <div class="overflow-hidden rounded-2xl border border-border bg-white shadow-card" data-aos="fade-up" data-aos-delay="120">
+        <table class="min-w-full divide-y divide-border">
+          <thead class="bg-bgpage/60">
+            <tr class="text-left text-xs font-semibold uppercase tracking-wider text-textmain/70">
+              <th class="px-4 py-3">Họ và tên</th>
+              <th class="px-4 py-3">Mã BN</th>
+              <th class="px-4 py-3">Giới tính</th>
+              <th class="px-4 py-3">Tuổi</th>
+              <th class="px-4 py-3">Loại bệnh nhân</th>
+              <th class="px-4 py-3 text-right">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="patientBody" class="divide-y divide-border/60 text-sm"></tbody>
+        </table>
+        <div id="emptyPatients" class="hidden p-8 text-center text-sm text-textmain/60">Không có bệnh nhân nào.</div>
+      </div>
+    </div>
+  </section>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Mock dữ liệu
+      const PATIENTS = [
+        { id: "BN001", name: "Nguyễn Văn An", gender: "Nam", age: 45, type: "chronic" },
+        { id: "BN002", name: "Trần Thị Bích", gender: "Nữ", age: 32, type: "new" },
+        { id: "BN003", name: "Phạm Văn Cường", gender: "Nam", age: 54, type: "followup" },
+        { id: "BN004", name: "Lê Thị Dung", gender: "Nữ", age: 27, type: "new" },
+        { id: "BN005", name: "Đỗ Hữu Hạnh", gender: "Nam", age: 60, type: "chronic" },
+      ];
+  
+      const tbody = document.getElementById("patientBody");
+      const empty = document.getElementById("emptyPatients");
+      const search = document.getElementById("patientSearch");
+      const filter = document.getElementById("patientFilter");
+  
+      function render() {
+        const q = search.value.trim().toLowerCase();
+        const f = filter.value;
+        const list = PATIENTS.filter(p => {
+          const matchQ = !q || p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q);
+          const matchF = f === "all" || p.type === f;
+          return matchQ && matchF;
+        });
+  
+        tbody.innerHTML = "";
+        if (!list.length) {
+          empty.classList.remove("hidden");
+        } else {
+          empty.classList.add("hidden");
+          list.forEach(p => {
+            const tr = document.createElement("tr");
+            tr.className = "hover:bg-bgpage/40";
+            tr.innerHTML = `
+              <td class="px-4 py-3 font-medium">${p.name}</td>
+              <td class="px-4 py-3">${p.id}</td>
+              <td class="px-4 py-3">${p.gender}</td>
+              <td class="px-4 py-3">${p.age}</td>
+              <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 
+                  ${p.type==='new'?'bg-emerald-50 text-emerald-700 ring-emerald-200':
+                    p.type==='followup'?'bg-amber-50 text-amber-700 ring-amber-200':
+                    'bg-blue-50 text-blue-700 ring-blue-200'}">
+                  ${p.type==='new'?'Mới':p.type==='followup'?'Tái khám':'Mãn tính'}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <div class="flex justify-end gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1.5 text-xs hover:bg-bgpage">Xem</button>
+                  <button class="rounded-xl bg-primary px-3 py-1.5 text-xs text-white hover:bg-primary/90">Sửa</button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+        if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 300);
+      }
+  
+      search.addEventListener("input", render);
+      filter.addEventListener("change", render);
+      render();
+    });
+  </script>
+  

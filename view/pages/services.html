@@ -1,0 +1,200 @@
+<!-- view/pages/services.html -->
+<section class="py-16 bg-surface text-textmain">
+    <div class="container mx-auto px-4">
+      <!-- Header -->
+      <header class="text-center mb-10" data-aos="fade-up">
+        <h2 class="text-3xl font-bold text-primary">Dịch vụ tại Phòng Khám Hoà Lợi</h2>
+        <p class="text-textmain/70 max-w-2xl mx-auto mt-2">
+          Danh mục dịch vụ đa dạng, trang thiết bị hiện đại, quy trình nhanh gọn – phục vụ tận tâm.
+        </p>
+      </header>
+  
+      <!-- Bộ lọc cơ bản -->
+      <div class="bg-white rounded-2xl shadow-card border border-border p-4 md:p-5 mb-8" data-aos="fade-up" data-aos-delay="50">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center gap-2">
+            <button data-cat="all" class="svc-chip rounded-full px-4 py-1.5 text-sm bg-primary text-white shadow">Tất cả</button>
+            <button data-cat="kham" class="svc-chip rounded-full px-4 py-1.5 text-sm border border-border hover:bg-bgpage">Khám</button>
+            <button data-cat="nhi" class="svc-chip rounded-full px-4 py-1.5 text-sm border border-border hover:bg-bgpage">Nhi khoa</button>
+            <button data-cat="tim" class="svc-chip rounded-full px-4 py-1.5 text-sm border border-border hover:bg-bgpage">Tim mạch</button>
+            <button data-cat="xn"  class="svc-chip rounded-full px-4 py-1.5 text-sm border border-border hover:bg-bgpage">Xét nghiệm</button>
+            <button data-cat="nha" class="svc-chip rounded-full px-4 py-1.5 text-sm border border-border hover:bg-bgpage">Nha khoa</button>
+          </div>
+          <div class="relative">
+            <input id="svc-search" type="text" placeholder="Tìm dịch vụ theo tên…"
+                   class="w-72 rounded-2xl border border-border bg-white py-2 pl-10 pr-3 text-sm shadow-sm placeholder:text-textmain/50 focus:outline-none focus:border-primary">
+            <span class="pointer-events-none absolute left-3 top-2.5 text-textmain/50"><i class="fa-solid fa-magnifying-glass"></i></span>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Lưới dịch vụ -->
+      <div id="svc-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Card 1 -->
+        <article class="svc-card bg-white rounded-xl shadow-card p-6 border border-border" data-cat="kham" data-aos="fade-up" data-aos-delay="100">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl text-primary"><i class="fa-solid fa-user-doctor"></i></div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-lg mb-1">Khám tổng quát</h3>
+              <p class="text-sm text-textmain/70 mb-3">Kiểm tra định kỳ, sàng lọc sớm các nguy cơ sức khỏe.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-primary font-semibold">từ 250.000đ</span>
+                <a href="#/booking" class="text-sm bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90">
+                  <i class="fa-solid fa-calendar-check mr-1"></i>Đặt lịch
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+  
+        <!-- Card 2 -->
+        <article class="svc-card bg-white rounded-xl shadow-card p-6 border border-border" data-cat="nhi" data-aos="fade-up" data-aos-delay="120">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl text-primary"><i class="fa-solid fa-baby"></i></div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-lg mb-1">Khám Nhi khoa</h3>
+              <p class="text-sm text-textmain/70 mb-3">Tư vấn dinh dưỡng, theo dõi phát triển, tiêm chủng.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-primary font-semibold">từ 200.000đ</span>
+                <a href="#/booking" class="text-sm bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90">Đặt lịch</a>
+              </div>
+            </div>
+          </div>
+        </article>
+  
+        <!-- Card 3 -->
+        <article class="svc-card bg-white rounded-xl shadow-card p-6 border border-border" data-cat="tim" data-aos="fade-up" data-aos-delay="140">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl text-primary"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-lg mb-1">Tim mạch</h3>
+              <p class="text-sm text-textmain/70 mb-3">Khám tim mạch, đo điện tim, siêu âm tim chuyên sâu.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-primary font-semibold">từ 350.000đ</span>
+                <a href="#/booking" class="text-sm bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90">Đặt lịch</a>
+              </div>
+            </div>
+          </div>
+        </article>
+  
+        <!-- Card 4 -->
+        <article class="svc-card bg-white rounded-xl shadow-card p-6 border border-border" data-cat="xn" data-aos="fade-up" data-aos-delay="160">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl text-primary"><i class="fa-solid fa-vial-circle-check"></i></div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-lg mb-1">Xét nghiệm tổng hợp</h3>
+              <p class="text-sm text-textmain/70 mb-3">Máu, nước tiểu, sinh hóa, miễn dịch – trả kết quả nhanh.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-primary font-semibold">từ 180.000đ</span>
+                <a href="#/booking" class="text-sm bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90">Đặt lịch</a>
+              </div>
+            </div>
+          </div>
+        </article>
+  
+        <!-- Card 5 -->
+        <article class="svc-card bg-white rounded-xl shadow-card p-6 border border-border" data-cat="nha" data-aos="fade-up" data-aos-delay="180">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl text-primary"><i class="fa-solid fa-tooth"></i></div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-lg mb-1">Nha khoa tổng quát</h3>
+              <p class="text-sm text-textmain/70 mb-3">Cạo vôi, trám răng, điều trị tủy, thẩm mỹ nụ cười.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-primary font-semibold">từ 300.000đ</span>
+                <a href="#/booking" class="text-sm bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90">Đặt lịch</a>
+              </div>
+            </div>
+          </div>
+        </article>
+  
+        <!-- Card 6 -->
+        <article class="svc-card bg-white rounded-xl shadow-card p-6 border border-border" data-cat="kham" data-aos="fade-up" data-aos-delay="200">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl text-primary"><i class="fa-solid fa-stethoscope"></i></div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-lg mb-1">Tư vấn chuyên khoa</h3>
+              <p class="text-sm text-textmain/70 mb-3">Nội, Ngoại, Tai Mũi Họng, Da liễu… theo yêu cầu.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-primary font-semibold">từ 220.000đ</span>
+                <a href="#/booking" class="text-sm bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90">Đặt lịch</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+  
+      <!-- Gói khám (optional) -->
+      <div class="mt-12" data-aos="fade-up">
+        <h3 class="text-2xl font-bold text-primary mb-6 text-center">Gói khám ưu đãi</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+          <!-- Gói 1 -->
+          <div class="bg-white rounded-2xl border border-border shadow-card p-6">
+            <div class="text-sm uppercase tracking-wide text-textmain/60 mb-1">Gói Cơ Bản</div>
+            <div class="text-3xl font-extrabold text-primary mb-2">590.000đ</div>
+            <ul class="text-sm text-textmain/80 space-y-2 mb-5 list-disc list-inside">
+              <li>Khám tổng quát</li>
+              <li>Xét nghiệm cơ bản</li>
+              <li>Tư vấn dinh dưỡng</li>
+            </ul>
+            <a href="#/booking" class="w-full inline-flex justify-center bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90">Chọn gói</a>
+          </div>
+          <!-- Gói 2 -->
+          <div class="bg-white rounded-2xl border border-primary/30 shadow-card p-6 ring-2 ring-primary/10">
+            <div class="text-sm uppercase tracking-wide text-primary mb-1">Gói Nâng Cao</div>
+            <div class="text-3xl font-extrabold text-primary mb-2">1.190.000đ</div>
+            <ul class="text-sm text-textmain/80 space-y-2 mb-5 list-disc list-inside">
+              <li>Khám tổng quát mở rộng</li>
+              <li>Xét nghiệm chuyên sâu</li>
+              <li>Siêu âm ổ bụng</li>
+            </ul>
+            <a href="#/booking" class="w-full inline-flex justify-center bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90">Chọn gói</a>
+          </div>
+          <!-- Gói 3 -->
+          <div class="bg-white rounded-2xl border border-border shadow-card p-6">
+            <div class="text-sm uppercase tracking-wide text-textmain/60 mb-1">Gói Gia Đình</div>
+            <div class="text-3xl font-extrabold text-primary mb-2">2.990.000đ</div>
+            <ul class="text-sm text-textmain/80 space-y-2 mb-5 list-disc list-inside">
+              <li>Khám tổng quát 4 người</li>
+              <li>Ưu đãi xét nghiệm</li>
+              <li>Lịch hẹn linh hoạt</li>
+            </ul>
+            <a href="#/booking" class="w-full inline-flex justify-center bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90">Chọn gói</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <script>
+    // Lọc theo category + tìm kiếm tên dịch vụ
+    document.addEventListener("DOMContentLoaded", () => {
+      const chips = document.querySelectorAll(".svc-chip");
+      const cards = document.querySelectorAll(".svc-card");
+      const search = document.getElementById("svc-search");
+      let currentCat = "all";
+  
+      const apply = () => {
+        const q = (search?.value || "").trim().toLowerCase();
+        cards.forEach(card => {
+          const cat = card.getAttribute("data-cat");
+          const text = card.textContent.toLowerCase();
+          const matchCat = currentCat === "all" || cat === currentCat;
+          const matchQ = !q || text.includes(q);
+          card.classList.toggle("hidden", !(matchCat && matchQ));
+        });
+        if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 250);
+      };
+  
+      chips.forEach(btn => {
+        btn.addEventListener("click", () => {
+          currentCat = btn.getAttribute("data-cat");
+          chips.forEach(c => c.classList.remove("bg-primary","text-white","shadow"));
+          btn.classList.add("bg-primary","text-white","shadow");
+          apply();
+        });
+      });
+  
+      search?.addEventListener("input", apply);
+    });
+  </script>
+  

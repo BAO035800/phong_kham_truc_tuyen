@@ -46,20 +46,16 @@ async function loadPartial(selector, url) {
   
     switch (hash) {
       case "#/login":
-        root.innerHTML = `
-          <div class="max-w-md mx-auto mt-10 bg-white rounded-xl shadow p-6">
-            <h2 class="text-xl font-semibold mb-4 text-center">🔐 Đăng nhập hệ thống</h2>
-            <form id="loginForm" class="space-y-3">
-              <input type="email" id="email" placeholder="Email" class="w-full border rounded-md p-2" required value="1@gmail.com">
-              <input type="password" id="password" placeholder="Mật khẩu" class="w-full border rounded-md p-2" required value="1">
-              <button type="submit" class="w-full bg-primary text-white py-2 rounded-md hover:bg-blue-700 transition">
-                Đăng nhập
-              </button>
-            </form>
-            <div id="loginStatus" class="text-center text-sm text-gray-600 mt-4"></div>
-          </div>
-        `;
-  
+        try {
+          const res = await fetch("./pages/login.html?v=" + Date.now(), { cache: "no-store" });
+          if (!res.ok) throw new Error("Không thể tải trang đăng nhập");
+          root.innerHTML = await res.text();
+
+          if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+        } catch (err) {
+          console.error(err);
+          root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang đăng nhập</div>`;
+        }
         // gắn submit sau khi render
         document.getElementById("loginForm").addEventListener("submit", async (e) => {
           e.preventDefault();
@@ -87,7 +83,11 @@ async function loadPartial(selector, url) {
           }, 600);
         });
         break;
-  
+
+        case "#/register":
+  root.innerHTML = await (await fetch("./pages/register.html?v=" + Date.now(), { cache: "no-store" })).text();
+  break;
+
         case "#/booking":
             if (!user) {
               root.innerHTML = `
@@ -107,21 +107,144 @@ async function loadPartial(selector, url) {
             }
           
             break;
-          
-      case "#/doctor-dashboard":
-        if (!user || user.role !== "doctor") {
-          root.innerHTML = `<div class="text-center py-10 text-gray-600">
-            ⚠️ Chỉ bác sĩ mới được truy cập trang này.
-          </div>`;
-          return;
-        }
-        root.innerHTML = `
-          <div class="bg-white rounded-xl shadow p-6">
-            <h1 class="text-xl font-semibold mb-3">Trang quản lý bác sĩ</h1>
-            <p>Xin chào ${user.name}, bạn có thể xem lịch hẹn và bệnh nhân tại đây.</p>
-          </div>`;
-        break;
+            case "#/schedule":
+  if (!user) {
+    root.innerHTML = `
+      <div class="text-center py-10 text-gray-600">
+        🚫 Vui lòng <a href="#/login" class="text-blue-600 underline">đăng nhập</a> để xem lịch hẹn.
+      </div>`;
+    return;
+  }
+
+  try {
+    // đường dẫn chuẩn nếu file nằm trong view/pages/
+    const res = await fetch("./pages/schedule.html?v=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) throw new Error("Không thể tải trang lịch hẹn");
+    console.log("Loading schedule page...");
+    root.innerHTML = await res.text();
+
+    // nếu bạn đang dùng AOS cho animation thì giữ lại dòng này
+    if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+  } catch (err) {
+    console.error(err);
+    root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang lịch hẹn</div>`;
+  }
+  break;
+
+              
+  case "#/doctors":
+    try {
+      const res = await fetch("./pages/doctors.html?v=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error("Không thể tải trang bác sĩ");
+      root.innerHTML = await res.text();
   
+      if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+    } catch (err) {
+      console.error(err);
+      root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang bác sĩ</div>`;
+    }
+    break;
+    case "#/contact":
+      try {
+        // đường dẫn file contact trang con
+        const res = await fetch("./pages/contact.html?v=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) throw new Error("Không thể tải trang liên hệ");
+        root.innerHTML = await res.text();
+    
+        // nếu bạn dùng AOS cho animation, giữ lại:
+        if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+      } catch (err) {
+        console.error(err);
+        root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang liên hệ</div>`;
+      }
+      break;
+      case "#/services":
+        try {
+          const res = await fetch("./pages/services.html?v=" + Date.now(), { cache: "no-store" });
+          if (!res.ok) throw new Error("Không thể tải trang dịch vụ");
+          root.innerHTML = await res.text();
+          if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+        } catch (err) {
+          console.error(err);
+          root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang dịch vụ</div>`;
+        }
+        break;
+          
+        case "#/doctor-dashboard":
+          if (!user || user.role !== "doctor") {
+            root.innerHTML = `
+              <div class="text-center py-10 text-gray-600">
+                ⚠️ Chỉ bác sĩ mới được truy cập trang này.
+              </div>`;
+            return;
+          }
+          try {
+            const res = await fetch("./pages/doctor_dashboard.html?v=" + Date.now(), { cache: "no-store" });
+            if (!res.ok) throw new Error("Không thể tải trang lịch hôm nay");
+            root.innerHTML = await res.text();
+            if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+          } catch (err) {
+            console.error(err);
+            root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang lịch hôm nay</div>`;
+          }
+          break;
+          case "#/statistics":
+            if (!user) {
+              root.innerHTML = `
+                <div class="text-center py-10 text-gray-600">
+                  🚫 Vui lòng <a href="#/login" class="text-blue-600 underline">đăng nhập</a> để xem thống kê.
+                </div>`;
+              return;
+            }
+            try {
+              const res = await fetch("./pages/statistics.html?v=" + Date.now(), { cache: "no-store" });
+              if (!res.ok) throw new Error("Không thể tải trang thống kê");
+              root.innerHTML = await res.text();
+              if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+            } catch (err) {
+              console.error(err);
+              root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang thống kê</div>`;
+            }
+            break;
+          
+            case "#/patients":
+              if (!user || user.role !== "doctor") {
+                root.innerHTML = `
+                  <div class="text-center py-10 text-gray-600">
+                    ⚠️ Chỉ bác sĩ mới được truy cập trang này.
+                  </div>`;
+                return;
+              }
+              try {
+                const res = await fetch("./pages/patients.html?v=" + Date.now(), { cache: "no-store" });
+                if (!res.ok) throw new Error("Không thể tải trang bệnh nhân");
+                root.innerHTML = await res.text();
+                if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+              } catch (err) {
+                console.error(err);
+                root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang bệnh nhân</div>`;
+              }
+              break;
+              case "#/settings":
+                if (!user) {
+                  root.innerHTML = `
+                    <div class="text-center py-10 text-gray-600">
+                      🚫 Vui lòng <a href="#/login" class="text-blue-600 underline">đăng nhập</a> để truy cập cài đặt.
+                    </div>`;
+                  return;
+                }
+                try {
+                  const res = await fetch("./pages/settings.html?v=" + Date.now(), { cache: "no-store" });
+                  if (!res.ok) throw new Error("Không thể tải trang cài đặt");
+                  root.innerHTML = await res.text();
+                  if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+                } catch (err) {
+                  console.error(err);
+                  root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang cài đặt</div>`;
+                }
+                break;
+                          
+    
       default:
         try {
           const res = await fetch("./pages/home.html?v=" + Date.now(), { cache: "no-store" });

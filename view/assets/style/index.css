@@ -13,4 +13,16 @@
   .after\:w-full::after {
     width: 100%;
   }
+  .doctor-card.selected, .doctor-card.is-selected {
+    border-color:#0096C7 !important;
+    box-shadow:0 0 0 2px rgba(0,150,199,.18) inset;
+  }
+  .slot-btn.is-selected {
+    background:#F0F9FF;
+    border-color:#0096C7;
+    box-shadow:0 0 0 2px rgba(0,150,199,.18) inset;
+    font-weight:600;
+  }
+  #docPrev,#docNext { pointer-events:auto; z-index:50; }
+  #doctorTrack { padding-left:28px; padding-right:28px; }
   

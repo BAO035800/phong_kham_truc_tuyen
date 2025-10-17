@@ -1,0 +1,206 @@
+<!-- view/pages/settings.html -->
+<section class="py-16 bg-surface text-textmain">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <header class="mb-8 text-center" data-aos="fade-up">
+        <h2 class="text-3xl font-bold text-primary">Cài đặt tài khoản</h2>
+        <p class="text-textmain/70 mt-2">Quản lý thông tin cá nhân, bảo mật và tuỳ chọn hiển thị.</p>
+      </header>
+  
+      <!-- Thông tin tài khoản -->
+      <div class="bg-white rounded-2xl border border-border shadow-card p-6 mb-6" data-aos="fade-up" data-aos-delay="50">
+        <h3 class="text-lg font-semibold mb-4">Thông tin tài khoản</h3>
+        <form id="profileForm" class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-textmain/70 mb-1">Họ và tên</label>
+            <input id="stName" type="text" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
+          </div>
+          <div>
+            <label class="block text-sm text-textmain/70 mb-1">Email</label>
+            <input id="stEmail" type="email" class="w-full rounded-xl border border-border p-2 bg-slate-50 text-slate-500" disabled>
+          </div>
+          <div>
+            <label class="block text-sm text-textmain/70 mb-1">Vai trò</label>
+            <input id="stRole" type="text" class="w-full rounded-xl border border-border p-2 bg-slate-50 text-slate-500" disabled>
+          </div>
+          <div class="flex items-end">
+            <button class="rounded-xl bg-primary text-white px-4 py-2 hover:bg-primary/90" type="submit">
+              Lưu thông tin
+            </button>
+          </div>
+        </form>
+      </div>
+  
+      <!-- Bảo mật -->
+      <div class="bg-white rounded-2xl border border-border shadow-card p-6 mb-6" data-aos="fade-up" data-aos-delay="80">
+        <h3 class="text-lg font-semibold mb-4">Đổi mật khẩu</h3>
+        <form id="passwordForm" class="grid md:grid-cols-3 gap-4">
+          <input id="pwOld" type="password" placeholder="Mật khẩu hiện tại" class="rounded-xl border border-border p-2 focus:border-primary outline-none">
+          <input id="pwNew" type="password" placeholder="Mật khẩu mới" class="rounded-xl border border-border p-2 focus:border-primary outline-none">
+          <input id="pwNew2" type="password" placeholder="Nhập lại mật khẩu mới" class="rounded-xl border border-border p-2 focus:border-primary outline-none">
+          <div class="md:col-span-3 flex justify-end">
+            <button class="rounded-xl bg-primary text-white px-4 py-2 hover:bg-primary/90" type="submit">
+              Cập nhật mật khẩu
+            </button>
+          </div>
+        </form>
+        <p id="pwMsg" class="mt-2 text-sm"></p>
+      </div>
+  
+      <!-- Tuỳ chọn -->
+      <div class="bg-white rounded-2xl border border-border shadow-card p-6 mb-6" data-aos="fade-up" data-aos-delay="110">
+        <h3 class="text-lg font-semibold mb-4">Tuỳ chọn</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="flex items-center justify-between rounded-xl border border-border p-3">
+            <div>
+              <div class="font-medium">Thông báo</div>
+              <div class="text-sm text-textmain/60">Nhận thông báo về lịch hẹn và cập nhật.</div>
+            </div>
+            <label class="inline-flex items-center cursor-pointer">
+              <input id="optNotify" type="checkbox" class="peer sr-only">
+              <div class="w-11 h-6 bg-slate-200 rounded-full peer-checked:bg-primary relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></div>
+            </label>
+          </div>
+  
+          <div class="flex items-center justify-between rounded-xl border border-border p-3">
+            <div>
+              <div class="font-medium">Giao diện tối</div>
+              <div class="text-sm text-textmain/60">Bật/tắt chế độ nền tối.</div>
+            </div>
+            <label class="inline-flex items-center cursor-pointer">
+              <input id="optDark" type="checkbox" class="peer sr-only">
+              <div class="w-11 h-6 bg-slate-200 rounded-full peer-checked:bg-primary relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></div>
+            </label>
+          </div>
+  
+          <div class="rounded-xl border border-border p-3">
+            <label class="block text-sm text-textmain/70 mb-1">Ngôn ngữ</label>
+            <select id="optLang" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
+              <option value="vi">Tiếng Việt</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+  
+          <div class="rounded-xl border border-border p-3">
+            <label class="block text-sm text-textmain/70 mb-1">Định dạng ngày giờ</label>
+            <select id="optDateFmt" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
+              <option value="vi-VN">dd/MM/yyyy (vi-VN)</option>
+              <option value="en-US">MM/dd/yyyy (en-US)</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button id="btnSavePrefs" class="rounded-xl bg-primary text-white px-4 py-2 hover:bg-primary/90">
+            Lưu tuỳ chọn
+          </button>
+        </div>
+      </div>
+  
+      <!-- Hành động tài khoản -->
+      <div class="bg-white rounded-2xl border border-border shadow-card p-6" data-aos="fade-up" data-aos-delay="140">
+        <h3 class="text-lg font-semibold mb-4">Hành động</h3>
+        <div class="flex flex-wrap gap-3">
+          <a href="#/logout" class="rounded-xl border border-border px-4 py-2 hover:bg-bgpage">Đăng xuất</a>
+          <button id="btnDelete" class="rounded-xl bg-rose-600 text-white px-4 py-2 hover:bg-rose-500">Xoá tài khoản (demo)</button>
+        </div>
+        <p class="text-xs text-textmain/60 mt-3">* Lưu ý: Xoá tài khoản ở đây chỉ là mô phỏng (demo). Tích hợp thật sẽ gọi API BE.</p>
+      </div>
+    </div>
+  </section>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+  
+      // Bảo vệ trang cài đặt: nếu không có user thì điều hướng về login (phòng hờ nếu load trực tiếp file)
+      if (!user) {
+        location.hash = "#/login";
+        return;
+      }
+  
+      // ----- Binding form -----
+      const stName = document.getElementById("stName");
+      const stEmail = document.getElementById("stEmail");
+      const stRole = document.getElementById("stRole");
+      const profileForm = document.getElementById("profileForm");
+  
+      stName.value = user.name || "";
+      stEmail.value = user.email || "";
+      stRole.value = user.role || "";
+  
+      profileForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const updated = { ...user, name: stName.value.trim() };
+        localStorage.setItem("user", JSON.stringify(updated));
+        alert("Đã lưu thông tin tài khoản!");
+      });
+  
+      // ----- Đổi mật khẩu (demo FE) -----
+      const pwForm = document.getElementById("passwordForm");
+      const pwOld = document.getElementById("pwOld");
+      const pwNew = document.getElementById("pwNew");
+      const pwNew2 = document.getElementById("pwNew2");
+      const pwMsg = document.getElementById("pwMsg");
+  
+      pwForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        pwMsg.textContent = "";
+        pwMsg.className = "mt-2 text-sm";
+  
+        if (!pwOld.value || !pwNew.value || !pwNew2.value) {
+          pwMsg.textContent = "Vui lòng nhập đầy đủ thông tin.";
+          pwMsg.classList.add("text-amber-600");
+          return;
+        }
+        if (pwNew.value !== pwNew2.value) {
+          pwMsg.textContent = "Mật khẩu mới nhập lại không khớp.";
+          pwMsg.classList.add("text-rose-600");
+          return;
+        }
+        // TODO: gọi API BE đổi mật khẩu. FE demo:
+        setTimeout(() => {
+          pwMsg.textContent = "Đã cập nhật mật khẩu (demo).";
+          pwMsg.classList.add("text-emerald-600");
+          pwOld.value = pwNew.value = pwNew2.value = "";
+        }, 300);
+      });
+  
+      // ----- Tuỳ chọn (lưu LocalStorage) -----
+      const optNotify = document.getElementById("optNotify");
+      const optDark = document.getElementById("optDark");
+      const optLang = document.getElementById("optLang");
+      const optDateFmt = document.getElementById("optDateFmt");
+      const btnSavePrefs = document.getElementById("btnSavePrefs");
+  
+      const PREF_KEY = "prefs";
+      const prefs = JSON.parse(localStorage.getItem(PREF_KEY) || "{}");
+      optNotify.checked = !!prefs.notify;
+      optDark.checked = !!prefs.dark;
+      optLang.value = prefs.lang || "vi";
+      optDateFmt.value = prefs.dateFmt || "vi-VN";
+  
+      btnSavePrefs.addEventListener("click", () => {
+        const next = {
+          notify: optNotify.checked,
+          dark: optDark.checked,
+          lang: optLang.value,
+          dateFmt: optDateFmt.value,
+        };
+        localStorage.setItem(PREF_KEY, JSON.stringify(next));
+  
+        // demo bật/tắt dark: bạn có thể implement thêm class .dark trên <html> theo Tailwind config:
+        document.documentElement.classList.toggle("dark", next.dark);
+  
+        alert("Đã lưu tuỳ chọn!");
+      });
+  
+      // ----- Xoá tài khoản (demo) -----
+      document.getElementById("btnDelete").addEventListener("click", () => {
+        if (!confirm("Bạn chắc chắn muốn xoá tài khoản? (demo)")) return;
+        // TODO: gọi API BE để xoá thật
+        localStorage.removeItem("user");
+        alert("Đã xoá (demo). Đăng nhập lại để tiếp tục.");
+        location.hash = "#/login";
+      });
+    });
+  </script>
+  

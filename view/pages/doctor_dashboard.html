@@ -1,0 +1,134 @@
+<!-- view/pages/doctor_dashboard.html -->
+<section class="py-16 bg-surface text-textmain">
+    <div class="container mx-auto px-4">
+      <!-- Header -->
+      <header class="mb-8">
+        <h2 class="text-3xl font-bold text-primary" data-aos="fade-up">Lịch hôm nay của bác sĩ</h2>
+        <p class="text-textmain/70" data-aos="fade-up" data-aos-delay="80">
+          <span id="docName">Bác sĩ</span> · <span id="todayStr"></span>
+        </p>
+      </header>
+  
+      <!-- Stats -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" data-aos="fade-up" data-aos-delay="120">
+        <div class="rounded-2xl bg-white border border-border p-5 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Tổng lịch hôm nay</div>
+          <div id="statTotal" class="text-2xl font-bold text-primary">0</div>
+        </div>
+        <div class="rounded-2xl bg-white border border-border p-5 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Đã đến</div>
+          <div id="statCheckedIn" class="text-2xl font-bold">0</div>
+        </div>
+        <div class="rounded-2xl bg-white border border-border p-5 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Đang khám</div>
+          <div id="statInProgress" class="text-2xl font-bold">0</div>
+        </div>
+        <div class="rounded-2xl bg-white border border-border p-5 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Hoàn tất</div>
+          <div id="statCompleted" class="text-2xl font-bold">0</div>
+        </div>
+      </div>
+  
+      <!-- Bảng lịch -->
+      <div class="overflow-hidden rounded-2xl border border-border bg-white shadow-card" data-aos="fade-up" data-aos-delay="160">
+        <table class="min-w-full divide-y divide-border">
+          <thead class="bg-bgpage/60">
+            <tr class="text-left text-xs font-semibold uppercase tracking-wider text-textmain/70">
+              <th class="px-4 py-3">Giờ</th>
+              <th class="px-4 py-3">Bệnh nhân</th>
+              <th class="px-4 py-3">Dịch vụ</th>
+              <th class="px-4 py-3">Phòng</th>
+              <th class="px-4 py-3">Trạng thái</th>
+              <th class="px-4 py-3 text-right">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="tblToday" class="divide-y divide-border/60 text-sm"></tbody>
+        </table>
+        <div id="emptyState" class="hidden p-8 text-center text-sm text-textmain/60">Hôm nay chưa có lịch.</div>
+      </div>
+    </div>
+  </section>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1) Lấy user hiện tại
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      const today = new Date();
+      const todayKey = today.toISOString().slice(0,10); // YYYY-MM-DD
+  
+      // 2) In tên bác sĩ + ngày hôm nay
+      const fmtOpts = { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" };
+      document.getElementById("docName").textContent = user?.name || "Bác sĩ";
+      document.getElementById("todayStr").textContent = today.toLocaleDateString("vi-VN", fmtOpts);
+  
+      // 3) Dữ liệu mẫu (có thể thay bằng API của bạn)
+      //    Nếu bạn đã có nguồn APPTS toàn cục, có thể lấy từ window.APPTS; còn không dùng tạm mock dưới đây.
+      const APPTS_DASH = [
+        { id:'APT-001', date: todayKey, start:'09:00', end:'09:30', name:'Nguyễn Văn A', type:'Khám tổng quát', provider:'BS. Minh Trí', room:'201', status:'scheduled'   },
+        { id:'APT-002', date: todayKey, start:'10:00', end:'10:45', name:'Trần Thị B',   type:'Tái khám',       provider:'BS. Minh Trí', room:'201', status:'checked-in' },
+        { id:'APT-003', date: todayKey, start:'13:30', end:'14:00', name:'Phạm Hữu C',  type:'Siêu âm',        provider:'BS. Minh Trí', room:'305', status:'in-progress' },
+        { id:'APT-004', date: todayKey, start:'15:00', end:'15:30', name:'Ngô Quang D', type:'Khám mắt',       provider:'BS. Hạnh',    room:'305', status:'completed'   },
+      ];
+  
+      // 4) Chỉ lấy lịch của bác sĩ đang đăng nhập
+      const doctorName = user?.name;
+      let list = APPTS_DASH.filter(a => a.date === todayKey && (!doctorName || a.provider === doctorName));
+  
+      // 5) Sắp xếp theo giờ
+      list.sort((a,b) => (a.start).localeCompare(b.start));
+  
+      // 6) Render bảng
+      const STATUS_META = {
+        scheduled:   { label: "Đã hẹn",      dot: "bg-blue-500",   bg: "bg-blue-50",     text: "text-blue-700",    ring: "ring-blue-200" },
+        "checked-in":{ label: "Đã đến",      dot: "bg-amber-500",  bg: "bg-amber-50",    text: "text-amber-700",   ring: "ring-amber-200" },
+        "in-progress":{label: "Đang khám",   dot: "bg-purple-500", bg: "bg-purple-50",   text: "text-purple-700",  ring: "ring-purple-200" },
+        completed:   { label: "Hoàn tất",    dot: "bg-emerald-600",bg: "bg-emerald-50",  text: "text-emerald-700", ring: "ring-emerald-200" },
+        cancelled:   { label: "Huỷ",         dot: "bg-rose-500",   bg: "bg-rose-50",     text: "text-rose-700",    ring: "ring-rose-200" },
+      };
+  
+      const tbody = document.getElementById("tblToday");
+      const empty = document.getElementById("emptyState");
+  
+      if (!list.length) {
+        empty.classList.remove("hidden");
+      } else {
+        empty.classList.add("hidden");
+        list.forEach(a => {
+          const m = STATUS_META[a.status] || STATUS_META.scheduled;
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-bgpage/40";
+          tr.innerHTML = `
+            <td class="px-4 py-3">${a.start}–${a.end}</td>
+            <td class="px-4 py-3">
+              <div class="font-medium">${a.name}</div>
+              <div class="text-xs text-textmain/60">Mã: ${a.id}</div>
+            </td>
+            <td class="px-4 py-3">${a.type}</td>
+            <td class="px-4 py-3">${a.room || "—"}</td>
+            <td class="px-4 py-3">
+              <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${m.bg} ${m.text} ${m.ring}">
+                <span class="size-1.5 rounded-full ${m.dot}"></span>${m.label}
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex justify-end gap-2">
+                <a href="#/booking" class="rounded-xl border border-border px-3 py-1.5 text-xs hover:bg-bgpage">Chi tiết</a>
+                <button class="rounded-xl bg-primary px-3 py-1.5 text-xs text-white hover:bg-primary/90">Cập nhật</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+  
+      // 7) Cập nhật stats
+      const countBy = (s) => list.filter(x => x.status === s).length;
+      document.getElementById("statTotal").textContent = list.length;
+      document.getElementById("statCheckedIn").textContent = countBy("checked-in");
+      document.getElementById("statInProgress").textContent = countBy("in-progress");
+      document.getElementById("statCompleted").textContent = countBy("completed");
+  
+      if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 300);
+    });
+  </script>
+  

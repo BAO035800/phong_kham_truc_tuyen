@@ -1,0 +1,166 @@
+<!-- /view/pages/contact.html -->
+<section class="container mx-auto px-4 md:px-6 lg:px-8 py-8 max-w-6xl" id="contact-subpage">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Thông tin liên hệ -->
+      <div class="lg:col-span-5">
+        <div class="bg-white rounded-2xl border border-border shadow-card p-5 md:p-6">
+          <h1 class="text-xl font-semibold text-textmain mb-3">Liên hệ nhanh</h1>
+          <p class="text-sm text-textmuted mb-5">
+            Gửi câu hỏi hoặc nhu cầu của bạn, chúng tôi sẽ phản hồi trong giờ làm việc.
+          </p>
+  
+          <ul class="space-y-3 text-[14px]">
+            <li class="flex gap-3 items-start">
+              <i class="fa-solid fa-location-dot text-primary mt-1"></i>
+              <span>123 Đường ABC, Quận 1, TP. Hồ Chí Minh</span>
+            </li>
+            <li class="flex gap-3 items-start">
+              <i class="fa-solid fa-phone text-primary mt-1"></i>
+              <a href="tel:0909123456" class="hover:text-primary">0909 123 456</a>
+            </li>
+            <li class="flex gap-3 items-start">
+              <i class="fa-solid fa-envelope text-primary mt-1"></i>
+              <a href="mailto:phongkham@example.com" class="hover:text-primary">phongkham@example.com</a>
+            </li>
+            <li class="flex gap-3 items-start">
+              <i class="fa-solid fa-clock text-primary mt-1"></i>
+              <span>08:00 - 17:00 (Thứ 2 - Thứ 7)</span>
+            </li>
+          </ul>
+  
+          <!-- Bản đồ (tuỳ chọn, có thể xoá nếu không cần) -->
+          <div class="mt-5 rounded-xl overflow-hidden border border-border">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.9090962282608!2d105.79891361032308!3d21.036322987438915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab3f57fc23d1%3A0xf813dfd05dfa4078!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBUaOG7pyDEkcO0IEjDoCBO4buZaQ!5e0!3m2!1svi!2s!4v1760741970415!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Form liên hệ nhanh -->
+      <div class="lg:col-span-7">
+        <div class="bg-white rounded-2xl border border-border shadow-card p-5 md:p-6">
+          <h2 class="text-lg font-semibold text-textmain mb-4">Gửi thông tin</h2>
+  
+          <form id="quickContactForm" class="space-y-4 text-[14px]" novalidate>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-medium mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                <input id="ct-name" type="text"
+                       class="w-full border border-border rounded-md px-3 py-2 focus:ring-2 focus:ring-primary/60 outline-none"
+                       placeholder="Nguyễn Văn A" required>
+              </div>
+              <div>
+                <label class="block font-medium mb-1">Số điện thoại</label>
+                <input id="ct-phone" type="tel"
+                       class="w-full border border-border rounded-md px-3 py-2 focus:ring-2 focus:ring-primary/60 outline-none"
+                       placeholder="0909xxxxxx" pattern="^[0-9+()\\-\\s]{8,}$">
+              </div>
+            </div>
+  
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-medium mb-1">Email</label>
+                <input id="ct-email" type="email"
+                       class="w-full border border-border rounded-md px-3 py-2 focus:ring-2 focus:ring-primary/60 outline-none"
+                       placeholder="you@example.com">
+              </div>
+              <div>
+                <label class="block font-medium mb-1">Chủ đề</label>
+                <input id="ct-subject" type="text"
+                       class="w-full border border-border rounded-md px-3 py-2 focus:ring-2 focus:ring-primary/60 outline-none"
+                       placeholder="Đặt lịch/ Tư vấn/ Góp ý...">
+              </div>
+            </div>
+  
+            <div>
+              <label class="block font-medium mb-1">Nội dung <span class="text-red-500">*</span></label>
+              <textarea id="ct-message" rows="4"
+                        class="w-full border border-border rounded-md px-3 py-2 focus:ring-2 focus:ring-primary/60 outline-none"
+                        placeholder="Mô tả ngắn gọn yêu cầu của bạn..." required></textarea>
+            </div>
+  
+            <!-- Quick actions -->
+            <div class="flex flex-wrap items-center gap-3">
+              <button type="submit"
+                      class="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-sky-600 transition">
+                📨 Gửi liên hệ
+              </button>
+              <button type="button" id="ct-mailto"
+                      class="border border-border px-4 py-2 rounded-md hover:bg-gray-50 transition">
+                ✉️ Gửi qua Email
+              </button>
+              <a id="ct-call" href="tel:0909123456"
+                 class="border border-border px-4 py-2 rounded-md hover:bg-gray-50 transition">
+                ☎️ Gọi nhanh
+              </a>
+            </div>
+  
+            <p id="ct-status" class="text-sm text-textmuted"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <script>
+  (() => {
+    const form = document.getElementById('quickContactForm');
+    const nameEl = document.getElementById('ct-name');
+    const phoneEl = document.getElementById('ct-phone');
+    const emailEl = document.getElementById('ct-email');
+    const subjectEl = document.getElementById('ct-subject');
+    const msgEl = document.getElementById('ct-message');
+    const statusEl = document.getElementById('ct-status');
+    const mailtoBtn = document.getElementById('ct-mailto');
+  
+    // Helper: ít nhất phải có 1 trong 2: phone hoặc email
+    function hasAtLeastOneContact() {
+      return (phoneEl.value && phoneEl.value.trim().length >= 8) || (emailEl.value && emailEl.value.includes('@'));
+    }
+  
+    function setStatus(text, colorClass) {
+      statusEl.textContent = text;
+      statusEl.className = 'text-sm ' + (colorClass || 'text-textmuted');
+    }
+  
+    // Gửi qua mailto nhanh
+    mailtoBtn.addEventListener('click', () => {
+      const name = (nameEl.value || '').trim();
+      const email = (emailEl.value || '').trim();
+      const phone = (phoneEl.value || '').trim();
+      const sub = (subjectEl.value || 'Liên hệ từ website').trim();
+      const body = `Họ tên: ${name}%0D%0AEmail: ${email}%0D%0ASĐT: ${phone}%0D%0A%0D%0ANội dung:%0D%0A${(msgEl.value || '').trim()}`;
+      window.location.href = `mailto:phongkham@example.com?subject=${encodeURIComponent(sub)}&body=${body}`;
+    });
+  
+    // Submit mock nhanh
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+  
+      if (!nameEl.value.trim() || !msgEl.value.trim()) {
+        setStatus('⚠️ Vui lòng nhập Họ tên và Nội dung.', 'text-red-600');
+        return;
+      }
+      if (!hasAtLeastOneContact()) {
+        setStatus('⚠️ Vui lòng cung cấp ít nhất Số điện thoại hoặc Email.', 'text-red-600');
+        return;
+      }
+      if (emailEl.value && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(emailEl.value)) {
+        setStatus('⚠️ Email không hợp lệ.', 'text-red-600');
+        return;
+      }
+      if (phoneEl.value && !/^[0-9+()\\-\\s]{8,}$/.test(phoneEl.value)) {
+        setStatus('⚠️ Số điện thoại không hợp lệ.', 'text-red-600');
+        return;
+      }
+  
+      setStatus('⏳ Đang gửi...', 'text-blue-600');
+  
+      // Giả lập gửi
+      setTimeout(() => {
+        setStatus('✅ Đã nhận liên hệ! Chúng tôi sẽ phản hồi sớm nhất.', 'text-green-600');
+        form.reset();
+      }, 800);
+    });
+  })();
+  </script>
+  
