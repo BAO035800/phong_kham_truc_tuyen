@@ -1,0 +1,92 @@
+<!-- HEADER (KHÁCH) -->
+<header class="w-full bg-white border-b border-gray-200 shadow-sm">
+    <!-- Topbar -->
+    <div class="w-full bg-primary text-white text-sm">
+      <div class="container mx-auto px-4 flex items-center justify-end py-1.5">
+        <a href="#/login" id="loginLink" class="flex items-center gap-2 hover:text-secondary transition">
+          <i class="fa-solid fa-right-to-bracket text-xs"></i>
+          <span>Đăng nhập</span>
+        </a>
+      </div>
+    </div>
+  
+    <!-- Main Navigation -->
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between py-3">
+        <a href="#/" class="flex items-center gap-3">
+          <div class="leading-tight">
+            <div class="font-bold text-lg text-primary">Phòng Khám Hoà Lợi</div>
+            <div class="text-slate-500 text-xs tracking-wide">Chăm sóc sức khỏe tận tâm</div>
+          </div>
+        </a>
+  
+        <!-- Mobile toggle -->
+        <button type="button"
+          class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border hover:bg-slate-50"
+          data-toggle="mobile-nav" aria-controls="navMain" aria-expanded="false" aria-label="Mở menu">
+          <i class="fa-solid fa-bars text-slate-700"></i>
+        </button>
+  
+        <!-- Navigation -->
+        <nav id="navMain" class="hidden lg:block">
+          <ul class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-1">
+            <li><a href="#/" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Trang chủ</a></li>
+            <li><a href="#/services" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Dịch vụ</a></li>
+            <li><a href="#/doctors" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Bác sĩ</a></li>
+            <li><a href="#/contact" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Liên hệ</a></li>
+            <li>
+              <a href="#/login" class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Đặt lịch khám</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+  
+  
+  <style>
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .animate-gradient {
+    background-size: 200% auto;
+    animation: gradientMove 5s ease infinite;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 3px;
+    height: 2px;
+    width: 0%;
+    background-color: currentColor;
+    transition: width 0.25s ease;
+  }
+  .nav-link:hover::after, .nav-link.active::after {
+    width: 100%;
+  }
+  </style>
+  
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const navLinks = document.querySelectorAll(".nav-link");
+  
+    function updateActiveLink() {
+      const currentHash = window.location.hash || "#/";
+      navLinks.forEach(link => {
+        const isActive = link.getAttribute("href") === currentHash;
+        link.classList.toggle("text-primary", isActive);
+        link.classList.toggle("font-semibold", isActive);
+        link.classList.toggle("after:w-full", isActive);
+      });
+    }
+  
+    updateActiveLink();
+    window.addEventListener("hashchange", updateActiveLink);
+  });
+  </script>
+  

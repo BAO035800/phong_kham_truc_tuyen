@@ -1,0 +1,169 @@
+<!-- BOOKING PAGE — RESPONSIVE, GỌN & CÂN ĐỐI -->
+<section class="max-w-3xl mx-auto mt-8 bg-white rounded-2xl shadow border border-gray-200 overflow-hidden">
+    <!-- Banner + layout 2 cột ở md+ -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+      <!-- Ảnh minh hoạ -->
+      <div class="relative">
+        <img src="/view/assets/img/clinic.jpg"
+             alt="Phòng khám"
+             class="w-full h-44 md:h-full object-cover"
+             onerror="this.onerror=null;this.src='https://picsum.photos/800/600?random=21';">
+        <div class="absolute left-0 top-0 m-3 px-3 py-1 rounded-full bg-black/40 text-white text-xs">
+          🩺 Phòng khám
+        </div>
+      </div>
+  
+      <!-- Form -->
+      <div class="p-5 md:p-6">
+        <h2 class="text-xl font-semibold mb-4 text-slate-800 flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-primary"></span>
+          Đặt lịch khám
+        </h2>
+  
+        <form id="bookingForm" class="space-y-4 text-[14px]">
+          <!-- Họ tên -->
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Họ và tên</label>
+            <input id="fullname" type="text"
+                   class="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-primary/60 outline-none"
+                   placeholder="Nguyễn Văn A" required>
+          </div>
+  
+          <!-- Bác sĩ (card) -->
+          <div>
+            <label class="block font-medium text-slate-700 mb-2">Chọn bác sĩ</label>
+            <input type="hidden" id="doctor" required>
+            <div id="doctorGrid" class="grid grid-cols-3 gap-2">
+              <!-- Card 1 -->
+              <label tabindex="0" class="doctor-card group relative bg-white border rounded-lg p-2.5 flex flex-col items-center cursor-pointer hover:border-primary transition">
+                <input type="radio" name="doctorRadio" value="doctor1" class="sr-only">
+                <img src="/view/assets/img/doctor1.jpg"
+                     class="w-12 h-12 rounded-full object-cover mb-1.5 ring-2 ring-transparent group-[.selected]:ring-primary transition"
+                     onerror="this.onerror=null;this.src='https://picsum.photos/96?random=1';">
+                <span class="text-[12px] font-medium text-slate-800 text-center leading-tight">BS. Minh Trí</span>
+                <i class="fa-solid fa-check-circle text-primary text-xs absolute top-1 right-1 opacity-0 group-[.selected]:opacity-100"></i>
+              </label>
+              <!-- Card 2 -->
+              <label tabindex="0" class="doctor-card group relative bg-white border rounded-lg p-2.5 flex flex-col items-center cursor-pointer hover:border-primary transition">
+                <input type="radio" name="doctorRadio" value="doctor2" class="sr-only">
+                <img src="/view/assets/img/doctor2.jpg"
+                     class="w-12 h-12 rounded-full object-cover mb-1.5 ring-2 ring-transparent group-[.selected]:ring-primary transition"
+                     onerror="this.onerror=null;this.src='https://picsum.photos/96?random=2';">
+                <span class="text-[12px] font-medium text-slate-800 text-center leading-tight">BS. Thu Hà</span>
+                <i class="fa-solid fa-check-circle text-primary text-xs absolute top-1 right-1 opacity-0 group-[.selected]:opacity-100"></i>
+              </label>
+              <!-- Card 3 -->
+              <label tabindex="0" class="doctor-card group relative bg-white border rounded-lg p-2.5 flex flex-col items-center cursor-pointer hover:border-primary transition">
+                <input type="radio" name="doctorRadio" value="doctor3" class="sr-only">
+                <img src="/view/assets/img/doctor3.jpg"
+                     class="w-12 h-12 rounded-full object-cover mb-1.5 ring-2 ring-transparent group-[.selected]:ring-primary transition"
+                     onerror="this.onerror=null;this.src='https://picsum.photos/96?random=3';">
+                <span class="text-[12px] font-medium text-slate-800 text-center leading-tight">BS. Anh Tú</span>
+                <i class="fa-solid fa-check-circle text-primary text-xs absolute top-1 right-1 opacity-0 group-[.selected]:opacity-100"></i>
+              </label>
+            </div>
+          </div>
+  
+          <!-- Ngày & Giờ -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Ngày khám</label>
+              <input id="date" type="date"
+                     class="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-primary/60 outline-none"
+                     required>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Giờ khám</label>
+              <input type="hidden" id="time" required>
+              <div id="slotWrap" class="grid grid-cols-3 gap-1.5">
+                <button type="button" class="slot-btn border rounded-md py-1.5 text-sm hover:border-primary transition" data-value="08:00">08:00</button>
+                <button type="button" class="slot-btn border rounded-md py-1.5 text-sm hover:border-primary transition" data-value="09:00">09:00</button>
+                <button type="button" class="slot-btn border rounded-md py-1.5 text-sm hover:border-primary transition" data-value="10:00">10:00</button>
+                <button type="button" class="slot-btn border rounded-md py-1.5 text-sm hover:border-primary transition" data-value="13:00">13:00</button>
+                <button type="button" class="slot-btn border rounded-md py-1.5 text-sm hover:border-primary transition" data-value="14:00">14:00</button>
+                <button type="button" class="slot-btn border rounded-md py-1.5 text-sm hover:border-primary transition" data-value="15:00">15:00</button>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Ghi chú -->
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Ghi chú (tuỳ chọn)</label>
+            <textarea id="note" rows="2"
+                      class="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-primary/60 outline-none"
+                      placeholder="Ví dụ: Tôi bị ho 2 ngày nay..."></textarea>
+          </div>
+  
+          <!-- Submit -->
+          <button type="submit"
+                  class="w-full bg-primary text-white py-2.5 rounded-md font-medium hover:bg-sky-600 transition">
+            ✅ Xác nhận đặt lịch
+          </button>
+          <p id="statusMsg" class="text-center text-sm text-slate-500"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+  
+  <!-- LOGIC -->
+  <script>
+  (() => {
+    // Min date = hôm nay
+    const dateEl = document.getElementById("date");
+    dateEl.min = new Date().toISOString().split("T")[0];
+  
+    // Chọn bác sĩ
+    const doctorHidden = document.getElementById("doctor");
+    const doctorCards = document.querySelectorAll(".doctor-card");
+    function selectDoctor(el){
+      doctorCards.forEach(c=>c.classList.remove("selected"));
+      el.classList.add("selected");
+      doctorHidden.value = el.querySelector("input").value;
+    }
+    doctorCards.forEach(el=>{
+      el.addEventListener("click",()=>selectDoctor(el));
+      el.addEventListener("keydown",e=>{
+        if(e.key==="Enter"||e.key===" "){ e.preventDefault(); selectDoctor(el); }
+      });
+    });
+  
+    // Chọn giờ
+    const timeHidden = document.getElementById("time");
+    const slotBtns = document.querySelectorAll(".slot-btn");
+    slotBtns.forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        slotBtns.forEach(b=>b.classList.remove("bg-sky-100","border-primary","ring-2","ring-primary"));
+        btn.classList.add("bg-sky-100","border-primary","ring-2","ring-primary");
+        timeHidden.value = btn.dataset.value;
+      });
+    });
+  
+    // Submit (mock)
+    const form = document.getElementById("bookingForm");
+    const msg  = document.getElementById("statusMsg");
+    form.addEventListener("submit",e=>{
+      e.preventDefault();
+      const name = document.getElementById("fullname").value.trim();
+      const doctor = doctorHidden.value;
+      const date = dateEl.value;
+      const time = timeHidden.value;
+  
+      if(!name || !doctor || !date || !time){
+        msg.textContent = "⚠️ Vui lòng điền đủ họ tên, chọn bác sĩ, ngày và giờ.";
+        msg.className   = "text-center text-sm text-red-500";
+        return;
+      }
+      msg.textContent = "⏳ Đang gửi yêu cầu...";
+      msg.className   = "text-center text-sm text-blue-500";
+      setTimeout(()=>{
+        msg.textContent = `✅ Đặt lịch thành công cho ${name}! ${date} lúc ${time}.`;
+        msg.className   = "text-center text-sm text-green-600";
+        form.reset(); doctorHidden.value=""; timeHidden.value="";
+        doctorCards.forEach(c=>c.classList.remove("selected"));
+        slotBtns.forEach(b=>b.classList.remove("bg-sky-100","border-primary","ring-2","ring-primary"));
+        msg.scrollIntoView({behavior:"smooth",block:"center"});
+      },800);
+    });
+  })();
+  </script>
+  

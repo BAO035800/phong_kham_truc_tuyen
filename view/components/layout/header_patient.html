@@ -1,0 +1,127 @@
+<!-- HEADER (Shrinking on Scroll) -->
+<header id="mainHeader"
+  class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm transition-all duration-300 ease-in-out">
+  
+  <!-- Top bar -->
+  <div id="topBar" class="bg-primary text-white text-sm transition-all duration-300">
+    <div class="container mx-auto px-4 flex items-center justify-between py-2 md:py-2.5">
+      <span id="userGreeting" class="font-medium"></span>
+      <button id="logoutBtn"
+        class="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-white/20 transition">
+        <i class="fa-solid fa-right-from-bracket text-xs"></i>
+        <span>Đăng xuất</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div id="navContainer" class="container mx-auto px-4 transition-all duration-300">
+    <div id="navContent" class="flex items-center justify-between py-6 md:py-7 transition-all duration-300">
+      
+      <!-- Logo -->
+      <a href="#/" class="flex items-center gap-2 transition-all duration-300" id="logoWrap">
+        <img src="/view/assets/img/logo.png" 
+             onerror="this.onerror=null;this.src='https://picsum.photos/60?random=10';" 
+             alt="Logo" 
+             class="h-12 w-12 object-cover rounded-full transition-all duration-300">
+        <div id="logoText" class="leading-tight transition-all duration-300">
+          <div class="font-bold text-2xl text-primary transition-all duration-300">Phòng Khám Hoà Lợi</div>
+          <div class="text-slate-500 text-xs tracking-wide transition-all duration-300">Chăm sóc sức khỏe tận tâm</div>
+        </div>
+      </a>
+
+      <!-- Menu -->
+      <nav id="navMain" class="hidden lg:block transition-all duration-300">
+        <ul class="flex items-center gap-1 text-[15px] font-medium">
+          <li><a href="#/" class="nav-link px-3 py-2 text-slate-700 hover:text-primary relative">Trang chủ</a></li>
+          <li><a href="#/booking" class="nav-link px-3 py-2 text-slate-700 hover:text-primary relative">Đặt lịch</a></li>
+          <li><a href="#/my-schedule" class="nav-link px-3 py-2 text-slate-700 hover:text-primary relative">Lịch hẹn</a></li>
+          <li><a href="#/doctors" class="nav-link px-3 py-2 text-slate-700 hover:text-primary relative">Bác sĩ</a></li>
+          <li><a href="#/contact" class="nav-link px-3 py-2 text-slate-700 hover:text-primary relative">Liên hệ</a></li>
+        </ul>
+      </nav>
+
+      <!-- Mobile toggle -->
+      <button type="button"
+        class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border hover:bg-slate-50 transition">
+        <i class="fa-solid fa-bars text-slate-700"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Spacer để tránh bị che -->
+<div class="h-28 md:h-32"></div>
+
+<!-- STYLE -->
+<style>
+  /* Hiệu ứng gạch chân nav */
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 3px;
+    height: 2px;
+    width: 0%;
+    background-color: currentColor;
+    transition: width 0.25s ease;
+  }
+  .nav-link:hover::after, .nav-link.active::after {
+    width: 100%;
+  }
+
+  /* 🌟 Khi header co lại */
+  .header-shrink {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .header-shrink #topBar {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  .header-shrink #logoWrap img {
+    height: 40px !important;
+    width: 40px !important;
+  }
+  .header-shrink #logoText .font-bold {
+    font-size: 1.25rem; /* text-xl */
+  }
+  .header-shrink #navContent {
+    padding-top: 0.4rem !important;
+    padding-bottom: 0.4rem !important;
+  }
+</style>
+
+<!-- SCRIPT -->
+<script>
+  // Greet user
+  (function () {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const greet = document.getElementById("userGreeting");
+    if (user && greet) greet.textContent = `Xin chào, ${user.name} 👋`;
+  })();
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const header = document.getElementById("mainHeader");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const headerContainer = document.getElementById("header");
+
+    // ✨ Hiệu ứng Shrink khi scroll
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 10) {
+        header.classList.add("header-shrink");
+      } else {
+        header.classList.remove("header-shrink");
+      }
+    });
+
+    // 🔐 Đăng xuất
+    logoutBtn.addEventListener("click", async () => {
+      localStorage.removeItem("user");
+      const res = await fetch("./components/layout/header_guest.html?v=" + Date.now());
+      headerContainer.innerHTML = await res.text();
+      window.location.hash = "#/login";
+      if (typeof renderPage === "function") renderPage();
+    });
+  });
+</script>

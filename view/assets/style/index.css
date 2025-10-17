@@ -1,0 +1,16 @@
+.nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 3px;
+    height: 2px;
+    width: 0%;
+    background-color: currentColor;
+    transition: width .25s ease;
+  }
+  .nav-link:hover::after {
+    width: 100%;
+  }
+  .after\:w-full::after {
+    width: 100%;
+  }
+  
