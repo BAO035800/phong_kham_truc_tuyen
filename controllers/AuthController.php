@@ -21,8 +21,12 @@ class AuthController
 
         try {
             switch ($action) {
-                case 'register':
-                    $id = $this->auth->register($data);
+                case 'registerBenhNhan':
+                    $id = $this->auth->registerBenhNhan($data);
+                    echo json_encode(['message' => 'Đăng ký thành công', 'id' => $id]);
+                    break;
+                case 'registerBacSi':
+                    $id = $this->auth->registerBacSi($data);
                     echo json_encode(['message' => 'Đăng ký thành công', 'id' => $id]);
                     break;
 
