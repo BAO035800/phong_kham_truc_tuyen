@@ -14,6 +14,17 @@ class AuthController
         header("Access-Control-Allow-Headers: Content-Type, Authorization");
     }
 
+    private function requireAdmin()
+    {
+        $user = $_SESSION['user'] ?? null;
+        if (!$user || $user['vai_tro'] !== 'ADMIN') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Chỉ ADMIN mới có quyền thực hiện thao tác này']);
+            exit;
+        }
+    }
+
+
     public function handleRequest()
     {
         $action = $_GET['action'] ?? '';
@@ -26,6 +37,7 @@ class AuthController
                     echo json_encode(['message' => 'Đăng ký thành công', 'id' => $id]);
                     break;
                 case 'registerBacSi':
+                    $this->requireAdmin();
                     $id = $this->auth->registerBacSi($data);
                     echo json_encode(['message' => 'Đăng ký thành công', 'id' => $id]);
                     break;
