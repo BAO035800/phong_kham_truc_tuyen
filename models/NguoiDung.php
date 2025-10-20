@@ -98,7 +98,7 @@ class NguoiDung
                 ':ten'       => $data['ten_dang_nhap'],
                 ':email'     => $data['email'],
                 ':mat_khau'  => password_hash($data['mat_khau'], PASSWORD_BCRYPT),
-                ':vai_tro'   => $data['vai_tro'] ?? 'BENHNHAN'
+                ':vai_tro'   => $data['vai_tro'] ?? 'BACSI'
             ]);
 
             $userId = (int)$this->db->lastInsertId();
