@@ -8,6 +8,11 @@ require_once __DIR__ . '/../controllers/DichVuController.php';
 require_once __DIR__ . '/../controllers/ChuyenKhoaController.php';
 require_once __DIR__ . '/../controllers/BaiVietController.php';
 require_once __DIR__ . '/../controllers/ChiNhanhController.php';
+require_once __DIR__ . '/../controllers/LichHenController.php';
+require_once __DIR__ . '/../controllers/LichTrongController.php';
+
+
+
 
 
 
@@ -62,6 +67,16 @@ switch ($path) {
         $controller = new ChiNhanhController();
         $controller->handleRequest();
         break;
+    case 'lichhen':
+        $controller = new LichHenController();
+        $controller->handleRequest();
+        break;
+    case 'lichtrong':
+        $controller = new LichTrongController();
+        $controller->handleRequest();
+        break;
+
+
 
 
 
