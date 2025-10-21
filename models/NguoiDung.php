@@ -104,18 +104,20 @@ class NguoiDung
             $userId = (int)$this->db->lastInsertId();
 
             // 🔹 2. Tạo thông tin bệnh nhân (luôn chèn)
-            $sqlPatient = "INSERT INTO benhnhan (ho_ten, ngay_sinh, gioi_tinh, so_dien_thoai, email, dia_chi, ma_nguoi_dung)
-                       VALUES (:ho_ten, :ngay_sinh, :gioi_tinh, :so_dien_thoai, :email, :dia_chi, :ma_nguoi_dung)";
-            $stmtPatient = $this->db->prepare($sqlPatient);
-            $stmtPatient->execute([
-                ':ho_ten'        => $data['ho_ten'] ?? '',
-                ':ngay_sinh'     => $data['ngay_sinh'] ?? null,
-                ':gioi_tinh'     => $data['gioi_tinh'] ?? 'Khác',
-                ':so_dien_thoai' => $data['so_dien_thoai'] ?? '',
-                ':email'         => $data['email'] ?? '',
-                ':dia_chi'       => $data['dia_chi'] ?? '',
-                ':ma_nguoi_dung' => $userId
+            // 🔹 2. Tạo thông tin bác sĩ
+            $sqlDoctor = "INSERT INTO bacsi (ma_nguoi_dung, ma_chuyen_khoa, ma_chi_nhanh, ho_ten, trinh_do, kinh_nghiem, mo_ta)
+               VALUES (:ma_nguoi_dung, :ma_chuyen_khoa, :ma_chi_nhanh, :ho_ten, :trinh_do, :kinh_nghiem, :mo_ta)";
+            $stmtDoctor = $this->db->prepare($sqlDoctor);
+            $stmtDoctor->execute([
+                ':ma_nguoi_dung' => $userId,
+                ':ma_chuyen_khoa' => $data['ma_chuyen_khoa'] ?? null,
+                ':ma_chi_nhanh' => $data['ma_chi_nhanh'] ?? null,
+                ':ho_ten' => $data['ho_ten'] ?? '',
+                ':trinh_do' => $data['trinh_do'] ?? '',
+                ':kinh_nghiem' => $data['kinh_nghiem'] ?? 0,
+                ':mo_ta' => $data['mo_ta'] ?? ''
             ]);
+
 
             $this->db->commit();
             return $userId;
