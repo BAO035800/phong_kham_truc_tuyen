@@ -1,0 +1,318 @@
+<section class="py-16 bg-surface text-textmain">
+    <div class="container mx-auto px-4 max-w-5xl">
+      <header class="mb-8">
+        <h2 class="text-3xl font-bold text-primary">Lịch trống của bác sĩ</h2>
+        <p class="text-textmain/70">Thêm, sửa, xoá lịch <b>trống</b> theo từng ngày.</p>
+      </header>
+  
+      <!-- Thanh công cụ nhỏ -->
+      <div class="mb-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Bác sĩ</div>
+          <div id="docName" class="font-semibold">—</div>
+        </div>
+        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Múi giờ</div>
+          <div>Asia/Bangkok (UTC+7)</div>
+        </div>
+        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Hành động</div>
+          <div class="flex flex-wrap gap-2">
+            <button id="btnClearAll" class="rounded-xl border border-border px-3 py-1.5 text-sm hover:bg-bgpage">Xoá toàn bộ</button>
+            <button id="btnPreview" class="rounded-xl bg-primary text-white px-3 py-1.5 text-sm hover:bg-primary/90">Xem JSON</button>
+            <button id="btnHidePreview" class="rounded-xl border border-border px-3 py-1.5 text-sm hover:bg-bgpage hidden">Ẩn JSON</button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Form thêm lịch trống -->
+      <div class="flex flex-wrap items-end gap-2 mb-5">
+        <div>
+          <label class="block text-xs text-textmain/60 mb-1">Ngày</label>
+          <select id="selDay" class="rounded-xl border border-border p-2 focus:border-primary outline-none">
+            <option value="mon">Thứ hai</option>
+            <option value="tue">Thứ ba</option>
+            <option value="wed">Thứ tư</option>
+            <option value="thu">Thứ năm</option>
+            <option value="fri">Thứ sáu</option>
+            <option value="sat">Thứ bảy</option>
+            <option value="sun">Chủ nhật</option>
+          </select>
+        </div>
+        <div class="flex-1 min-w-[160px]">
+          <label class="block text-xs text-textmain/60 mb-1">Bắt đầu</label>
+          <input id="inpStart" type="time" value="08:00" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
+        </div>
+        <div class="flex-1 min-w-[160px]">
+          <label class="block text-xs text-textmain/60 mb-1">Kết thúc</label>
+          <input id="inpEnd" type="time" value="12:00" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
+        </div>
+        <button id="btnAdd" class="rounded-xl bg-primary text-white px-4 py-2 text-sm hover:bg-primary/90">Thêm lịch trống</button>
+      </div>
+  
+      <!-- Lưới 7 ngày -->
+      <div id="daysGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <template id="dayTpl">
+          <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="">
+            <header class="flex items-center justify-between mb-3">
+              <div>
+                <div class="text-xs uppercase tracking-wide text-textmain/60 day-label">Thứ hai</div>
+                <div class="text-sm font-semibold text-textmain day-key">mon</div>
+              </div>
+              <button class="btn-clear-day rounded-xl border border-border px-3 py-1.5 text-xs hover:bg-bgpage">Xoá hết</button>
+            </header>
+            <ul class="slot-list space-y-2"></ul>
+          </section>
+        </template>
+      </div>
+  
+      <!-- JSON preview -->
+      <div id="jsonWrap" class="mt-6 hidden">
+        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-lg font-semibold">JSON hiện tại</h3>
+          </div>
+          <pre id="jsonPreview" class="text-xs bg-bgpage rounded-xl p-3 overflow-auto max-h-96"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Toast nhỏ -->
+  <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 z-[60] hidden">
+    <div id="toastInner" class="rounded-xl px-4 py-2 shadow-card border text-sm bg-white text-slate-700"></div>
+  </div>
+  
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // ===== LƯU MẪU BẰNG LOCALSTORAGE =====
+    const STORAGE_KEY = "availability:demo-doctor";
+  
+    // ==== DỮ LIỆU BAN ĐẦU (fallback) ====
+    let state = loadState() || {
+      doctorName: "BS. Nguyễn Văn An",
+      timezone: "Asia/Bangkok",
+      slots: {
+        mon: [ {start:"08:00", end:"11:30"}, {start:"13:30", end:"16:30"} ],
+        tue: [ {start:"09:00", end:"12:00"}, {start:"14:00", end:"17:00"} ],
+        wed: [ {start:"08:30", end:"11:30"} ],
+        thu: [ {start:"08:00", end:"12:00"}, {start:"13:00", end:"15:30"} ],
+        fri: [ {start:"08:00", end:"11:00"}, {start:"13:30", end:"16:00"} ],
+        sat: [ {start:"08:00", end:"11:00"} ],
+        sun: []
+      }
+    };
+  
+    // ===== DOM refs =====
+    const grid = document.getElementById("daysGrid");
+    const tpl = document.getElementById("dayTpl");
+    const btnAdd = document.getElementById("btnAdd");
+    const btnClearAll = document.getElementById("btnClearAll");
+    const btnPreview = document.getElementById("btnPreview");
+    const btnHidePreview = document.getElementById("btnHidePreview");
+    const jsonWrap = document.getElementById("jsonWrap");
+    const jsonPreview = document.getElementById("jsonPreview");
+  
+    document.getElementById("docName").textContent = state.doctorName;
+  
+    const DAYS = [
+      { key:"mon", label:"Thứ hai" }, { key:"tue", label:"Thứ ba" }, { key:"wed", label:"Thứ tư" },
+      { key:"thu", label:"Thứ năm" }, { key:"fri", label:"Thứ sáu" },
+      { key:"sat", label:"Thứ bảy" }, { key:"sun", label:"Chủ nhật" }
+    ];
+  
+    // ===== Render 7 cards =====
+    grid.innerHTML = "";
+    DAYS.forEach(d => {
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      node.dataset.day = d.key;
+      node.querySelector(".day-label").textContent = d.label;
+      node.querySelector(".day-key").textContent = d.key;
+      grid.appendChild(node);
+      renderList(d.key, node);
+    });
+  
+    // ===== Form: Thêm slot =====
+    btnAdd.addEventListener("click", () => {
+      const dayKey = document.getElementById("selDay").value;
+      const st = document.getElementById("inpStart").value;
+      const en = document.getElementById("inpEnd").value;
+  
+      if (!validRange(st, en)) return toast("Khung giờ không hợp lệ (HH:mm, bắt đầu < kết thúc).", "error");
+  
+      const merged = normalize([...(state.slots[dayKey]||[]), {start:st, end:en}]);
+      if (merged === null) return toast("Khung giờ trùng/đè lên khoảng khác.", "error");
+  
+      state.slots[dayKey] = merged;
+      const card = grid.querySelector(`[data-day="${dayKey}"]`);
+      if (card) renderList(dayKey, card);
+      saveState();
+      toast(`Đã thêm: ${st}–${en}`, "success");
+    });
+  
+    // ===== Xoá tất cả trong tuần =====
+    btnClearAll.addEventListener("click", () => {
+      if (!confirm("Xoá toàn bộ lịch trống của cả tuần?")) return;
+      Object.keys(state.slots).forEach(k => state.slots[k] = []);
+      grid.querySelectorAll("[data-day]").forEach(card => renderList(card.dataset.day, card));
+      saveState();
+      toast("Đã xoá toàn bộ.", "success");
+    });
+  
+    // ===== Xem/Ẩn JSON =====
+    btnPreview.addEventListener("click", () => {
+      jsonPreview.textContent = JSON.stringify(state, null, 2);
+      jsonWrap.classList.remove("hidden");
+      btnPreview.classList.add("hidden");
+      btnHidePreview.classList.remove("hidden");
+    });
+    btnHidePreview.addEventListener("click", () => {
+      jsonWrap.classList.add("hidden");
+      btnHidePreview.classList.add("hidden");
+      btnPreview.classList.remove("hidden");
+    });
+  
+    // ===== Event delegation cho từng card (Sửa/Xoá/Xoá hết) =====
+    grid.addEventListener("click", (ev) => {
+      const target = ev.target;
+      // tìm card và dayKey
+      const card = target.closest("[data-day]");
+      if (!card) return;
+      const dayKey = card.dataset.day;
+  
+      // Xoá hết trong 1 ngày
+      if (target.classList.contains("btn-clear-day")) {
+        state.slots[dayKey] = [];
+        renderList(dayKey, card);
+        saveState();
+        return toast(`Đã xoá hết lịch trống ngày ${labelOf(dayKey)}`, "success");
+      }
+  
+      // Xoá 1 slot
+      if (target.classList.contains("btn-del")) {
+        const idx = Number(target.dataset.idx);
+        state.slots[dayKey].splice(idx, 1);
+        state.slots[dayKey] = normalize(state.slots[dayKey]) || [];
+        renderList(dayKey, card);
+        saveState();
+        return toast("Đã xoá.", "success");
+      }
+  
+      // Chuyển sang edit
+      if (target.classList.contains("btn-edit")) {
+        const row = target.closest("li");
+        row.querySelector(".view").classList.add("hidden");
+        row.querySelector(".edit").classList.remove("hidden");
+        return;
+      }
+  
+      // Huỷ edit
+      if (target.classList.contains("btn-cancel")) {
+        const row = target.closest("li");
+        row.querySelector(".edit").classList.add("hidden");
+        row.querySelector(".view").classList.remove("hidden");
+        return;
+      }
+  
+      // Lưu edit
+      if (target.classList.contains("btn-save")) {
+        const row = target.closest("li");
+        const idx = Number(row.dataset.idx);
+        const st = row.querySelector(".inp-edit-start").value;
+        const en = row.querySelector(".inp-edit-end").value;
+        if (!validRange(st, en)) return toast("Khung giờ không hợp lệ.", "error");
+  
+        const tmp = (state.slots[dayKey] || []).slice();
+        tmp[idx] = { start: st, end: en };
+        const fixed = normalize(tmp);
+        if (fixed === null) return toast("Trùng/đè lên khung khác.", "error");
+  
+        state.slots[dayKey] = fixed;
+        renderList(dayKey, card);
+        saveState();
+        return toast(`Đã cập nhật: ${st}–${en}`, "success");
+      }
+    });
+  
+    // ===== Render list =====
+    function renderList(dayKey, root) {
+      const ul = root.querySelector(".slot-list");
+      ul.innerHTML = "";
+      const arr = state.slots[dayKey] || [];
+  
+      if (!arr.length) {
+        const li = document.createElement("li");
+        li.className = "text-sm text-textmain/50";
+        li.textContent = "Chưa có lịch trống";
+        ul.appendChild(li);
+        return;
+      }
+  
+      arr.forEach((slot, idx) => {
+        const li = document.createElement("li");
+        li.dataset.idx = idx;
+        li.className = "rounded-xl border border-border p-3";
+  
+        li.innerHTML = `
+          <!-- view mode -->
+          <div class="view flex items-center justify-between">
+            <div class="text-sm font-medium">${slot.start} – ${slot.end}</div>
+            <div class="flex gap-2">
+              <button class="btn-edit rounded-xl border border-border px-3 py-1 text-xs hover:bg-bgpage">Sửa</button>
+              <button class="btn-del rounded-xl border border-rose-200 text-rose-600 px-3 py-1 text-xs hover:bg-rose-50" data-idx="${idx}">Xoá</button>
+            </div>
+          </div>
+  
+          <!-- edit mode -->
+          <div class="edit hidden mt-3">
+            <div class="grid grid-cols-2 gap-2 items-end">
+              <div>
+                <label class="block text-xs text-textmain/60 mb-1">Bắt đầu</label>
+                <input type="time" class="inp-edit-start w-full rounded-xl border border-border p-2 focus:border-primary outline-none" value="${slot.start}">
+              </div>
+              <div>
+                <label class="block text-xs text-textmain/60 mb-1">Kết thúc</label>
+                <input type="time" class="inp-edit-end w-full rounded-xl border border-border p-2 focus:border-primary outline-none" value="${slot.end}">
+              </div>
+            </div>
+            <div class="mt-3 flex justify-end gap-2">
+              <button class="btn-cancel rounded-xl border border-border px-3 py-1.5 text-xs hover:bg-bgpage">Huỷ</button>
+              <button class="btn-save rounded-xl bg-primary text-white px-3 py-1.5 text-xs hover:bg-primary/90">Lưu</button>
+            </div>
+          </div>
+        `;
+  
+        ul.appendChild(li);
+      });
+    }
+  
+    // ===== Utils =====
+    const validTime = (t) => /^\d{2}:\d{2}$/.test(t); // LƯU Ý: regex đúng, KHÔNG dùng \\d
+    const validRange = (s, e) => validTime(s) && validTime(e) && s < e;
+  
+    function normalize(arr){
+      const a = (arr||[]).slice().sort((x,y)=> x.start.localeCompare(y.start));
+      for (let i=1;i<a.length;i++) if (a[i].start < a[i-1].end) return null; // chồng lấn
+      return a;
+    }
+  
+    function saveState(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch{} }
+    function loadState(){ try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch{ return null } }
+  
+    function labelOf(k){ return ({mon:"Thứ hai",tue:"Thứ ba",wed:"Thứ tư",thu:"Thứ năm",fri:"Thứ sáu",sat:"Thứ bảy",sun:"Chủ nhật"})[k] || k; }
+  
+    function toast(msg, type="info") {
+      const t = document.getElementById("toast");
+      const inner = document.getElementById("toastInner");
+      inner.textContent = msg;
+      inner.className = "rounded-xl px-4 py-2 shadow-card border text-sm " +
+        (type==="error" ? "bg-rose-50 text-rose-700 border-rose-200" :
+         type==="success" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+         "bg-white text-slate-700 border-border");
+      t.classList.remove("hidden");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(()=> t.classList.add("hidden"), 1600);
+    }
+  });
+  </script>
+  
