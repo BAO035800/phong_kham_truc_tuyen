@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lịch trống của bác sĩ — tĩnh (không JS)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#0096C7",
+            border: "#E2E8F0",
+            surface: "#FFFFFF",
+            textmain: "#1E293B",
+            bgpage: "#F1F5F9",
+          },
+          boxShadow: { card: "0 2px 8px rgba(0,0,0,.05)" }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-bgpage text-textmain">
+  <section class="py-16 bg-surface text-textmain">
+    <div class="container mx-auto px-4 max-w-5xl">
+      <header class="mb-8">
+        <h2 class="text-3xl font-bold text-primary">Lịch trống của bác sĩ</h2>
+        <p class="text-textmain/70">Thêm, sửa, xoá lịch <b>trống</b> theo từng ngày.</p>
+      </header>
+
+      <!-- Thanh công cụ nhỏ -->
+      <div class="mb-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Bác sĩ</div>
+          <div id="docName" class="font-semibold">BS. Nguyễn Văn An</div>
+        </div>
+        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Múi giờ</div>
+          <div>Asia/Bangkok (UTC+7)</div>
+        </div>
+        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
+          <div class="text-sm text-textmain/60 mb-1">Hành động</div>
+          <div class="flex flex-wrap gap-2">
+            <button class="rounded-xl border border-border px-3 py-1.5 text-sm bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá toàn bộ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form (chỉ hiển thị, không hoạt động) -->
+      <div class="flex flex-wrap items-end gap-2 mb-5">
+        <div>
+          <label class="block text-xs text-textmain/60 mb-1">Ngày</label>
+          <select class="rounded-xl border border-border p-2 bg-bgpage text-textmain/50 cursor-not-allowed" >
+            <option>Thứ hai</option><option>Thứ ba</option><option>Thứ tư</option>
+            <option>Thứ năm</option><option>Thứ sáu</option><option>Thứ bảy</option><option>Chủ nhật</option>
+          </select>
+        </div>
+        <div class="flex-1 min-w-[160px]">
+          <label class="block text-xs text-textmain/60 mb-1">Bắt đầu</label>
+          <input type="time" value="08:00" class="w-full rounded-xl border border-border p-2 bg-bgpage text-textmain/50 " >
+        </div>
+        <div class="flex-1 min-w-[160px]">
+          <label class="block text-xs text-textmain/60 mb-1">Kết thúc</label>
+          <input type="time" value="12:00" class="w-full rounded-xl border border-border p-2 bg-bgpage text-textmain/50 " >
+        </div>
+        <button class="rounded-xl bg-primary/60 text-white px-4 py-2 text-sm " >Thêm lịch trống</button>
+      </div>
+
+      <!-- Lưới 7 ngày (dữ liệu cố định) -->
+      <div id="daysGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Thứ hai -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="mon">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ hai</div>
+              <div class="text-sm font-semibold text-textmain">mon</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:00 – 11:30</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">13:30 – 16:30</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ ba -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="tue">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ ba</div>
+              <div class="text-sm font-semibold text-textmain">tue</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">09:00 – 12:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">14:00 – 17:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ tư -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="wed">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ tư</div>
+              <div class="text-sm font-semibold text-textmain">wed</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:30 – 11:30</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ năm -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="thu">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ năm</div>
+              <div class="text-sm font-semibold text-textmain">thu</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:00 – 12:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">13:00 – 15:30</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ sáu -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="fri">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ sáu</div>
+              <div class="text-sm font-semibold text-textmain">fri</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:00 – 11:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">13:30 – 16:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ bảy -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="sat">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ bảy</div>
+              <div class="text-sm font-semibold text-textmain">sat</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-2xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:00 – 11:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Chủ nhật -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="sun">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Chủ nhật</div>
+              <div class="text-sm font-semibold text-textmain">sun</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="text-sm text-textmain/50">Chưa có lịch trống</li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- BẢNG LỊCH RẢNH TƯỢNG TRƯNG (tĩnh) -->
+      <section class="mt-8">
+        <div class="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
+          <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+            <h3 class="font-semibold">Bảng lịch rảnh (tượng trưng)</h3>
+            <span class="text-xs text-textmain/60">Tĩnh — không đồng bộ với lưới</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="bg-bgpage">
+                <tr>
+                  <th class="text-left px-4 py-2 border-b border-border w-40">Ngày</th>
+                  <th class="text-left px-4 py-2 border-b border-border">Khung giờ trống</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ hai</td>
+                  <td class="px-4 py-2 border-b border-border">08:00–11:30, 13:30–16:30</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ ba</td>
+                  <td class="px-4 py-2 border-b border-border">09:00–12:00, 14:00–17:00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ tư</td>
+                  <td class="px-4 py-2 border-b border-border">08:30–11:30</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ năm</td>
+                  <td class="px-4 py-2 border-b border-border">08:00–12:00, 13:00–15:30</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ sáu</td>
+                  <td class="px-4 py-2 border-b border-border">08:00–11:00, 13:30–16:00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ bảy</td>
+                  <td class="px-4 py-2 border-b border-border">08:00–11:00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Chủ nhật</td>
+                  <td class="px-4 py-2 border-b border-border">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </section>
+</body>
+</html>
