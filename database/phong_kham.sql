@@ -38,7 +38,7 @@ CREATE TABLE `bacsi` (
   CONSTRAINT `bacsi_ibfk_1` FOREIGN KEY (`ma_nguoi_dung`) REFERENCES `nguoidung` (`ma_nguoi_dung`) ON DELETE CASCADE,
   CONSTRAINT `bacsi_ibfk_2` FOREIGN KEY (`ma_chuyen_khoa`) REFERENCES `chuyenkhoa` (`ma_chuyen_khoa`) ON DELETE CASCADE,
   CONSTRAINT `bacsi_ibfk_3` FOREIGN KEY (`ma_chi_nhanh`) REFERENCES `chinhanh` (`ma_chi_nhanh`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,6 +47,7 @@ CREATE TABLE `bacsi` (
 
 LOCK TABLES `bacsi` WRITE;
 /*!40000 ALTER TABLE `bacsi` DISABLE KEYS */;
+INSERT INTO `bacsi` VALUES (2,5,1,1,'Nguyễn Văn A','Bác sĩ chuyên khoa I',10,'Chuyên khoa Tai Mũi Họng, hơn 10 năm kinh nghiệm điều trị bệnh lý tai giữa, viêm xoang và thanh quản.');
 /*!40000 ALTER TABLE `bacsi` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,7 +98,7 @@ CREATE TABLE `benhnhan` (
   PRIMARY KEY (`ma_benh_nhan`),
   KEY `fk_benhnhan_nguoidung` (`ma_nguoi_dung`),
   CONSTRAINT `fk_benhnhan_nguoidung` FOREIGN KEY (`ma_nguoi_dung`) REFERENCES `nguoidung` (`ma_nguoi_dung`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -106,6 +107,7 @@ CREATE TABLE `benhnhan` (
 
 LOCK TABLES `benhnhan` WRITE;
 /*!40000 ALTER TABLE `benhnhan` DISABLE KEYS */;
+INSERT INTO `benhnhan` VALUES (3,'Nguyễn Văn A','2002-05-14','Nam','0987654321','hau250184@gmail.com','123 Đường Trần Hưng Đạo, Quận 1, TP.HCM',7);
 /*!40000 ALTER TABLE `benhnhan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -201,7 +203,10 @@ CREATE TABLE `lichhen` (
   `ma_phong` int DEFAULT NULL,
   `thoi_gian` datetime NOT NULL,
   `trang_thai` enum('CHO_XAC_NHAN','DA_XAC_NHAN','HOAN_THANH','DA_HUY') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'CHO_XAC_NHAN',
+  `thoi_gian_xac_nhan` datetime DEFAULT NULL,
   `ghi_chu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `xac_nhan_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email_xac_nhan_at` datetime DEFAULT NULL,
   PRIMARY KEY (`ma_lich_hen`),
   KEY `ma_benh_nhan` (`ma_benh_nhan`),
   KEY `ma_bac_si` (`ma_bac_si`),
@@ -211,7 +216,7 @@ CREATE TABLE `lichhen` (
   CONSTRAINT `lichhen_ibfk_2` FOREIGN KEY (`ma_bac_si`) REFERENCES `bacsi` (`ma_bac_si`) ON DELETE CASCADE,
   CONSTRAINT `lichhen_ibfk_3` FOREIGN KEY (`ma_dich_vu`) REFERENCES `dichvu` (`ma_dich_vu`) ON DELETE SET NULL,
   CONSTRAINT `lichhen_ibfk_4` FOREIGN KEY (`ma_phong`) REFERENCES `phong` (`ma_phong`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,6 +225,7 @@ CREATE TABLE `lichhen` (
 
 LOCK TABLES `lichhen` WRITE;
 /*!40000 ALTER TABLE `lichhen` DISABLE KEYS */;
+INSERT INTO `lichhen` VALUES (11,3,2,1,1,'2025-10-24 09:00:00','DA_XAC_NHAN',NULL,'Bệnh nhân có tiền sử dị ứng thuốc Penicillin.','d1d29c245219fa1248289211cf7b4694a79df15c03d3396905c44bf862521a8a','2025-10-22 22:32:51');
 /*!40000 ALTER TABLE `lichhen` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -239,7 +245,7 @@ CREATE TABLE `lichtrong` (
   PRIMARY KEY (`ma_lich_trong`),
   KEY `ma_bac_si` (`ma_bac_si`),
   CONSTRAINT `lichtrong_ibfk_1` FOREIGN KEY (`ma_bac_si`) REFERENCES `bacsi` (`ma_bac_si`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -248,6 +254,7 @@ CREATE TABLE `lichtrong` (
 
 LOCK TABLES `lichtrong` WRITE;
 /*!40000 ALTER TABLE `lichtrong` DISABLE KEYS */;
+INSERT INTO `lichtrong` VALUES (1,2,'2025-10-24 08:00:00','2025-10-24 09:00:00','TRONG'),(2,2,'2025-10-24 09:00:00','2025-10-24 10:00:00','DA_DAT');
 /*!40000 ALTER TABLE `lichtrong` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -268,7 +275,7 @@ CREATE TABLE `nguoidung` (
   PRIMARY KEY (`ma_nguoi_dung`),
   UNIQUE KEY `ten_dang_nhap` (`ten_dang_nhap`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,7 +284,7 @@ CREATE TABLE `nguoidung` (
 
 LOCK TABLES `nguoidung` WRITE;
 /*!40000 ALTER TABLE `nguoidung` DISABLE KEYS */;
-INSERT INTO `nguoidung` VALUES (1,'D','thangnd05@example.com','$2y$10$z2v7.hbcTvS5y3ikKN.pNeH/p0tlBqFbwbis2gK5LBkQj7m/GFPZa','BENHNHAN','2025-10-19 10:01:27'),(2,'thang','thang@gmail.com','$2y$10$0DLB4gRjJDziS6yYS7FxxujJXG67rnN6X5j/aYJzwI4A.Ema4kgdS','ADMIN','2025-10-19 13:43:29');
+INSERT INTO `nguoidung` VALUES (1,'D','thangnd05@example.com','$2y$10$z2v7.hbcTvS5y3ikKN.pNeH/p0tlBqFbwbis2gK5LBkQj7m/GFPZa','BENHNHAN','2025-10-19 10:01:27'),(2,'thang','thang@gmail.com','$2y$10$0DLB4gRjJDziS6yYS7FxxujJXG67rnN6X5j/aYJzwI4A.Ema4kgdS','ADMIN','2025-10-19 13:43:29'),(5,'a','dr.nguyenvana@example.com','$2y$10$7Ual2bSzyMvC5TTAuRK9.eusHtIhdcrkXYehIjEHT6qSDVg0s02Pq','BACSI','2025-10-21 15:31:10'),(6,'nguyenvanaa','nguyenvanaa@example.com','$2y$10$3t4q2CECeo3pdKKEktvVxO.0DjCufwsYiWXVNAFMmnlAOu8T.gY8y','BENHNHAN','2025-10-22 14:01:49'),(7,'nguyenvana','hau250184@gmail.com','$2y$10$oIXWzmMdF9by64FIrCQgdOoHnkHR8PGzx4yC5NdEuq2WW.XG1Q7c.','BENHNHAN','2025-10-22 15:02:07');
 /*!40000 ALTER TABLE `nguoidung` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -342,4 +349,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-19 21:36:46
+-- Dump completed on 2025-10-22 22:37:34
