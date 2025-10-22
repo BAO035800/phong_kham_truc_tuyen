@@ -14,6 +14,25 @@ class LichTrongController
         header("Access-Control-Allow-Headers: Content-Type, Authorization");
     }
 
+    private function requireAdminAndBacSi()
+    {
+        if (!isset($_SESSION['user'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Bạn chưa đăng nhập']);
+            exit;
+        }
+
+        $role = $_SESSION['user']['vai_tro'] ?? null;
+
+        // 🔒 Chỉ cho phép ADMIN hoặc BACSI
+        if (!in_array($role, ['ADMIN', 'BACSI'])) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Chỉ ADMIN hoặc BÁC SĨ mới có quyền thực hiện thao tác này']);
+            exit;
+        }
+    }
+
+
     public function handleRequest()
     {
         $action = $_GET['action'] ?? '';
@@ -22,11 +41,13 @@ class LichTrongController
         try {
             switch ($action) {
                 case 'POST':
+                    $this->requireAdminAndBacSi();
                     $result = $this->model->taoLichTrong($data);
                     echo json_encode($result);
                     break;
 
                 case 'PUT':
+                    $this->requireAdminAndBacSi();
                     $id = $_GET['id'] ?? null;
                     if (!$id) throw new Exception("Thiếu mã lịch trống.");
                     $result = $this->model->capNhatLich($id, $data);
@@ -34,6 +55,7 @@ class LichTrongController
                     break;
 
                 case 'DELETE':
+                    $this->requireAdminAndBacSi();
                     $id = $_GET['id'] ?? null;
                     if (!$id) throw new Exception("Thiếu mã lịch trống.");
                     $result = $this->model->xoaLich($id);
@@ -51,6 +73,10 @@ class LichTrongController
                     $ma_bac_si = $_GET['ma_bac_si'] ?? null;
                     if (!$ma_bac_si) throw new Exception("Thiếu mã bác sĩ.");
                     $result = $this->model->getLichTrongCongKhai($ma_bac_si);
+                    echo json_encode($result);
+                    break;
+                case 'listTatCa':
+                    $result = $this->model->getTatCaLichTrong();
                     echo json_encode($result);
                     break;
 

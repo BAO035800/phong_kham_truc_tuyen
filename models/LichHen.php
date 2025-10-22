@@ -121,4 +121,19 @@ class LichHen
         $stmt->execute([$ma_benh_nhan]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function xacNhanLich($ma_lich_hen)
+    {
+        $stmt = $this->conn->prepare("
+        UPDATE lichhen 
+        SET trang_thai = 'DA_XAC_NHAN',
+            thoi_gian_xac_nhan = NOW()
+        WHERE ma_lich_hen = ? AND trang_thai = 'CHO_XAC_NHAN'
+    ");
+        $stmt->execute([$ma_lich_hen]);
+        return [
+            'status' => 'success',
+            'message' => 'Đã xác nhận lịch hẹn.'
+        ];
+    }
 }

@@ -129,4 +129,27 @@ class LichTrong
         $stmt->execute([$ma_bac_si]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * 🔹 Lấy danh sách lịch trống của tất cả bác sĩ (cho bệnh nhân chọn)
+     */
+    public function getTatCaLichTrong()
+    {
+        $stmt = $this->conn->prepare("
+        SELECT 
+            lt.ma_lich_trong,
+            lt.ma_bac_si,
+            bs.ho_ten AS ten_bac_si,
+            bs.chuyen_khoa,
+            lt.thoi_gian_bat_dau,
+            lt.thoi_gian_ket_thuc,
+            lt.trang_thai
+        FROM lichtrong lt
+        JOIN bacsi bs ON lt.ma_bac_si = bs.ma_bac_si
+        WHERE lt.trang_thai = 'TRONG'
+        ORDER BY bs.ho_ten ASC, lt.thoi_gian_bat_dau ASC
+    ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
