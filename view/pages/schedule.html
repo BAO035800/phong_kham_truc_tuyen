@@ -1,10 +1,10 @@
 <!-- ===============================
 📅 LỊCH HẸN BỆNH NHÂN (SCHEDULE)
-CRUD: thêm - sửa - xoá - lưu LocalStorage
+DỮ LIỆU MẪU SET CỨNG TRONG HTML
 =============================== -->
 <section id="schedule" class="py-16 bg-surface text-textmain">
   <div class="container mx-auto px-4">
-    <header class="text-center mb-10" data-aos="fade-up">
+    <header class="text-center mb-10">
       <h2 class="text-3xl font-bold text-primary">Lịch hẹn bệnh nhân</h2>
       <p class="text-textmain/70 max-w-2xl mx-auto mt-2">
         Quản lý và theo dõi lịch khám theo tuần hoặc dạng danh sách. Có tìm kiếm, lọc trạng thái, và điều hướng tuần.
@@ -12,14 +12,11 @@ CRUD: thêm - sửa - xoá - lưu LocalStorage
     </header>
 
     <!-- Thanh công cụ -->
-    <div class="bg-white rounded-2xl shadow-card border border-border p-4 md:p-5 mb-6" data-aos="fade-up" data-aos-delay="100">
+    <div class="bg-white rounded-2xl shadow-card border border-border p-4 md:p-5 mb-6">
       <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div class="flex items-center gap-2">
           <button data-view="week" class="view-btn rounded-xl px-4 py-2 text-sm bg-primary text-white shadow-md">
             <i class="fa-solid fa-calendar-week mr-2"></i>Tuần
-          </button>
-          <button data-view="list" class="view-btn rounded-xl px-4 py-2 text-sm border border-border hover:bg-bgpage">
-            <i class="fa-solid fa-list mr-2"></i>Danh sách
           </button>
         </div>
 
@@ -27,9 +24,10 @@ CRUD: thêm - sửa - xoá - lưu LocalStorage
           <div class="relative">
             <input id="sch-search" type="text" placeholder="Tìm bệnh nhân, bác sĩ…"
               class="w-72 rounded-2xl border border-border bg-white py-2 pl-10 pr-3 text-sm shadow-sm placeholder:text-textmain/50 focus:outline-none focus:border-primary">
-            <span class="pointer-events-none absolute left-3 top-2.5 text-textmain/50"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <span class="pointer-events-none absolute left-3 top-2.5 text-textmain/50">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
           </div>
-          <!-- Lọc trạng thái -->
           <select id="sch-status" class="rounded-2xl border border-border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:border-primary">
             <option value="all">Tất cả trạng thái</option>
             <option value="waiting">Đang đợi</option>
@@ -49,83 +47,215 @@ CRUD: thêm - sửa - xoá - lưu LocalStorage
           <button id="today-week" class="rounded-xl border border-border bg-bgpage px-3 py-2 text-sm hover:bg-white">Hôm nay</button>
           <button id="next-week" class="rounded-xl border border-border bg-bgpage px-3 py-2 text-sm hover:bg-white">Tuần sau →</button>
         </div>
-        <div class="text-sm text-textmain/70">Tuần bắt đầu: <span id="week-start" class="font-semibold text-textmain"></span></div>
+        <div class="text-sm text-textmain/70">Tuần bắt đầu: <span id="week-start" class="font-semibold text-textmain">2025-10-20</span></div>
       </div>
     </div>
 
-    <!-- WEEK VIEW -->
-    <div id="week-view" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-aos="fade-up" data-aos-delay="150"></div>
+    <!-- WEEK VIEW (SET CỨNG) -->
+    <div id="week-view" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <!-- TH 2 · 2025-10-20 -->
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
+        <header class="mb-3 flex justify-between">
+          <div>
+            <div class="text-xs uppercase">Th 2</div>
+            <div class="text-sm font-semibold">2025-10-20</div>
+          </div>
+          <div class="text-xs text-gray-500">1 lịch</div>
+        </header>
+        <div class="flex flex-col gap-3">
+          <div class="rounded-xl border p-3 shadow-sm hover:shadow-md">
+            <div class="flex justify-between">
+              <div>
+                <div class="font-semibold text-sm">09:00–09:30</div>
+                <div class="text-xs text-gray-500">👨‍⚕️ BS. Lê Minh</div>
+              </div>
+              <span class="text-xs text-amber-700">Đang đợi</span>
+            </div>
+            <div class="text-xs text-gray-600 mt-1">Lần đầu đến khám — Nguyễn Văn A</div>
+          </div>
+        </div>
+      </section>
 
-    <!-- LIST VIEW -->
-    <div id="list-view" class="hidden overflow-hidden rounded-2xl border border-border bg-white shadow-card" data-aos="fade-up" data-aos-delay="150">
+      <!-- TH 3 · 2025-10-21 -->
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
+        <header class="mb-3 flex justify-between">
+          <div>
+            <div class="text-xs uppercase">Th 3</div>
+            <div class="text-sm font-semibold">2025-10-21</div>
+          </div>
+          <div class="text-xs text-gray-500">1 lịch</div>
+        </header>
+        <div class="flex flex-col gap-3">
+          <div class="rounded-xl border p-3 shadow-sm hover:shadow-md">
+            <div class="flex justify-between">
+              <div>
+                <div class="font-semibold text-sm">10:00–10:30</div>
+                <div class="text-xs text-gray-500">👨‍⚕️ BS. Thu Hà</div>
+              </div>
+              <span class="text-xs text-blue-700">Đã đặt</span>
+            </div>
+            <div class="text-xs text-gray-600 mt-1">Xác nhận qua điện thoại — Trần Thị B</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TH 4 · 2025-10-22 -->
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
+        <header class="mb-3 flex justify-between">
+          <div>
+            <div class="text-xs uppercase">Th 4</div>
+            <div class="text-sm font-semibold">2025-10-22</div>
+          </div>
+          <div class="text-xs text-gray-500">1 lịch</div>
+        </header>
+        <div class="flex flex-col gap-3">
+          <div class="rounded-xl border p-3 shadow-sm hover:shadow-md">
+            <div class="flex justify-between">
+              <div>
+                <div class="font-semibold text-sm">14:00–14:45</div>
+                <div class="text-xs text-gray-500">👨‍⚕️ BS. Hồng Sơn</div>
+              </div>
+              <span class="text-xs text-emerald-700">Đã khám xong</span>
+            </div>
+            <div class="text-xs text-gray-600 mt-1">Đã kê thuốc — Lê Quốc C</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TH 5 · 2025-10-23 -->
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
+        <header class="mb-3 flex justify-between">
+          <div>
+            <div class="text-xs uppercase">Th 5</div>
+            <div class="text-sm font-semibold">2025-10-23</div>
+          </div>
+          <div class="text-xs text-gray-500">1 lịch</div>
+        </header>
+        <div class="flex flex-col gap-3">
+          <div class="rounded-xl border p-3 shadow-sm hover:shadow-md">
+            <div class="flex justify-between">
+              <div>
+                <div class="font-semibold text-sm">08:30–09:00</div>
+                <div class="text-xs text-gray-500">👨‍⚕️ BS. Minh Trí</div>
+              </div>
+              <span class="text-xs text-rose-700">Đã hủy</span>
+            </div>
+            <div class="text-xs text-gray-600 mt-1">Bệnh nhân bận — Phạm Duyên D</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TH 6 · 2025-10-24 (không có lịch) -->
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
+        <header class="mb-3 flex justify-between">
+          <div>
+            <div class="text-xs uppercase">Th 6</div>
+            <div class="text-sm font-semibold">2025-10-24</div>
+          </div>
+          <div class="text-xs text-gray-500">0 lịch</div>
+        </header>
+        <div class="flex flex-col gap-3">
+          <div class="text-sm text-gray-400 text-center">Không có lịch</div>
+        </div>
+      </section>
+
+      <!-- TH 7 · 2025-10-25 (không có lịch) -->
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
+        <header class="mb-3 flex justify-between">
+          <div>
+            <div class="text-xs uppercase">Th 7</div>
+            <div class="text-sm font-semibold">2025-10-25</div>
+          </div>
+          <div class="text-xs text-gray-500">0 lịch</div>
+        </header>
+        <div class="flex flex-col gap-3">
+          <div class="text-sm text-gray-400 text-center">Không có lịch</div>
+        </div>
+      </section>
+
+      <!-- CN · 2025-10-26 (không có lịch) -->
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
+        <header class="mb-3 flex justify-between">
+          <div>
+            <div class="text-xs uppercase">CN</div>
+            <div class="text-sm font-semibold">2025-10-26</div>
+          </div>
+          <div class="text-xs text-gray-500">0 lịch</div>
+        </header>
+        <div class="flex flex-col gap-3">
+          <div class="text-sm text-gray-400 text-center">Không có lịch</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- LIST VIEW (SET CỨNG) -->
+    <div id="list-view" class="hidden overflow-hidden rounded-2xl border border-border bg-white shadow-card">
       <table class="min-w-full divide-y divide-border">
         <thead class="bg-bgpage/60">
           <tr class="text-left text-xs font-semibold uppercase tracking-wider text-textmain/70">
-            <th class="px-4 py-3">Bệnh nhân</th>
             <th class="px-4 py-3">Thời gian</th>
             <th class="px-4 py-3">Bác sĩ</th>
             <th class="px-4 py-3">Trạng thái</th>
             <th class="px-4 py-3">Ghi chú</th>
             <th class="px-4 py-3 text-right">Hành động</th>
-          </tr>
         </thead>
-        <tbody id="list-body" class="divide-y divide-border/60 text-sm"></tbody>
+        <tbody id="list-body" class="divide-y divide-border/60 text-sm">
+          <!-- Row 1 -->
+          <tr>
+            <td class="px-4 py-3 font-medium">Nguyễn Văn A</td>
+            <td class="px-4 py-3">2025-10-20<br><span class="text-xs text-gray-500">09:00–09:30</span></td>
+            <td class="px-4 py-3">BS. Lê Minh</td>
+            <td class="px-4 py-3 text-xs text-amber-700">Đang đợi</td>
+            <td class="px-4 py-3 text-xs text-gray-500">Lần đầu đến khám</td>
+            <td class="px-4 py-3 text-right">
+              <button class="text-blue-600 text-xs mr-2">Sửa</button>
+              <button class="text-red-600 text-xs">Xoá</button>
+            </td>
+          </tr>
+          <!-- Row 2 -->
+          <tr>
+            <td class="px-4 py-3 font-medium">Trần Thị B</td>
+            <td class="px-4 py-3">2025-10-21<br><span class="text-xs text-gray-500">10:00–10:30</span></td>
+            <td class="px-4 py-3">BS. Thu Hà</td>
+            <td class="px-4 py-3 text-xs text-blue-700">Đã đặt</td>
+            <td class="px-4 py-3 text-xs text-gray-500">Xác nhận qua điện thoại</td>
+            <td class="px-4 py-3 text-right">
+              <button class="text-blue-600 text-xs mr-2">Sửa</button>
+              <button class="text-red-600 text-xs">Xoá</button>
+            </td>
+          </tr>
+          <!-- Row 3 -->
+          <tr>
+            <td class="px-4 py-3 font-medium">Lê Quốc C</td>
+            <td class="px-4 py-3">2025-10-22<br><span class="text-xs text-gray-500">14:00–14:45</span></td>
+            <td class="px-4 py-3">BS. Hồng Sơn</td>
+            <td class="px-4 py-3 text-xs text-emerald-700">Đã khám xong</td>
+            <td class="px-4 py-3 text-xs text-gray-500">Đã kê thuốc</td>
+            <td class="px-4 py-3 text-right">
+              <button class="text-blue-600 text-xs mr-2">Sửa</button>
+              <button class="text-red-600 text-xs">Xoá</button>
+            </td>
+          </tr>
+          <!-- Row 4 -->
+          <tr>
+            <td class="px-4 py-3 font-medium">Phạm Duyên D</td>
+            <td class="px-4 py-3">2025-10-23<br><span class="text-xs text-gray-500">08:30–09:00</span></td>
+            <td class="px-4 py-3">BS. Minh Trí</td>
+            <td class="px-4 py-3 text-xs text-rose-700">Đã hủy</td>
+            <td class="px-4 py-3 text-xs text-gray-500">Bệnh nhân báo bận</td>
+            <td class="px-4 py-3 text-right">
+              <button class="text-blue-600 text-xs mr-2">Sửa</button>
+              <button class="text-red-600 text-xs">Xoá</button>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
 </section>
 
-<!-- MODAL CRUD -->
-<div id="appt-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-    <h3 id="modal-title" class="text-xl font-semibold mb-4">Thêm lịch hẹn</h3>
-    <form id="appt-form" class="space-y-3">
-      <input type="hidden" id="appt-id">
-      <div>
-        <label class="block text-sm mb-1">Tên bệnh nhân</label>
-        <input id="appt-name" type="text" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-sm mb-1">Ngày</label>
-          <input id="appt-date" type="date" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
-        </div>
-        <div>
-          <label class="block text-sm mb-1">Bác sĩ</label>
-          <input id="appt-provider" type="text" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-sm mb-1">Bắt đầu</label>
-          <input id="appt-start" type="time" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
-        </div>
-        <div>
-          <label class="block text-sm mb-1">Kết thúc</label>
-          <input id="appt-end" type="time" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
-        </div>
-      </div>
-      <div>
-        <label class="block text-sm mb-1">Trạng thái</label>
-        <select id="appt-status" class="w-full border rounded-xl p-2 focus:border-primary outline-none">
-          <option value="waiting">Đang đợi</option>
-          <option value="booked">Đã đặt</option>
-          <option value="done">Đã khám xong</option>
-          <option value="cancelled">Đã hủy</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm mb-1">Ghi chú</label>
-        <textarea id="appt-notes" rows="2" class="w-full border rounded-xl p-2 focus:border-primary outline-none"></textarea>
-      </div>
-      <div class="flex justify-end gap-2 pt-2">
-        <button type="button" id="btn-cancel" class="rounded-xl border border-border px-4 py-2 text-sm hover:bg-bgpage">Huỷ</button>
-        <button type="submit" class="rounded-xl bg-primary text-white px-4 py-2 text-sm hover:bg-primary/90">Lưu</button>
-      </div>
-    </form>
-  </div>
-</div>
+<!-- MODAL CRUD có thể giữ nguyên để demo UI (không bắt buộc) -->
+<!-- ... (phần modal của bạn) ... -->
 
-<script>
-document.addEventListener('DOMContentLoaded', () => setupSchedulePage());
-</script>
+<!-- GỢI Ý: Nếu chỉ muốn HTML tĩnh, bỏ dòng dưới đi -->
+<!-- <script>document.addEventListener('DOMContentLoaded', () => setupSchedulePage());</script> -->
