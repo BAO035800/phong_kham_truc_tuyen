@@ -282,24 +282,29 @@ async function renderPage() {
       }
       break;
 
-    case "#/doctor-availability":
-      if (!user || user.role !== "doctor") {
-        root.innerHTML = `
-          <div class="text-center py-10 text-gray-600">
-            ⚠️ Chỉ bác sĩ mới được truy cập trang này.
-          </div>`;
-        return;
-      }
-      try {
-        const res = await fetch("./pages/doctor_availability.html?v=" + Date.now(), { cache: "no-store" });
-        if (!res.ok) throw new Error("Không thể tải trang lịch rảnh bác sĩ");
-        root.innerHTML = await res.text();
-        if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
-      } catch (err) {
-        console.error(err);
-        root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang lịch rảnh bác sĩ</div>`;
-      }
-      break;
+   case "#/doctor-availability":
+  if (!user || user.role !== "doctor") {
+    root.innerHTML = `
+      <div class="text-center py-10 text-gray-600">
+        ⚠️ Chỉ bác sĩ mới được truy cập trang này.
+      </div>`;
+    return;
+  }
+  try {
+    const res = await fetch("./pages/doctor_availability.html?v=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) throw new Error("Không thể tải trang lịch rảnh bác sĩ");
+    root.innerHTML = await res.text();
+
+    // 👇 Thêm dòng này để kích hoạt JS trong trang lịch rảnh
+    if (typeof setupDoctorAvailabilityPage === "function") setupDoctorAvailabilityPage();
+
+    if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 400);
+  } catch (err) {
+    console.error(err);
+    root.innerHTML = `<div class="text-center text-danger py-5">Lỗi tải trang lịch rảnh bác sĩ</div>`;
+  }
+  break;
+
 
     /* ----------------- ADMIN ROUTES ----------------- */
     case "#/admin":

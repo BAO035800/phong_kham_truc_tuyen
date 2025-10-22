@@ -2,10 +2,25 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lịch trống của bác sĩ — không có JSON preview</title>
-  <!-- Nếu dự án của bạn dùng Tailwind, đảm bảo đã build CSS. Dưới đây là CDN cho bản demo: -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lịch trống của bác sĩ — tĩnh (không JS)</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#0096C7",
+            border: "#E2E8F0",
+            surface: "#FFFFFF",
+            textmain: "#1E293B",
+            bgpage: "#F1F5F9",
+          },
+          boxShadow: { card: "0 2px 8px rgba(0,0,0,.05)" }
+        }
+      }
+    }
+  </script>
 </head>
 <body class="bg-bgpage text-textmain">
   <section class="py-16 bg-surface text-textmain">
@@ -19,7 +34,7 @@
       <div class="mb-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
           <div class="text-sm text-textmain/60 mb-1">Bác sĩ</div>
-          <div id="docName" class="font-semibold">—</div>
+          <div id="docName" class="font-semibold">BS. Nguyễn Văn An</div>
         </div>
         <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
           <div class="text-sm text-textmain/60 mb-1">Múi giờ</div>
@@ -28,265 +43,267 @@
         <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
           <div class="text-sm text-textmain/60 mb-1">Hành động</div>
           <div class="flex flex-wrap gap-2">
-            <button id="btnClearAll" class="rounded-xl border border-border px-3 py-1.5 text-sm hover:bg-bgpage">Xoá toàn bộ</button>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-sm bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá toàn bộ</button>
           </div>
         </div>
       </div>
 
-      <!-- Form thêm lịch trống -->
+      <!-- Form (chỉ hiển thị, không hoạt động) -->
       <div class="flex flex-wrap items-end gap-2 mb-5">
         <div>
           <label class="block text-xs text-textmain/60 mb-1">Ngày</label>
-          <select id="selDay" class="rounded-xl border border-border p-2 focus:border-primary outline-none">
-            <option value="mon">Thứ hai</option>
-            <option value="tue">Thứ ba</option>
-            <option value="wed">Thứ tư</option>
-            <option value="thu">Thứ năm</option>
-            <option value="fri">Thứ sáu</option>
-            <option value="sat">Thứ bảy</option>
-            <option value="sun">Chủ nhật</option>
+          <select class="rounded-xl border border-border p-2 bg-bgpage text-textmain/50 cursor-not-allowed" disabled>
+            <option>Thứ hai</option><option>Thứ ba</option><option>Thứ tư</option>
+            <option>Thứ năm</option><option>Thứ sáu</option><option>Thứ bảy</option><option>Chủ nhật</option>
           </select>
         </div>
         <div class="flex-1 min-w-[160px]">
           <label class="block text-xs text-textmain/60 mb-1">Bắt đầu</label>
-          <input id="inpStart" type="time" value="08:00" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
+          <input type="time" value="08:00" class="w-full rounded-xl border border-border p-2 bg-bgpage text-textmain/50 cursor-not-allowed" disabled>
         </div>
         <div class="flex-1 min-w-[160px]">
           <label class="block text-xs text-textmain/60 mb-1">Kết thúc</label>
-          <input id="inpEnd" type="time" value="12:00" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
+          <input type="time" value="12:00" class="w-full rounded-xl border border-border p-2 bg-bgpage text-textmain/50 cursor-not-allowed" disabled>
         </div>
-        <button id="btnAdd" class="rounded-xl bg-primary text-white px-4 py-2 text-sm hover:bg-primary/90">Thêm lịch trống</button>
+        <button class="rounded-xl bg-primary/60 text-white px-4 py-2 text-sm cursor-not-allowed" disabled>Thêm lịch trống</button>
       </div>
 
-      <!-- Lưới 7 ngày -->
+      <!-- Lưới 7 ngày (dữ liệu cố định) -->
       <div id="daysGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <template id="dayTpl">
-          <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="">
-            <header class="flex items-center justify-between mb-3">
-              <div>
-                <div class="text-xs uppercase tracking-wide text-textmain/60 day-label">Thứ hai</div>
-                <div class="text-sm font-semibold text-textmain day-key">mon</div>
+        <!-- Thứ hai -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="mon">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ hai</div>
+              <div class="text-sm font-semibold text-textmain">mon</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:00 – 11:30</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
               </div>
-              <button class="btn-clear-day rounded-xl border border-border px-3 py-1.5 text-xs hover:bg-bgpage">Xoá hết</button>
-            </header>
-            <ul class="slot-list space-y-2"></ul>
-          </section>
-        </template>
+            </li>
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">13:30 – 16:30</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ ba -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="tue">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ ba</div>
+              <div class="text-sm font-semibold text-textmain">tue</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">09:00 – 12:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">14:00 – 17:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ tư -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="wed">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ tư</div>
+              <div class="text-sm font-semibold text-textmain">wed</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:30 – 11:30</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ năm -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="thu">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ năm</div>
+              <div class="text-sm font-semibold text-textmain">thu</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:00 – 12:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">13:00 – 15:30</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ sáu -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="fri">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ sáu</div>
+              <div class="text-sm font-semibold text-textmain">fri</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:00 – 11:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">13:30 – 16:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Thứ bảy -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="sat">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Thứ bảy</div>
+              <div class="text-sm font-semibold text-textmain">sat</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="rounded-2xl border border-border p-3">
+              <div class="view flex items-center justify-between">
+                <div class="text-sm font-medium">08:00 – 11:00</div>
+                <div class="flex gap-2">
+                  <button class="rounded-xl border border-border px-3 py-1 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Sửa</button>
+                  <button class="rounded-xl border border-rose-200 text-rose-400 px-3 py-1 text-xs cursor-not-allowed" disabled>Xoá</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Chủ nhật -->
+        <section class="rounded-2xl border border-border bg-white p-4 shadow-card" data-day="sun">
+          <header class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-textmain/60">Chủ nhật</div>
+              <div class="text-sm font-semibold text-textmain">sun</div>
+            </div>
+            <button class="rounded-xl border border-border px-3 py-1.5 text-xs bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá hết</button>
+          </header>
+          <ul class="slot-list space-y-2">
+            <li class="text-sm text-textmain/50">Chưa có lịch trống</li>
+          </ul>
+        </section>
       </div>
+
+      <!-- BẢNG LỊCH RẢNH TƯỢNG TRƯNG (tĩnh) -->
+      <section class="mt-8">
+        <div class="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
+          <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+            <h3 class="font-semibold">Bảng lịch rảnh (tượng trưng)</h3>
+            <span class="text-xs text-textmain/60">Tĩnh — không đồng bộ với lưới</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="bg-bgpage">
+                <tr>
+                  <th class="text-left px-4 py-2 border-b border-border w-40">Ngày</th>
+                  <th class="text-left px-4 py-2 border-b border-border">Khung giờ trống</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ hai</td>
+                  <td class="px-4 py-2 border-b border-border">08:00–11:30, 13:30–16:30</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ ba</td>
+                  <td class="px-4 py-2 border-b border-border">09:00–12:00, 14:00–17:00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ tư</td>
+                  <td class="px-4 py-2 border-b border-border">08:30–11:30</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ năm</td>
+                  <td class="px-4 py-2 border-b border-border">08:00–12:00, 13:00–15:30</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ sáu</td>
+                  <td class="px-4 py-2 border-b border-border">08:00–11:00, 13:30–16:00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Thứ bảy</td>
+                  <td class="px-4 py-2 border-b border-border">08:00–11:00</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2 border-b border-border whitespace-nowrap font-medium">Chủ nhật</td>
+                  <td class="px-4 py-2 border-b border-border">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
     </div>
   </section>
-
-  <!-- Toast nhỏ -->
-  <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 z-[60] hidden">
-    <div id="toastInner" class="rounded-xl px-4 py-2 shadow-card border text-sm bg-white text-slate-700"></div>
-  </div>
-
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    // ===== LƯU MẪU BẰNG LOCALSTORAGE =====
-    const STORAGE_KEY = "availability:demo-doctor";
-
-    // ==== DỮ LIỆU BAN ĐẦU (fallback) ====
-    let state = loadState() || {
-      doctorName: "BS. Nguyễn Văn An",
-      timezone: "Asia/Bangkok",
-      slots: {
-        mon: [ {start:"08:00", end:"11:30"}, {start:"13:30", end:"16:30"} ],
-        tue: [ {start:"09:00", end:"12:00"}, {start:"14:00", end:"17:00"} ],
-        wed: [ {start:"08:30", end:"11:30"} ],
-        thu: [ {start:"08:00", end:"12:00"}, {start:"13:00", end:"15:30"} ],
-        fri: [ {start:"08:00", end:"11:00"}, {start:"13:30", end:"16:00"} ],
-        sat: [ {start:"08:00", end:"11:00"} ],
-        sun: []
-      }
-    };
-
-    // ===== DOM refs =====
-    const grid = document.getElementById("daysGrid");
-    const tpl = document.getElementById("dayTpl");
-    const btnAdd = document.getElementById("btnAdd");
-    const btnClearAll = document.getElementById("btnClearAll");
-
-    document.getElementById("docName").textContent = state.doctorName;
-
-    const DAYS = [
-      { key:"mon", label:"Thứ hai" }, { key:"tue", label:"Thứ ba" }, { key:"wed", label:"Thứ tư" },
-      { key:"thu", label:"Thứ năm" }, { key:"fri", label:"Thứ sáu" },
-      { key:"sat", label:"Thứ bảy" }, { key:"sun", label:"Chủ nhật" }
-    ];
-
-    // ===== Render 7 cards =====
-    grid.innerHTML = "";
-    DAYS.forEach(d => {
-      const node = tpl.content.firstElementChild.cloneNode(true);
-      node.dataset.day = d.key;
-      node.querySelector(".day-label").textContent = d.label;
-      node.querySelector(".day-key").textContent = d.key;
-      grid.appendChild(node);
-      renderList(d.key, node);
-    });
-
-    // ===== Form: Thêm slot =====
-    btnAdd.addEventListener("click", () => {
-      const dayKey = document.getElementById("selDay").value;
-      const st = document.getElementById("inpStart").value;
-      const en = document.getElementById("inpEnd").value;
-
-      if (!validRange(st, en)) return toast("Khung giờ không hợp lệ (HH:mm, bắt đầu < kết thúc).", "error");
-
-      const merged = normalize([...(state.slots[dayKey]||[]), {start:st, end:en}]);
-      if (merged === null) return toast("Khung giờ trùng/đè lên khoảng khác.", "error");
-
-      state.slots[dayKey] = merged;
-      const card = grid.querySelector(`[data-day="${dayKey}"]`);
-      if (card) renderList(dayKey, card);
-      saveState();
-      toast(`Đã thêm: ${st}–${en}`, "success");
-    });
-
-    // ===== Xoá tất cả trong tuần =====
-    btnClearAll.addEventListener("click", () => {
-      if (!confirm("Xoá toàn bộ lịch trống của cả tuần?")) return;
-      Object.keys(state.slots).forEach(k => state.slots[k] = []);
-      grid.querySelectorAll("[data-day]").forEach(card => renderList(card.dataset.day, card));
-      saveState();
-      toast("Đã xoá toàn bộ.", "success");
-    });
-
-    // ===== Event delegation cho từng card (Sửa/Xoá/Xoá hết) =====
-    grid.addEventListener("click", (ev) => {
-      const target = ev.target;
-      const card = target.closest("[data-day]");
-      if (!card) return;
-      const dayKey = card.dataset.day;
-
-      if (target.classList.contains("btn-clear-day")) {
-        state.slots[dayKey] = [];
-        renderList(dayKey, card);
-        saveState();
-        return toast(`Đã xoá hết lịch trống ngày ${labelOf(dayKey)}`, "success");
-      }
-
-      if (target.classList.contains("btn-del")) {
-        const idx = Number(target.dataset.idx);
-        state.slots[dayKey].splice(idx, 1);
-        state.slots[dayKey] = normalize(state.slots[dayKey]) || [];
-        renderList(dayKey, card);
-        saveState();
-        return toast("Đã xoá.", "success");
-      }
-
-      if (target.classList.contains("btn-edit")) {
-        const row = target.closest("li");
-        row.querySelector(".view").classList.add("hidden");
-        row.querySelector(".edit").classList.remove("hidden");
-        return;
-      }
-
-      if (target.classList.contains("btn-cancel")) {
-        const row = target.closest("li");
-        row.querySelector(".edit").classList.add("hidden");
-        row.querySelector(".view").classList.remove("hidden");
-        return;
-      }
-
-      if (target.classList.contains("btn-save")) {
-        const row = target.closest("li");
-        const idx = Number(row.dataset.idx);
-        const st = row.querySelector(".inp-edit-start").value;
-        const en = row.querySelector(".inp-edit-end").value;
-        if (!validRange(st, en)) return toast("Khung giờ không hợp lệ.", "error");
-
-        const tmp = (state.slots[dayKey] || []).slice();
-        tmp[idx] = { start: st, end: en };
-        const fixed = normalize(tmp);
-        if (fixed === null) return toast("Trùng/đè lên khung khác.", "error");
-
-        state.slots[dayKey] = fixed;
-        renderList(dayKey, card);
-        saveState();
-        return toast(`Đã cập nhật: ${st}–${en}`, "success");
-      }
-    });
-
-    // ===== Render list =====
-    function renderList(dayKey, root) {
-      const ul = root.querySelector(".slot-list");
-      ul.innerHTML = "";
-      const arr = state.slots[dayKey] || [];
-
-      if (!arr.length) {
-        const li = document.createElement("li");
-        li.className = "text-sm text-textmain/50";
-        li.textContent = "Chưa có lịch trống";
-        ul.appendChild(li);
-        return;
-      }
-
-      arr.forEach((slot, idx) => {
-        const li = document.createElement("li");
-        li.dataset.idx = idx;
-        li.className = "rounded-xl border border-border p-3";
-
-        li.innerHTML = `
-          <div class="view flex items-center justify-between">
-            <div class="text-sm font-medium">${slot.start} – ${slot.end}</div>
-            <div class="flex gap-2">
-              <button class="btn-edit rounded-xl border border-border px-3 py-1 text-xs hover:bg-bgpage">Sửa</button>
-              <button class="btn-del rounded-xl border border-rose-200 text-rose-600 px-3 py-1 text-xs hover:bg-rose-50" data-idx="${idx}">Xoá</button>
-            </div>
-          </div>
-
-          <div class="edit hidden mt-3">
-            <div class="grid grid-cols-2 gap-2 items-end">
-              <div>
-                <label class="block text-xs text-textmain/60 mb-1">Bắt đầu</label>
-                <input type="time" class="inp-edit-start w-full rounded-xl border border-border p-2 focus:border-primary outline-none" value="${slot.start}">
-              </div>
-              <div>
-                <label class="block text-xs text-textmain/60 mb-1">Kết thúc</label>
-                <input type="time" class="inp-edit-end w-full rounded-xl border border-border p-2 focus:border-primary outline-none" value="${slot.end}">
-              </div>
-            </div>
-            <div class="mt-3 flex justify-end gap-2">
-              <button class="btn-cancel rounded-xl border border-border px-3 py-1.5 text-xs hover:bg-bgpage">Huỷ</button>
-              <button class="btn-save rounded-xl bg-primary text-white px-3 py-1.5 text-xs hover:bg-primary/90">Lưu</button>
-            </div>
-          </div>
-        `;
-
-        ul.appendChild(li);
-      });
-    }
-
-    // ===== Utils =====
-    const validTime = (t) => /^\d{2}:\d{2}$/.test(t); // KHÔNG dùng \\d trong regex literal
-    const validRange = (s, e) => validTime(s) && validTime(e) && s < e;
-
-    function normalize(arr){
-      const a = (arr||[]).slice().sort((x,y)=> x.start.localeCompare(y.start));
-      for (let i=1;i<a.length;i++) if (a[i].start < a[i-1].end) return null; // chồng lấn
-      return a;
-    }
-
-    function saveState(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch{} }
-    function loadState(){ try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch{ return null } }
-
-    function labelOf(k){ return ({mon:"Thứ hai",tue:"Thứ ba",wed:"Thứ tư",thu:"Thứ năm",fri:"Thứ sáu",sat:"Thứ bảy",sun:"Chủ nhật"})[k] || k; }
-
-    function toast(msg, type="info") {
-      const t = document.getElementById("toast");
-      const inner = document.getElementById("toastInner");
-      inner.textContent = msg;
-      inner.className = "rounded-xl px-4 py-2 shadow-card border text-sm " +
-        (type==="error" ? "bg-rose-50 text-rose-700 border-rose-200" :
-         type==="success" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
-         "bg-white text-slate-700 border-border");
-      t.classList.remove("hidden");
-      clearTimeout(toast._t);
-      toast._t = setTimeout(()=> t.classList.add("hidden"), 1600);
-    }
-  });
-  </script>
 </body>
 </html>
