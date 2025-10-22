@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../services/MailerService.php';
+
 
 class LichHen
 {
@@ -19,46 +21,49 @@ class LichHen
     {
         $this->conn->beginTransaction();
         try {
-            // Lấy thông tin cần thiết
             $ma_benh_nhan = $data['ma_benh_nhan'];
             $ma_bac_si = $data['ma_bac_si'];
             $ma_dich_vu = $data['ma_dich_vu'];
             $ma_phong = $data['ma_phong'];
             $thoi_gian = $data['thoi_gian'];
             $ghi_chu = $data['ghi_chu'] ?? '';
+            $email_benh_nhan = $data['email'] ?? null;
 
-            // ✅ Kiểm tra lịch trống có tồn tại và chưa bị đặt
-            $sqlCheck = "SELECT * FROM lichtrong 
-                         WHERE ma_bac_si = ? 
-                         AND thoi_gian_bat_dau <= ? 
-                         AND thoi_gian_ket_thuc > ? 
-                         AND trang_thai = 'TRONG'";
-            $stmt = $this->conn->prepare($sqlCheck);
+            // 🔍 Kiểm tra lịch trống
+            $stmt = $this->conn->prepare("
+            SELECT * FROM lichtrong
+            WHERE ma_bac_si = ?
+              AND thoi_gian_bat_dau <= ?
+              AND thoi_gian_ket_thuc > ?
+              AND trang_thai = 'TRONG'
+        ");
             $stmt->execute([$ma_bac_si, $thoi_gian, $thoi_gian]);
             $lichTrong = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$lichTrong) {
-                throw new Exception("Không có lịch trống phù hợp hoặc đã được đặt.");
-            }
+            if (!$lichTrong) throw new Exception("Không có lịch trống phù hợp hoặc đã được đặt.");
 
-            // ✅ Tạo lịch hẹn
-            $sqlInsert = "INSERT INTO lichhen (ma_benh_nhan, ma_bac_si, ma_dich_vu, ma_phong, thoi_gian, trang_thai, ghi_chu)
-                          VALUES (?, ?, ?, ?, ?, 'CHO_XAC_NHAN', ?)";
-            $stmt = $this->conn->prepare($sqlInsert);
-            $stmt->execute([$ma_benh_nhan, $ma_bac_si, $ma_dich_vu, $ma_phong, $thoi_gian, $ghi_chu]);
+            // 🧩 Sinh token xác nhận
+            $token = bin2hex(random_bytes(32));
 
+            // 🗂️ Tạo lịch hẹn (chưa xác nhận)
+            $stmt = $this->conn->prepare("
+            INSERT INTO lichhen 
+            (ma_benh_nhan, ma_bac_si, ma_dich_vu, ma_phong, thoi_gian, trang_thai, ghi_chu, xac_nhan_token)
+            VALUES (?, ?, ?, ?, ?, 'CHO_XAC_NHAN', ?, ?)
+        ");
+            $stmt->execute([$ma_benh_nhan, $ma_bac_si, $ma_dich_vu, $ma_phong, $thoi_gian, $ghi_chu, $token]);
             $ma_lich_hen = $this->conn->lastInsertId();
-
-            // ✅ Cập nhật lịch trống thành đã đặt
-            $sqlUpdate = "UPDATE lichtrong SET trang_thai = 'DA_DAT' WHERE ma_lich_trong = ?";
-            $stmt = $this->conn->prepare($sqlUpdate);
-            $stmt->execute([$lichTrong['ma_lich_trong']]);
 
             $this->conn->commit();
 
+            // ✉️ Gửi mail xác nhận nếu có email
+            if ($email_benh_nhan) {
+                MailerService::sendAppointmentConfirmation($email_benh_nhan, $token);
+            }
+
             return [
-                'status' => 'success',
-                'message' => 'Đặt lịch thành công!',
+                'status' => 'pending',
+                'message' => 'Lịch hẹn đã được tạo, vui lòng kiểm tra email để xác nhận.',
                 'ma_lich_hen' => $ma_lich_hen
             ];
         } catch (Exception $e) {
@@ -66,6 +71,7 @@ class LichHen
             throw new Exception("Lỗi khi đặt lịch: " . $e->getMessage());
         }
     }
+
 
     /**
      * 🔹 Hủy lịch hẹn (bệnh nhân hoặc bác sĩ)
