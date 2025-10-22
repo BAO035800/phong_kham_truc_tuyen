@@ -68,6 +68,13 @@ class LichHenController
                     $result = $this->model->xacNhanLich($ma_lich_hen);
                     echo json_encode($result);
                     break;
+                case 'xacNhanQuaEmail':
+                    $token = $_GET['token'] ?? null;
+                    if (!$token) throw new Exception("Thiếu token xác nhận.");
+                    $result = $this->model->xacNhanQuaEmail($token);
+                    echo json_encode($result);
+                    break;
+
 
 
                 default:

@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../services/MailerService.php';
 
-
 class LichHen
 {
     private PDO $conn;
@@ -13,9 +12,9 @@ class LichHen
     }
 
     /**
-     * 🔹 Tạo lịch hẹn mới (khi bệnh nhân đặt)
-     * - Tạo bản ghi trong bảng lichhen
-     * - Cập nhật lichtrong thành 'DA_DAT'
+     * 🟢 Đặt lịch hẹn (bệnh nhân)
+     * - Tạo lịch hẹn ở trạng thái CHO_XAC_NHAN
+     * - Sinh token và gửi mail xác nhận
      */
     public function datLich($data)
     {
@@ -27,43 +26,52 @@ class LichHen
             $ma_phong = $data['ma_phong'];
             $thoi_gian = $data['thoi_gian'];
             $ghi_chu = $data['ghi_chu'] ?? '';
-            $email_benh_nhan = $data['email'] ?? null;
+
+            // 🔍 Lấy email bệnh nhân từ bảng benhnhan
+            $stmt = $this->conn->prepare("SELECT email, ho_ten FROM benhnhan WHERE ma_benh_nhan = ?");
+            $stmt->execute([$ma_benh_nhan]);
+            $benhnhan = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$benhnhan) {
+                throw new Exception("Không tìm thấy bệnh nhân với mã $ma_benh_nhan");
+            }
+            $email_benh_nhan = $benhnhan['email'];
 
             // 🔍 Kiểm tra lịch trống
-            $stmt = $this->conn->prepare("
-            SELECT * FROM lichtrong
-            WHERE ma_bac_si = ?
-              AND thoi_gian_bat_dau <= ?
-              AND thoi_gian_ket_thuc > ?
-              AND trang_thai = 'TRONG'
-        ");
+            $sql = "SELECT * FROM lichtrong 
+                    WHERE ma_bac_si = ? 
+                      AND thoi_gian_bat_dau <= ? 
+                      AND thoi_gian_ket_thuc > ? 
+                      AND trang_thai = 'TRONG'";
+            $stmt = $this->conn->prepare($sql);
             $stmt->execute([$ma_bac_si, $thoi_gian, $thoi_gian]);
             $lichTrong = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$lichTrong) throw new Exception("Không có lịch trống phù hợp hoặc đã được đặt.");
+            if (!$lichTrong) {
+                throw new Exception("Không có lịch trống phù hợp hoặc đã được đặt.");
+            }
 
             // 🧩 Sinh token xác nhận
             $token = bin2hex(random_bytes(32));
 
-            // 🗂️ Tạo lịch hẹn (chưa xác nhận)
-            $stmt = $this->conn->prepare("
-            INSERT INTO lichhen 
-            (ma_benh_nhan, ma_bac_si, ma_dich_vu, ma_phong, thoi_gian, trang_thai, ghi_chu, xac_nhan_token)
-            VALUES (?, ?, ?, ?, ?, 'CHO_XAC_NHAN', ?, ?)
-        ");
+            // 🗂️ Thêm lịch hẹn mới
+            $sql = "INSERT INTO lichhen 
+                    (ma_benh_nhan, ma_bac_si, ma_dich_vu, ma_phong, thoi_gian, trang_thai, ghi_chu, xac_nhan_token)
+                    VALUES (?, ?, ?, ?, ?, 'CHO_XAC_NHAN', ?, ?)";
+            $stmt = $this->conn->prepare($sql);
             $stmt->execute([$ma_benh_nhan, $ma_bac_si, $ma_dich_vu, $ma_phong, $thoi_gian, $ghi_chu, $token]);
-            $ma_lich_hen = $this->conn->lastInsertId();
 
+            $ma_lich_hen = $this->conn->lastInsertId();
             $this->conn->commit();
 
-            // ✉️ Gửi mail xác nhận nếu có email
+            // ✉️ Gửi mail xác nhận
             if ($email_benh_nhan) {
-                MailerService::sendAppointmentConfirmation($email_benh_nhan, $token);
+                MailerService::sendAppointmentConfirmation($email_benh_nhan, $benhnhan['ho_ten'], $token);
             }
 
             return [
                 'status' => 'pending',
-                'message' => 'Lịch hẹn đã được tạo, vui lòng kiểm tra email để xác nhận.',
+                'message' => 'Lịch hẹn đã được tạo. Vui lòng kiểm tra email để xác nhận.',
                 'ma_lich_hen' => $ma_lich_hen
             ];
         } catch (Exception $e) {
@@ -72,15 +80,57 @@ class LichHen
         }
     }
 
+    /**
+     * 🟡 Xác nhận lịch qua email
+     */
+    public function xacNhanQuaEmail($token)
+    {
+        $stmt = $this->conn->prepare("
+            SELECT * FROM lichhen 
+            WHERE xac_nhan_token = ? AND trang_thai = 'CHO_XAC_NHAN'
+        ");
+        $stmt->execute([$token]);
+        $lich = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$lich) {
+            throw new Exception("Liên kết xác nhận không hợp lệ hoặc lịch hẹn đã được xác nhận.");
+        }
+
+        $this->conn->beginTransaction();
+        try {
+            // ✅ Cập nhật trạng thái lịch
+            $this->conn->prepare("
+                UPDATE lichhen 
+                SET trang_thai = 'DA_XAC_NHAN', 
+                    email_xac_nhan_at = NOW()
+                WHERE ma_lich_hen = ?
+            ")->execute([$lich['ma_lich_hen']]);
+
+            // ✅ Đánh dấu lịch trống tương ứng là đã đặt
+            $this->conn->prepare("
+                UPDATE lichtrong 
+                SET trang_thai = 'DA_DAT'
+                WHERE ma_bac_si = ? 
+                  AND thoi_gian_bat_dau <= ? 
+                  AND thoi_gian_ket_thuc > ?
+            ")->execute([$lich['ma_bac_si'], $lich['thoi_gian'], $lich['thoi_gian']]);
+
+            $this->conn->commit();
+
+            return ['status' => 'success', 'message' => 'Lịch hẹn đã được xác nhận qua email.'];
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            throw new Exception("Lỗi khi xác nhận lịch: " . $e->getMessage());
+        }
+    }
 
     /**
-     * 🔹 Hủy lịch hẹn (bệnh nhân hoặc bác sĩ)
+     * 🔴 Hủy lịch
      */
     public function huyLich($ma_lich_hen)
     {
         $this->conn->beginTransaction();
         try {
-            // Lấy thông tin lịch hẹn
             $stmt = $this->conn->prepare("SELECT * FROM lichhen WHERE ma_lich_hen = ?");
             $stmt->execute([$ma_lich_hen]);
             $lich = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -89,17 +139,16 @@ class LichHen
                 throw new Exception("Không tìm thấy lịch hẹn.");
             }
 
-            // Cập nhật trạng thái lịch hẹn
             $this->conn->prepare("UPDATE lichhen SET trang_thai = 'DA_HUY' WHERE ma_lich_hen = ?")
                 ->execute([$ma_lich_hen]);
 
-            // Mở lại lịch trống
-            $this->conn->prepare("UPDATE lichtrong 
-                SET trang_thai = 'TRONG' 
+            $this->conn->prepare("
+                UPDATE lichtrong 
+                SET trang_thai = 'TRONG'
                 WHERE ma_bac_si = ? 
                   AND thoi_gian_bat_dau <= ? 
-                  AND thoi_gian_ket_thuc > ?")
-                ->execute([$lich['ma_bac_si'], $lich['thoi_gian'], $lich['thoi_gian']]);
+                  AND thoi_gian_ket_thuc > ?
+            ")->execute([$lich['ma_bac_si'], $lich['thoi_gian'], $lich['thoi_gian']]);
 
             $this->conn->commit();
 
@@ -111,7 +160,7 @@ class LichHen
     }
 
     /**
-     * 🔹 Danh sách lịch hẹn theo bệnh nhân
+     * 🔹 Lấy danh sách lịch hẹn theo bệnh nhân
      */
     public function getByBenhNhan($ma_benh_nhan)
     {
@@ -128,15 +177,19 @@ class LichHen
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * 🔵 Bác sĩ hoặc admin xác nhận thủ công
+     */
     public function xacNhanLich($ma_lich_hen)
     {
         $stmt = $this->conn->prepare("
-        UPDATE lichhen 
-        SET trang_thai = 'DA_XAC_NHAN',
-            thoi_gian_xac_nhan = NOW()
-        WHERE ma_lich_hen = ? AND trang_thai = 'CHO_XAC_NHAN'
-    ");
+            UPDATE lichhen 
+            SET trang_thai = 'DA_XAC_NHAN', 
+                thoi_gian_xac_nhan = NOW()
+            WHERE ma_lich_hen = ? AND trang_thai = 'CHO_XAC_NHAN'
+        ");
         $stmt->execute([$ma_lich_hen]);
+
         return [
             'status' => 'success',
             'message' => 'Đã xác nhận lịch hẹn.'
