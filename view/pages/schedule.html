@@ -1,274 +1,131 @@
-<!-- LỊCH HẸN BỆNH NHÂN (HTML + Tailwind, theo motif của bạn) -->
-<!-- Giả định bạn đã có Tailwind, Font Awesome và AOS trong trang chủ. -->
-<!-- Nếu chưa, thêm vào <head> (CDN đơn giản cho demo):
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.10/dist/tailwind.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>document.addEventListener('DOMContentLoaded',()=>AOS.init({ once:true }));</script>
--->
-
+<!-- ===============================
+📅 LỊCH HẸN BỆNH NHÂN (SCHEDULE)
+CRUD: thêm - sửa - xoá - lưu LocalStorage
+=============================== -->
 <section id="schedule" class="py-16 bg-surface text-textmain">
-    <div class="container mx-auto px-4">
-      <header class="text-center mb-10" data-aos="fade-up">
-        <h2 class="text-3xl font-bold text-primary">Lịch hẹn bệnh nhân</h2>
-        <p class="text-textmain/70 max-w-2xl mx-auto mt-2">Quản lý và theo dõi lịch khám theo tuần hoặc dạng danh sách. Có tìm kiếm, lọc trạng thái, và điều hướng tuần.</p>
-      </header>
-  
-      <!-- Thanh công cụ: chuyển chế độ, tìm kiếm, lọc, tạo mới -->
-      <div class="bg-white rounded-2xl shadow-card border border-border p-4 md:p-5 mb-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <!-- Toggle view -->
-          <div class="flex items-center gap-2">
-            <button data-view="week" class="view-btn rounded-xl px-4 py-2 text-sm bg-primary text-white shadow-md">
-              <i class="fa-solid fa-calendar-week mr-2"></i>Tuần
-            </button>
-            <button data-view="list" class="view-btn rounded-xl px-4 py-2 text-sm border border-border hover:bg-bgpage">
-              <i class="fa-solid fa-list mr-2"></i>Danh sách
-            </button>
-          </div>
-  
-          <!-- Search + Filters -->
-          <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <div class="relative">
-              <input id="sch-search" type="text" placeholder="Tìm bệnh nhân, bác sĩ, loại khám…" class="w-72 rounded-2xl border border-border bg-white py-2 pl-10 pr-3 text-sm shadow-sm placeholder:text-textmain/50 focus:outline-none focus:border-primary">
-              <span class="pointer-events-none absolute left-3 top-2.5 text-textmain/50"><i class="fa-solid fa-magnifying-glass"></i></span>
-            </div>
-            <select id="sch-status" class="rounded-2xl border border-border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:border-primary">
-              <option value="all">Tất cả trạng thái</option>
-              <option value="scheduled">Đã hẹn</option>
-              <option value="checked-in">Đã đến</option>
-              <option value="in-progress">Đang khám</option>
-              <option value="completed">Hoàn tất</option>
-              <option value="cancelled">Huỷ</option>
-            </select>
-            <a href="#/booking" class="rounded-2xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-primary/90"><i class="fa-solid fa-plus mr-2"></i>Cuộc hẹn mới</a>
-          </div>
+  <div class="container mx-auto px-4">
+    <header class="text-center mb-10" data-aos="fade-up">
+      <h2 class="text-3xl font-bold text-primary">Lịch hẹn bệnh nhân</h2>
+      <p class="text-textmain/70 max-w-2xl mx-auto mt-2">
+        Quản lý và theo dõi lịch khám theo tuần hoặc dạng danh sách. Có tìm kiếm, lọc trạng thái, và điều hướng tuần.
+      </p>
+    </header>
+
+    <!-- Thanh công cụ -->
+    <div class="bg-white rounded-2xl shadow-card border border-border p-4 md:p-5 mb-6" data-aos="fade-up" data-aos-delay="100">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div class="flex items-center gap-2">
+          <button data-view="week" class="view-btn rounded-xl px-4 py-2 text-sm bg-primary text-white shadow-md">
+            <i class="fa-solid fa-calendar-week mr-2"></i>Tuần
+          </button>
+          <button data-view="list" class="view-btn rounded-xl px-4 py-2 text-sm border border-border hover:bg-bgpage">
+            <i class="fa-solid fa-list mr-2"></i>Danh sách
+          </button>
         </div>
-  
-        <!-- Điều hướng tuần (chỉ hiện ở Week view) -->
-        <div id="week-nav" class="mt-4 flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <button id="prev-week" class="rounded-xl border border-border bg-bgpage px-3 py-2 text-sm hover:bg-white">
-              ← Tuần trước
-            </button>
-            <button id="today-week" class="rounded-xl border border-border bg-bgpage px-3 py-2 text-sm hover:bg-white">
-              Hôm nay
-            </button>
-            <button id="next-week" class="rounded-xl border border-border bg-bgpage px-3 py-2 text-sm hover:bg-white">
-              Tuần sau →
-            </button>
+
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div class="relative">
+            <input id="sch-search" type="text" placeholder="Tìm bệnh nhân, bác sĩ…"
+              class="w-72 rounded-2xl border border-border bg-white py-2 pl-10 pr-3 text-sm shadow-sm placeholder:text-textmain/50 focus:outline-none focus:border-primary">
+            <span class="pointer-events-none absolute left-3 top-2.5 text-textmain/50"><i class="fa-solid fa-magnifying-glass"></i></span>
           </div>
-          <div class="text-sm text-textmain/70">Tuần bắt đầu: <span id="week-start" class="font-semibold text-textmain"></span></div>
+          <!-- Lọc trạng thái -->
+          <select id="sch-status" class="rounded-2xl border border-border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:border-primary">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="waiting">Đang đợi</option>
+            <option value="booked">Đã đặt</option>
+            <option value="done">Đã khám xong</option>
+            <option value="cancelled">Đã hủy</option>
+          </select>
+          <a href="#/booking" class="btn-add rounded-2xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-primary/90">
+            <i class="fa-solid fa-plus mr-2"></i>Cuộc hẹn mới
+          </a>
         </div>
       </div>
-  
-      <!-- WEEK VIEW -->
-      <div id="week-view" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-aos="fade-up" data-aos-delay="150"></div>
-  
-      <!-- LIST VIEW -->
-      <div id="list-view" class="hidden overflow-hidden rounded-2xl border border-border bg-white shadow-card" data-aos="fade-up" data-aos-delay="150">
-        <table class="min-w-full divide-y divide-border">
-          <thead class="bg-bgpage/60">
-            <tr class="text-left text-xs font-semibold uppercase tracking-wider text-textmain/70">
-              <th class="px-4 py-3">Bệnh nhân</th>
-              <th class="px-4 py-3">Thời gian</th>
-              <th class="px-4 py-3">Bác sĩ</th>
-              <th class="px-4 py-3">Loại</th>
-              <th class="px-4 py-3">Trạng thái</th>
-              <th class="px-4 py-3">Phòng</th>
-              <th class="px-4 py-3">Ghi chú</th>
-            </tr>
-          </thead>
-          <tbody id="list-body" class="divide-y divide-border/60 text-sm"></tbody>
-        </table>
+
+      <div id="week-nav" class="mt-4 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <button id="prev-week" class="rounded-xl border border-border bg-bgpage px-3 py-2 text-sm hover:bg-white">← Tuần trước</button>
+          <button id="today-week" class="rounded-xl border border-border bg-bgpage px-3 py-2 text-sm hover:bg-white">Hôm nay</button>
+          <button id="next-week" class="rounded-xl border border-border bg-bgpage px-3 py-2 text-sm hover:bg-white">Tuần sau →</button>
+        </div>
+        <div class="text-sm text-textmain/70">Tuần bắt đầu: <span id="week-start" class="font-semibold text-textmain"></span></div>
       </div>
     </div>
-  </section>
-  
-  <!-- TEMPLATES & SCRIPT (Vanilla JS) -->
-  <script>
-    // ===========================
-    // DỮ LIỆU MẪU - thay bằng API của bạn
-    // ===========================
-    const APPTS = [
-      { id: 'APT-001', name: 'Nguyễn Văn A', mrn: 'MRN001', provider: 'BS. Lê Minh', room: 'Phòng 201', date: '2025-10-20', start: '09:00', end: '09:30', type: 'Khám tổng quát', status: 'scheduled', notes: 'Lần đầu đến khám' },
-      { id: 'APT-002', name: 'Trần Thị B', mrn: 'MRN002', provider: 'BS. Lê Minh', room: 'Phòng 201', date: '2025-10-20', start: '10:00', end: '10:45', type: 'Tái khám', status: 'checked-in' },
-      { id: 'APT-003', name: 'Phạm Hữu C', provider: 'BS. Hạnh', room: 'Phòng 305', date: '2025-10-21', start: '13:30', end: '14:00', type: 'Siêu âm', status: 'in-progress' },
-      { id: 'APT-004', name: 'Ngô Quang D', mrn: 'MRN021', provider: 'BS. Hạnh', room: 'Phòng 305', date: '2025-10-21', start: '15:00', end: '15:30', type: 'Khám mắt', status: 'completed' },
-      { id: 'APT-005', name: 'Lê Thu E', provider: 'BS. Bình', room: 'Phòng 102', date: '2025-10-23', start: '08:30', end: '09:00', type: 'Tư vấn dinh dưỡng', status: 'cancelled' },
-    ];
-  
-    // ===========================
-    // TIỆN ÍCH & TRẠNG THÁI
-    // ===========================
-    const $ = (sel, el = document) => el.querySelector(sel);
-    const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
-    const fmtRange = (s, e) => `${s}–${e}`;
-    const toDate = (iso) => new Date(iso + 'T00:00:00');
-    const dayKey = (d) => d.toISOString().slice(0, 10);
-    const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
-    const startOfWeek = (d = new Date(), weekStartsOn = 1) => { // 1=Mon
-      const x = new Date(d); const day = x.getDay(); const diff = (day < weekStartsOn ? 7 : 0) + day - weekStartsOn; x.setDate(x.getDate()-diff); x.setHours(0,0,0,0); return x;
-    };
-  
-    const STATUS_META = {
-      scheduled:   { label: 'Đã hẹn',      dot: 'bg-blue-500',   bg: 'bg-blue-50',     text: 'text-blue-700',    ring: 'ring-blue-200' },
-      'checked-in':{ label: 'Đã đến',      dot: 'bg-amber-500',  bg: 'bg-amber-50',    text: 'text-amber-700',   ring: 'ring-amber-200' },
-      'in-progress':{label: 'Đang khám',   dot: 'bg-purple-500', bg: 'bg-purple-50',   text: 'text-purple-700',  ring: 'ring-purple-200' },
-      completed:   { label: 'Hoàn tất',    dot: 'bg-emerald-600',bg: 'bg-emerald-50',  text: 'text-emerald-700', ring: 'ring-emerald-200' },
-      cancelled:   { label: 'Huỷ',         dot: 'bg-rose-500',   bg: 'bg-rose-50',     text: 'text-rose-700',    ring: 'ring-rose-200' },
-    };
-  
-    let state = {
-      view: 'week', // 'week' | 'list'
-      weekStart: startOfWeek(new Date(), 1),
-      query: '',
-      status: 'all',
-    };
-  
-    // ===========================
-    // LỌC DỮ LIỆU
-    // ===========================
-    function filteredData() {
-      const q = state.query.trim().toLowerCase();
-      return APPTS.filter(a => {
-        const hitQ = !q || [a.name, a.provider, a.type, a.room, a.date, a.start, a.end, a.mrn || '']
-          .some(v => String(v).toLowerCase().includes(q));
-        const hitS = state.status === 'all' || a.status === state.status;
-        return hitQ && hitS;
-      });
-    }
-  
-    function weekData() {
-      const end = addDays(state.weekStart, 6);
-      return filteredData().filter(a => {
-        const d = toDate(a.date); return d >= state.weekStart && d <= end;
-      });
-    }
-  
-    // ===========================
-    // RENDER WEEK VIEW
-    // ===========================
-    function renderWeek() {
-      const container = $('#week-view');
-      container.innerHTML = '';
-      const days = Array.from({length:7}, (_,i)=> addDays(state.weekStart, i));
-      const by = {};
-      for (const a of weekData()) { (by[a.date] ||= []).push(a); }
-      for (const k in by) by[k].sort((x,y)=> x.start.localeCompare(y.start));
-  
-      days.forEach(d => {
-        const key = dayKey(d);
-        const list = by[key] || [];
-        const card = document.createElement('section');
-        card.className = 'rounded-2xl border border-border bg-white p-4 shadow-card';
-        card.innerHTML = `
-          <header class="mb-3 flex items-center justify-between">
-            <div>
-              <div class="text-xs uppercase tracking-wide text-textmain/60">${d.toLocaleDateString('vi-VN', { weekday:'short', day:'2-digit', month:'2-digit' })}</div>
-              <div class="text-sm font-semibold">${key}</div>
-            </div>
-            <div class="rounded-full bg-bgpage px-2 py-0.5 text-xs text-textmain/70">${list.length} lịch</div>
-          </header>
-          <div class="flex flex-col gap-3">${ list.length ? '' : `<div class="rounded-xl border border-dashed border-border p-4 text-center text-sm text-textmain/50">Không có lịch</div>` }</div>
-        `;
-        const listWrap = card.querySelector('.flex.flex-col.gap-3');
-        list.forEach(a => listWrap.appendChild(apptCard(a)));
-        container.appendChild(card);
-      });
-      $('#week-start').textContent = dayKey(state.weekStart);
-    }
-  
-    function apptCard(a){
-      const m = STATUS_META[a.status];
-      const wrap = document.createElement('div');
-      wrap.className = 'rounded-2xl border border-border bg-white p-3 shadow-sm hover:shadow-md transition-shadow';
-      wrap.innerHTML = `
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <div class="text-sm font-semibold text-textmain">${a.name}</div>
-            <div class="text-xs text-textmain/70">${a.type} · ${a.start}–${a.end}</div>
-          </div>
-          <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${m.bg} ${m.text} ${m.ring}">
-            <span class="size-1.5 rounded-full ${m.dot}"></span>${m.label}
-          </span>
+
+    <!-- WEEK VIEW -->
+    <div id="week-view" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-aos="fade-up" data-aos-delay="150"></div>
+
+    <!-- LIST VIEW -->
+    <div id="list-view" class="hidden overflow-hidden rounded-2xl border border-border bg-white shadow-card" data-aos="fade-up" data-aos-delay="150">
+      <table class="min-w-full divide-y divide-border">
+        <thead class="bg-bgpage/60">
+          <tr class="text-left text-xs font-semibold uppercase tracking-wider text-textmain/70">
+            <th class="px-4 py-3">Bệnh nhân</th>
+            <th class="px-4 py-3">Thời gian</th>
+            <th class="px-4 py-3">Bác sĩ</th>
+            <th class="px-4 py-3">Trạng thái</th>
+            <th class="px-4 py-3">Ghi chú</th>
+            <th class="px-4 py-3 text-right">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="list-body" class="divide-y divide-border/60 text-sm"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL CRUD -->
+<div id="appt-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+    <h3 id="modal-title" class="text-xl font-semibold mb-4">Thêm lịch hẹn</h3>
+    <form id="appt-form" class="space-y-3">
+      <input type="hidden" id="appt-id">
+      <div>
+        <label class="block text-sm mb-1">Tên bệnh nhân</label>
+        <input id="appt-name" type="text" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-sm mb-1">Ngày</label>
+          <input id="appt-date" type="date" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
         </div>
-        <div class="mt-2 grid grid-cols-2 gap-2 text-xs text-textmain/80">
-          <div class="truncate">👨‍⚕️ ${a.provider}</div>
-          <div class="truncate">📍 ${a.room || '—'}</div>
+        <div>
+          <label class="block text-sm mb-1">Bác sĩ</label>
+          <input id="appt-provider" type="text" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
         </div>
-        ${a.mrn ? `<div class="mt-1 text-[11px] text-textmain/60">MRN: ${a.mrn}</div>` : ''}
-        ${a.notes ? `<p class="mt-2 text-xs text-textmain/60 line-clamp-2">📝 ${a.notes}</p>` : ''}
-      `;
-      return wrap;
-    }
-  
-    // ===========================
-    // RENDER LIST VIEW
-    // ===========================
-    function renderList(){
-      const tbody = $('#list-body');
-      tbody.innerHTML = '';
-      filteredData().sort((a,b)=> (a.date+a.start).localeCompare(b.date+b.start)).forEach(a=>{
-        const m = STATUS_META[a.status];
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-bgpage/40';
-        tr.innerHTML = `
-          <td class="px-4 py-3">
-            <div class="font-medium text-textmain">${a.name}</div>
-            ${a.mrn ? `<div class="text-xs text-textmain/60">MRN: ${a.mrn}</div>` : ''}
-          </td>
-          <td class="px-4 py-3 text-textmain/80">
-            <div>${a.date}</div>
-            <div class="text-xs text-textmain/60">${a.start}–${a.end}</div>
-          </td>
-          <td class="px-4 py-3">${a.provider}</td>
-          <td class="px-4 py-3">${a.type}</td>
-          <td class="px-4 py-3">
-            <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${m.bg} ${m.text} ${m.ring}">
-              <span class="size-1.5 rounded-full ${m.dot}"></span>${m.label}
-            </span>
-          </td>
-          <td class="px-4 py-3">${a.room || '—'}</td>
-          <td class="px-4 py-3 text-textmain/80 max-w-[18rem]"><span class="line-clamp-2">${a.notes || ''}</span></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-  
-    // ===========================
-    // VIEW SWITCH & EVENTS
-    // ===========================
-    function updateView(){
-      const week = $('#week-view');
-      const list = $('#list-view');
-      const nav  = $('#week-nav');
-      if (state.view === 'week') { week.classList.remove('hidden'); list.classList.add('hidden'); nav.classList.remove('hidden'); renderWeek(); }
-      else { list.classList.remove('hidden'); week.classList.add('hidden'); nav.classList.add('hidden'); renderList(); }
-  
-      $$('.view-btn').forEach(btn=>{
-        btn.classList.remove('bg-primary','text-white','shadow-md');
-        btn.classList.add('border','border-border');
-      });
-      $(`.view-btn[data-view="${state.view}"]`).classList.remove('border','border-border');
-      $(`.view-btn[data-view="${state.view}"]`).classList.add('bg-primary','text-white','shadow-md');
-    }
-  
-    document.addEventListener('DOMContentLoaded', () => {
-      // Nút chuyển view
-      $$('.view-btn').forEach(btn=> btn.addEventListener('click', ()=>{ state.view = btn.dataset.view; updateView(); }));
-  
-      // Search & filter
-      $('#sch-search').addEventListener('input', (e)=>{ state.query = e.target.value; updateView(); });
-      $('#sch-status').addEventListener('change', (e)=>{ state.status = e.target.value; updateView(); });
-  
-      // Tuần điều hướng
-      $('#prev-week').addEventListener('click', ()=>{ state.weekStart = addDays(state.weekStart, -7); updateView(); });
-      $('#today-week').addEventListener('click', ()=>{ state.weekStart = startOfWeek(new Date(), 1); updateView(); });
-      $('#next-week').addEventListener('click', ()=>{ state.weekStart = addDays(state.weekStart, 7); updateView(); });
-  
-      // Khởi tạo
-      updateView();
-    });
-  </script>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-sm mb-1">Bắt đầu</label>
+          <input id="appt-start" type="time" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Kết thúc</label>
+          <input id="appt-end" type="time" class="w-full border rounded-xl p-2 focus:border-primary outline-none" required>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Trạng thái</label>
+        <select id="appt-status" class="w-full border rounded-xl p-2 focus:border-primary outline-none">
+          <option value="waiting">Đang đợi</option>
+          <option value="booked">Đã đặt</option>
+          <option value="done">Đã khám xong</option>
+          <option value="cancelled">Đã hủy</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Ghi chú</label>
+        <textarea id="appt-notes" rows="2" class="w-full border rounded-xl p-2 focus:border-primary outline-none"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" id="btn-cancel" class="rounded-xl border border-border px-4 py-2 text-sm hover:bg-bgpage">Huỷ</button>
+        <button type="submit" class="rounded-xl bg-primary text-white px-4 py-2 text-sm hover:bg-primary/90">Lưu</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => setupSchedulePage());
+</script>

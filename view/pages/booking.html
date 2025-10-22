@@ -1,51 +1,39 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Đặt lịch khám</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkfguPq4vgaYxwSYY5Q6XhQvW6RZJQ5dY3Gx4Kw6T7CkR9Cta8b+I2HSg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-    .shadow-card{ box-shadow: 0 6px 20px rgba(2, 6, 23, 0.08); }
-    .input{ width:100%; border:1px solid var(--border,#e5e7eb); border-radius:8px; padding:10px 12px; }
-    .label{ display:block; font-weight:600; margin-bottom:6px; }
-    .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:8px; background:#0ea5e9; color:#fff; font-weight:600; width:100%; }
-    .btn:hover{ background:#0284c7; }
-    .text-muted{ color:#6b7280; }
-  </style>
-</head>
-<body>
-
 <section class="container mx-auto px-4 md:px-6 lg:px-8 mt-8 max-w-7xl">
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
     <!-- Ảnh minh hoạ -->
     <div class="lg:col-span-6">
-      <div class="relative bg-white rounded-2xl border border-border shadow-card overflow-hidden">
-        <img src="/view/assets/img/clinic.jpg" alt="Phòng khám" class="w-full h-[220px] sm:h-[300px] lg:h-[520px] object-cover" onerror="this.onerror=null;this.src='https://picsum.photos/1200/800?random=21';" />
+      <div class="relative bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+        <img src="/view/assets/img/clinic.jpg"
+             alt="Phòng khám"
+             class="w-full h-[220px] sm:h-[300px] lg:h-[520px] object-cover"
+             onerror="this.onerror=null;this.src='https://picsum.photos/1200/800?random=21';" />
         <div class="absolute left-3 top-3 px-3 py-1 rounded-full bg-black/40 text-white text-xs">🩺 Phòng khám</div>
       </div>
     </div>
 
     <!-- Form -->
     <div class="lg:col-span-6">
-      <div class="bg-white rounded-2xl border border-border shadow-card overflow-hidden">
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
         <div class="p-5 md:p-6">
           <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full" style="background:#0ea5e9"></span>
+            <span class="inline-block w-2 h-2 rounded-full bg-sky-500"></span>
             Đặt lịch khám
           </h2>
 
-          <form id="bookingForm" class="space-y-4 text-[14px]">
+          <form id="bookingForm" class="space-y-4 text-sm" novalidate>
             <!-- Họ tên -->
             <div>
-              <label class="label" for="fullname">Họ và tên</label>
-              <input id="fullname" type="text" class="input" placeholder="Nguyễn Văn A" required />
+              <label for="fullname" class="block font-semibold mb-1">Họ và tên</label>
+              <input id="fullname" type="text"
+                     class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
+                     placeholder="Nguyễn Văn A" required>
             </div>
 
-            <!-- Bác sĩ (select) -->
+            <!-- Bác sĩ -->
             <div>
-              <label class="label" for="doctorSelect">Chọn bác sĩ</label>
-              <select id="doctorSelect" class="input" required>
+              <label for="doctorSelect" class="block font-semibold mb-1">Chọn bác sĩ</label>
+              <select id="doctorSelect"
+                      class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none" required>
                 <option value="" selected disabled>-- Chọn bác sĩ --</option>
                 <option value="doctor1">BS. Minh Trí — Nội tổng quát</option>
                 <option value="doctor2">BS. Thu Hà — Nhi khoa</option>
@@ -56,99 +44,40 @@
               </select>
             </div>
 
-            <!-- Ngày & Giờ (select) -->
+            <!-- Ngày & Giờ -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="label" for="date">Ngày khám</label>
-                <input id="date" type="date" class="input" required />
+                <label for="date" class="block font-semibold mb-1">Ngày khám</label>
+                <input id="date" type="date"
+                       class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none" required>
               </div>
               <div>
-                <label class="label" for="timeSelect">Giờ khám</label>
-                <select id="timeSelect" class="input" required>
-                  <option value="" selected disabled>-- Chọn giờ --</option>
-                  <option>08:00</option>
-                  <option>09:00</option>
-                  <option>10:00</option>
-                  <option>13:00</option>
-                  <option>14:00</option>
-                  <option>15:00</option>
+                <label for="timeSelect" class="block font-semibold mb-1">Giờ khám trống</label>
+                <select id="timeSelect"
+                        class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                  <option value="" selected disabled>— Chọn bác sĩ & ngày trước —</option>
                 </select>
               </div>
             </div>
 
             <!-- Ghi chú -->
             <div>
-              <label class="label" for="note">Ghi chú (tuỳ chọn)</label>
-              <textarea id="note" rows="2" class="input" placeholder="Ví dụ: Tôi bị ho 2 ngày nay..."></textarea>
-              <p class="text-muted mt-1">* Bạn có thể mô tả ngắn triệu chứng để bác sĩ chuẩn bị tốt hơn.</p>
+              <label for="note" class="block font-semibold mb-1">Ghi chú (tuỳ chọn)</label>
+              <textarea id="note" rows="2"
+                        class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
+                        placeholder="Ví dụ: Tôi bị ho 2 ngày nay..."></textarea>
+              <p class="text-gray-500 mt-1 text-xs">* Bạn có thể mô tả ngắn triệu chứng để bác sĩ chuẩn bị tốt hơn.</p>
             </div>
 
-            <!-- Submit -->
-            <button type="submit" class="btn">✅ Xác nhận đặt lịch</button>
-            <p id="statusMsg" class="text-center text-sm text-muted"></p>
+            <!-- Nút gửi -->
+            <button type="submit"
+                    class="w-full bg-sky-500 text-white font-semibold py-2.5 rounded-lg hover:bg-sky-600 transition">
+              ✅ Xác nhận đặt lịch
+            </button>
+            <p id="statusMsg" class="text-center text-gray-500 text-sm mt-2"></p>
           </form>
         </div>
       </div>
     </div>
   </div>
 </section>
-
-<!-- Toast -->
-<div id="toast" class="fixed right-4 bottom-4 z-50 hidden items-center gap-3 bg-white border border-border shadow-card rounded-xl px-4 py-3">
-  <i class="fa-solid fa-circle-check text-green-600"></i>
-  <span id="toastMsg" class="text-sm"></span>
-</div>
-
-<script>
-(function(){
-  'use strict';
-
-  // Min date = hôm nay
-  const dateEl = document.getElementById('date');
-  if (dateEl) dateEl.min = new Date().toISOString().split('T')[0];
-
-  const form = document.getElementById('bookingForm');
-  const msg  = document.getElementById('statusMsg');
-  const toast= document.getElementById('toast');
-  const toastMsg = document.getElementById('toastMsg');
-  const nameEl = document.getElementById('fullname');
-  const doctorSel = document.getElementById('doctorSelect');
-  const timeSel = document.getElementById('timeSelect');
-
-  function showToast(text){
-    toastMsg.textContent = text;
-    toast.classList.remove('hidden');
-    toast.classList.add('flex');
-    setTimeout(()=>{ toast.classList.add('hidden'); toast.classList.remove('flex'); }, 2600);
-  }
-
-  form.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const name = nameEl.value.trim();
-    const doctor = doctorSel.value;
-    const date = dateEl.value;
-    const time = timeSel.value;
-
-    if(!name || !doctor || !date || !time){
-      msg.textContent = '⚠️ Vui lòng điền đủ họ tên, chọn bác sĩ, ngày và giờ.';
-      msg.className = 'text-center text-sm';
-      return;
-    }
-
-    msg.textContent = '⏳ Đang gửi yêu cầu...';
-    msg.className   = 'text-center text-sm';
-
-    setTimeout(()=>{
-      const ok = `✅ Đặt lịch thành công cho ${name}! ${date} lúc ${time}.`;
-      msg.textContent = ok;
-      msg.className   = 'text-center text-sm';
-      showToast(ok);
-
-      form.reset();
-    }, 800);
-  });
-})();
-</script>
-
-</body>
-</html>
