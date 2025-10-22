@@ -952,93 +952,51 @@ function setupBookingPage() {
 // ----------------- SCHEDULE PAGE SETUP -----------------
 // ----------------- SCHEDULE PAGE SETUP -----------------
 function setupSchedulePage() {
-  const STORAGE_KEY = "appointments";
-
-  // Lấy danh sách, nếu trống thì seed dữ liệu mẫu (mỗi trạng thái 1 bản ghi)
-  // Lấy danh sách, nếu trống thì seed dữ liệu mẫu (mỗi trạng thái 1 bản ghi)
-let APPTS = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-if (APPTS.length === 0) {
-  APPTS = [
-    // 1) đang đợi (CHO PHÉP XOÁ)
-    {
-      id: "APT-001",
-      name: "Nguyễn Văn A",
-      provider: "BS. Lê Minh",
-      date: "2025-10-20",
-      start: "09:00",
-      end: "09:30",
-      status: "waiting",
-      notes: "Lần đầu đến khám",
-    },
-    // 2) đã đặt
-    {
-      id: "APT-002",
-      name: "Trần Thị B",
-      provider: "BS. Thu Hà",
-      date: "2025-10-21",
-      start: "10:00",
-      end: "10:30",
-      status: "booked",
-      notes: "Xác nhận qua điện thoại",
-    },
-    // 3) đã khám xong
-    {
-      id: "APT-003",
-      name: "Lê Quốc C",
-      provider: "BS. Hồng Sơn",
-      date: "2025-10-22",
-      start: "14:00",
-      end: "14:45",
-      status: "done",
-      notes: "Đã khám và kê thuốc",
-    },
-    // 4) đã hủy
-    {
-      id: "APT-004",
-      name: "Phạm Duyên D",
-      provider: "BS. Minh Trí",
-      date: "2025-10-23",
-      start: "08:30",
-      end: "09:00",
-      status: "cancelled",
-      notes: "Bệnh nhân báo bận",
-    },
+  // --- DỮ LIỆU FIX CỨNG (demo) ---
+  const APPTS = [
+    { id: "APT-001", name: "Nguyễn Văn A", provider: "BS. Lê Minh", date: "2025-10-20", start: "09:00", end: "09:30", status: "waiting", notes: "Lần đầu đến khám" },
+    { id: "APT-002", name: "Trần Thị B",   provider: "BS. Thu Hà",  date: "2025-10-21", start: "10:00", end: "10:30", status: "booked",  notes: "Đã xác nhận qua điện thoại" },
+    { id: "APT-003", name: "Lê Quốc C",    provider: "BS. Hồng Sơn",date: "2025-10-22", start: "14:00", end: "14:45", status: "done",    notes: "Đã khám và kê thuốc" },
+    { id: "APT-004", name: "Phạm Duyên D", provider: "BS. Minh Trí",date: "2025-10-23", start: "08:30", end: "09:00", status: "cancelled",notes: "Bệnh nhân báo bận" }
   ];
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(APPTS));
-}
 
+  // --- KHÔNG DÙNG localStorage ---
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
-  // helpers
+  // helper functions
   const $  = (s, e=document)=>e.querySelector(s);
   const $$ = (s, e=document)=>[...e.querySelectorAll(s)];
   const toDate = iso => new Date(iso + "T00:00:00");
   const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
   const startOfWeek = (d=new Date(), w=1) => { const x = new Date(d); const day = x.getDay(); const diff = (day < w ? 7 : 0) + day - w; x.setDate(x.getDate() - diff); return x; };
 
-  // Map hiển thị trạng thái
   const STATUS_META = {
-    waiting:   { label: "Đang đợi",    dot: "bg-amber-500",  text: "text-amber-700"  },
-    booked:    { label: "Đã đặt",       dot: "bg-blue-500",   text: "text-blue-700"   },
-    done:      { label: "Đã khám xong", dot: "bg-emerald-600",text: "text-emerald-700"},
-    cancelled: { label: "Đã hủy",       dot: "bg-rose-500",   text: "text-rose-700"   },
+    waiting:   { label: "Đang đợi",    text: "text-amber-700"  },
+    booked:    { label: "Đã đặt",      text: "text-blue-700"   },
+    done:      { label: "Đã khám xong",text: "text-emerald-700"},
+    cancelled: { label: "Đã hủy",      text: "text-rose-700"   },
   };
 
-  // state
-  let state = {
-    view: 'week',
-    weekStart: startOfWeek(new Date(), 1),
-    query: '',
-    status: 'all'
-  };
+  let state = { view: 'week', weekStart: startOfWeek(new Date(), 1), query: '', status: 'all' };
 
-  // ===== FILTER =====
+  // --- Lọc dữ liệu theo người đăng nhập ---
+  function scopeFilter(a) {
+    if (!user) return false;
+    if (user.role === "patient") return a.name === user.name;
+    if (user.role === "doctor")  return a.provider === user.name;
+    if (user.role === "admin")   return true;
+    return false;
+  }
+
   function filtered() {
     const q = state.query.toLowerCase();
-    return APPTS.filter(a => {
-      const hitQ = !q || [a.name, a.provider, a.notes].some(v => String(v||"").toLowerCase().includes(q));
-      const hitS = state.status === "all" || a.status === state.status;
-      return hitQ && hitS;
-    });
+    return APPTS
+      .filter(scopeFilter)
+      .filter(a => {
+        const hitQ = !q || [a.name, a.provider, a.notes].some(v => String(v||"").toLowerCase().includes(q));
+        const hitS = state.status === "all" || a.status === state.status;
+        return hitQ && hitS;
+      });
   }
 
   function weekData() {
@@ -1049,11 +1007,10 @@ if (APPTS.length === 0) {
     });
   }
 
-  // ===== RENDER WEEK =====
+  // --- Render WEEK view ---
   function renderWeek() {
     const container = $("#week-view");
     container.innerHTML = "";
-
     const days = Array.from({ length: 7 }, (_, i) => addDays(state.weekStart, i));
     const by = {};
     for (const a of weekData()) (by[a.date] ??= []).push(a);
@@ -1079,7 +1036,6 @@ if (APPTS.length === 0) {
       list.forEach(a => wrap.appendChild(apptCard(a)));
       container.appendChild(card);
     });
-
     $("#week-start").textContent = state.weekStart.toISOString().slice(0,10);
   }
 
@@ -1090,41 +1046,33 @@ if (APPTS.length === 0) {
     el.innerHTML = `
       <div class="flex justify-between">
         <div>
-          <div class="font-semibold text-sm">${a.name}</div>
-          <div class="text-xs text-gray-500">${a.start}–${a.end}</div>
+          <div class="font-semibold text-sm">${a.start}–${a.end}</div>
+          <div class="text-xs text-gray-500">${a.provider}</div>
         </div>
         <span class="text-xs ${m.text || ""}">${m.label || a.status}</span>
       </div>
-      <div class="text-xs text-gray-600 mt-1">👨‍⚕️ ${a.provider}</div>`;
+      <div class="text-xs text-gray-600 mt-1">${a.notes || ""}</div>`;
     return el;
   }
 
-  // ===== RENDER LIST =====
+  // --- Render LIST view ---
   function renderList() {
     const tb = $("#list-body");
     tb.innerHTML = "";
     const data = filtered();
-
     if (data.length === 0) {
       tb.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-4">Không có lịch hẹn nào</td></tr>`;
       return;
     }
-
     data.forEach(a => {
       const m = STATUS_META[a.status] || {};
-      const canDelete = a.status === "waiting"; // chỉ "đang đợi" được xoá
-
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="px-4 py-3 font-medium">${a.name}</td>
-        <td class="px-4 py-3">${a.date}<br><span class="text-xs text-gray-500">${a.start}–${a.end}</span></td>
+        <td class="px-4 py-3 font-medium">${a.date}<br><span class="text-xs text-gray-500">${a.start}–${a.end}</span></td>
         <td class="px-4 py-3">${a.provider}</td>
         <td class="px-4 py-3 text-xs ${m.text || ""}">${m.label || a.status}</td>
         <td class="px-4 py-3 text-xs text-gray-500">${a.notes || ""}</td>
-        <td class="px-4 py-3 text-right">
-          <button class="btn-edit text-blue-600 text-xs mr-2" data-id="${a.id}">Sửa</button>
-          ${canDelete ? `<button class="btn-del text-red-600 text-xs" data-id="${a.id}">Xoá</button>` : ""}
-        </td>`;
+        <td class="px-4 py-3 text-right"><button class="text-xs text-blue-600">Chi tiết</button></td>`;
       tb.appendChild(tr);
     });
   }
@@ -1141,7 +1089,7 @@ if (APPTS.length === 0) {
     }
   }
 
-  // ===== EVENTS =====
+  // --- EVENTS ---
   $$(".view-btn").forEach(btn => btn.addEventListener("click", () => { state.view = btn.dataset.view; updateView(); }));
   $("#sch-search").addEventListener("input", e => { state.query = e.target.value; updateView(); });
   $("#sch-status").addEventListener("change", e => { state.status = e.target.value; updateView(); });
@@ -1149,70 +1097,6 @@ if (APPTS.length === 0) {
   $("#today-week").addEventListener("click", () => { state.weekStart = startOfWeek(new Date(), 1); updateView(); });
   $("#next-week").addEventListener("click", () => { state.weekStart = addDays(state.weekStart, 7); updateView(); });
 
-  // ===== MODAL CRUD =====
-  function openModal(id = null) {
-    $("#appt-modal").classList.remove("hidden");
-    $("#appt-modal").classList.add("flex");
-
-    if (id) {
-      const a = APPTS.find(x => x.id === id);
-      $("#modal-title").textContent = "Sửa lịch hẹn";
-      $("#appt-id").value = a.id;
-      $("#appt-name").value = a.name;
-      $("#appt-provider").value = a.provider;
-      $("#appt-date").value = a.date;
-      $("#appt-start").value = a.start;
-      $("#appt-end").value = a.end;
-      $("#appt-status").value = a.status;
-      $("#appt-notes").value = a.notes || "";
-    } else {
-      $("#modal-title").textContent = "Thêm lịch hẹn";
-      $("#appt-form").reset();
-      $("#appt-id").value = "";
-    }
-  }
-  function closeModal() {
-    $("#appt-modal").classList.add("hidden");
-    $("#appt-modal").classList.remove("flex");
-  }
-  $("#btn-cancel").addEventListener("click", closeModal);
-
-  $("#appt-form").addEventListener("submit", e => {
-    e.preventDefault();
-    const id = $("#appt-id").value || `APT-${Date.now()}`;
-    const item = {
-      id,
-      name: $("#appt-name").value.trim(),
-      provider: $("#appt-provider").value.trim(),
-      date: $("#appt-date").value,
-      start: $("#appt-start").value,
-      end: $("#appt-end").value,
-      status: $("#appt-status").value,
-      notes: $("#appt-notes").value,
-    };
-    const idx = APPTS.findIndex(x => x.id === id);
-    if (idx >= 0) APPTS[idx] = item; else APPTS.push(item);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(APPTS));
-    closeModal(); updateView();
-  });
-
-  document.addEventListener("click", e => {
-    const edit = e.target.closest(".btn-edit");
-    const del  = e.target.closest(".btn-del");
-    if (edit) return openModal(edit.dataset.id);
-    if (del) {
-      const id = del.dataset.id;
-      if (confirm("Xoá lịch hẹn này?")) {
-        const idx = APPTS.findIndex(x => x.id === id);
-        if (idx >= 0) APPTS.splice(idx, 1);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(APPTS));
-        updateView();
-      }
-    }
-  });
-
-  $(".btn-add")?.addEventListener("click", e => { e.preventDefault(); openModal(); });
-
-  // Lần đầu
   updateView();
 }
+
