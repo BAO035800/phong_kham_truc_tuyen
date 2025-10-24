@@ -202,7 +202,7 @@ CREATE TABLE `lichhen` (
   `ma_dich_vu` int DEFAULT NULL,
   `ma_phong` int DEFAULT NULL,
   `thoi_gian` datetime NOT NULL,
-  `trang_thai` enum('CHO_XAC_NHAN','DA_XAC_NHAN','HOAN_THANH','DA_HUY') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'CHO_XAC_NHAN',
+  `trang_thai` enum('CHO_XAC_NHAN_EMAIL','CHO_XAC_NHAN','DA_XAC_NHAN','HOAN_THANH','DA_HUY') COLLATE utf8mb4_unicode_ci DEFAULT 'CHO_XAC_NHAN_EMAIL',
   `thoi_gian_xac_nhan` datetime DEFAULT NULL,
   `ghi_chu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `xac_nhan_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -216,7 +216,7 @@ CREATE TABLE `lichhen` (
   CONSTRAINT `lichhen_ibfk_2` FOREIGN KEY (`ma_bac_si`) REFERENCES `bacsi` (`ma_bac_si`) ON DELETE CASCADE,
   CONSTRAINT `lichhen_ibfk_3` FOREIGN KEY (`ma_dich_vu`) REFERENCES `dichvu` (`ma_dich_vu`) ON DELETE SET NULL,
   CONSTRAINT `lichhen_ibfk_4` FOREIGN KEY (`ma_phong`) REFERENCES `phong` (`ma_phong`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -225,7 +225,7 @@ CREATE TABLE `lichhen` (
 
 LOCK TABLES `lichhen` WRITE;
 /*!40000 ALTER TABLE `lichhen` DISABLE KEYS */;
-INSERT INTO `lichhen` VALUES (11,3,2,1,1,'2025-10-24 09:00:00','DA_XAC_NHAN',NULL,'Bệnh nhân có tiền sử dị ứng thuốc Penicillin.','d1d29c245219fa1248289211cf7b4694a79df15c03d3396905c44bf862521a8a','2025-10-22 22:32:51');
+INSERT INTO `lichhen` VALUES (15,3,2,1,1,'2025-10-24 09:00:00','DA_XAC_NHAN','2025-10-24 13:55:01','Bệnh nhân có tiền sử dị ứng thuốc Penicillin.','d8fc1b008ad2856ab060f255d5c2edea290c2d8990688c8351f6398f0464f427','2025-10-24 13:52:07');
 /*!40000 ALTER TABLE `lichhen` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -349,4 +349,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-22 22:37:34
+-- Dump completed on 2025-10-24 14:34:16
