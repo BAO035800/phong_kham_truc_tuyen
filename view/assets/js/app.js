@@ -211,42 +211,51 @@ async function renderPage() {
     if (!res.ok) throw new Error("Không thể tải trang xác nhận lịch hẹn");
     root.innerHTML = await res.text();
 
-    // ✅ Lấy token đúng từ sau dấu # (vd: #/confirm?token=abc123)
+    // ✅ Lấy token đúng từ URL: #/confirm?token=abc123
     const token = new URLSearchParams(hash.split("?")[1] || "").get("token");
+
+    const msg = document.getElementById("confirmMessage");
 
     if (token) {
       // 🔹 Gọi API xác nhận bên PHP
       const res2 = await fetch(
-        `http://localhost:8000/index.php?path=lichhen&action=xacNhanQuaEmail&token=${encodeURIComponent(token)}`
+        `http://localhost:8000/index.php?path=lichhen&action=xacNhanQuaEmail&token=${encodeURIComponent(token)}`,
+        { cache: "no-store" }
       );
+
       const data = await res2.json();
 
-      const msg = document.getElementById("confirmMessage");
+      // 🟢 Nếu thành công → hiển thị màu xanh + thông báo cụ thể
       if (data.status === "success") {
         msg.innerHTML = `
           <div class="text-green-600 text-center py-5 text-lg font-semibold">
             ✅ ${data.message}
+          </div>
+          <div class="text-center mt-4">
+            <a href="#/home" class="text-blue-600 underline hover:text-blue-800">Quay lại trang chủ</a>
           </div>`;
       } else {
+        // 🔴 Nếu lỗi
         msg.innerHTML = `
           <div class="text-red-600 text-center py-5 text-lg font-semibold">
-            ❌ ${data.message}
+            ❌ ${data.message || "Liên kết xác nhận không hợp lệ hoặc đã hết hạn."}
           </div>`;
       }
     } else {
-      document.getElementById("confirmMessage").innerHTML = `
+      msg.innerHTML = `
         <div class="text-gray-600 text-center py-5">
-          Không tìm thấy token trong liên kết.
+          Không tìm thấy token trong liên kết xác nhận.
         </div>`;
     }
   } catch (err) {
     console.error(err);
     root.innerHTML = `
-      <div class="text-center text-danger py-5">
-        Lỗi tải trang xác nhận lịch hẹn
+      <div class="text-center text-red-600 py-5">
+        ⚠️ Lỗi khi tải trang xác nhận lịch hẹn.
       </div>`;
   }
   break;
+
 
 
 
