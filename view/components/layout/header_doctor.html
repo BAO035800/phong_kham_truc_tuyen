@@ -47,17 +47,7 @@
         </nav>
       </div>
     </div>
-  </header>
-  
-  <script>
-    (function () {
-      const user = JSON.parse(localStorage.getItem("user") || "null");
-      const greet = document.getElementById("doctorGreeting");
-      if (user && greet) greet.textContent = `Xin chào, ${user.name}`;
-    })();
-  </script>
-  
-  
+  </header>  
   <!-- CSS -->
   <style>
   @keyframes gradientMove {
@@ -83,30 +73,4 @@
   }
   </style>
   
-  <!-- SCRIPT -->
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const user = JSON.parse(localStorage.getItem("user") || "null");
-    const greet = document.getElementById("doctorGreeting");
-    const logoutBtn = document.getElementById("logoutBtnDoctor");
-  
-    if (user) greet.textContent = `Xin chào, ${user.name}`;
-  
-    logoutBtn.addEventListener("click", async () => {
-      // Xóa thông tin đăng nhập
-      localStorage.removeItem("user");
-  
-      // Load lại header_guest.html
-      const header = document.getElementById("header");
-      const res = await fetch("./components/layout/header_guest.html?v=" + Date.now());
-      header.innerHTML = await res.text();
-  
-      // Chuyển đến trang login
-      window.location.hash = "#/login";
-  
-      // Render lại trang login ngay
-      if (typeof renderPage === "function") renderPage();
-    });
-  });
-  </script>
   

@@ -127,37 +127,3 @@
 
     </div>
   </section>
-  
-  <script>
-    // Lọc theo category + tìm kiếm tên dịch vụ
-    document.addEventListener("DOMContentLoaded", () => {
-      const chips = document.querySelectorAll(".svc-chip");
-      const cards = document.querySelectorAll(".svc-card");
-      const search = document.getElementById("svc-search");
-      let currentCat = "all";
-  
-      const apply = () => {
-        const q = (search?.value || "").trim().toLowerCase();
-        cards.forEach(card => {
-          const cat = card.getAttribute("data-cat");
-          const text = card.textContent.toLowerCase();
-          const matchCat = currentCat === "all" || cat === currentCat;
-          const matchQ = !q || text.includes(q);
-          card.classList.toggle("hidden", !(matchCat && matchQ));
-        });
-        if (window.AOS?.refresh) setTimeout(() => AOS.refresh(), 250);
-      };
-  
-      chips.forEach(btn => {
-        btn.addEventListener("click", () => {
-          currentCat = btn.getAttribute("data-cat");
-          chips.forEach(c => c.classList.remove("bg-primary","text-white","shadow"));
-          btn.classList.add("bg-primary","text-white","shadow");
-          apply();
-        });
-      });
-  
-      search?.addEventListener("input", apply);
-    });
-  </script>
-  

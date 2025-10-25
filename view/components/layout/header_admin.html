@@ -85,44 +85,5 @@
     .nav-link.active::after{ width:calc(100% - 32px); }
   </style>
   
-  <script>
-    // Greeting admin
-    (function () {
-      const user = JSON.parse(localStorage.getItem("user") || "null");
-      const greet = document.getElementById("adminGreeting");
-      if (user && greet) greet.textContent = `Xin chào, ${user.name}`;
-    })();
-  
-    // Active link theo hash (đồng bộ với header_doctor)
-    document.addEventListener("DOMContentLoaded", () => {
-      const links = Array.from(document.querySelectorAll(".nav-link"));
-      function setActive(){
-        const h = window.location.hash || "#/admin";
-        links.forEach(a => {
-          const active = a.getAttribute("href") === h;
-          a.classList.toggle("text-primary", active);
-          a.classList.toggle("font-semibold", active);
-          a.classList.toggle("active", active);
-          if (active) a.setAttribute("aria-current", "page");
-          else a.removeAttribute("aria-current");
-        });
-      }
-      setActive();
-      window.addEventListener("hashchange", setActive);
-  
-      // Logout (giữ nguyên id để app.js xử lý)
-      const logoutBtn = document.getElementById("logoutBtnAdmin");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-          localStorage.removeItem("user");
-          // nạp header_guest & điều hướng về login (giống doctor)
-          const header = document.getElementById("header");
-          const res = await fetch("./components/layout/header_guest.html?v=" + Date.now());
-          header.innerHTML = await res.text();
-          window.location.hash = "#/login";
-          if (typeof renderPage === "function") renderPage();
-        });
-      }
-    });
-  </script>
+
   

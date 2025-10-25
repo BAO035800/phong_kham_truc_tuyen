@@ -71,22 +71,4 @@
   }
   </style>
   
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const navLinks = document.querySelectorAll(".nav-link");
-  
-    function updateActiveLink() {
-      const currentHash = window.location.hash || "#/";
-      navLinks.forEach(link => {
-        const isActive = link.getAttribute("href") === currentHash;
-        link.classList.toggle("text-primary", isActive);
-        link.classList.toggle("font-semibold", isActive);
-        link.classList.toggle("after:w-full", isActive);
-      });
-    }
-  
-    updateActiveLink();
-    window.addEventListener("hashchange", updateActiveLink);
-  });
-  </script>
   
