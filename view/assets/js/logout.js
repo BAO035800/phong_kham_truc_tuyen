@@ -1,6 +1,6 @@
 // assets/js/logout.js
 (function () {
-  // ====== Config ======
+  // ===== Config =====
   const CFG = window.CONFIG || {};
   const API_BASE = CFG.API_BASE || "/index.php";
   const PATHS = CFG.PATHS || { AUTH: "auth" };
@@ -8,9 +8,9 @@
   const DEBUG = !!CFG.DEBUG;
   const log = (...a) => DEBUG && console.log("[logout]", ...a);
 
-  // ====== Utils ======
   const $ = (s, r = document) => r.querySelector(s);
 
+  // ===== Utils =====
   function getHeaderEl() {
     return document.getElementById("header_patient") || document.getElementById("header");
   }
@@ -20,7 +20,7 @@
     return (h && h.getAttribute("data-guest-url")) || "./components/header_guest.html";
   }
 
-  // ====== Core API ======
+  // ===== API helper =====
   async function api(pathKey, action, { method = "GET", data = null } = {}) {
     const path = PATHS[pathKey] || pathKey;
     const u = new URL(API_BASE);
@@ -32,28 +32,34 @@
       credentials: "include",
       headers: { Accept: "application/json" },
     };
-
     if (data) {
       opts.headers["Content-Type"] = "application/json";
       opts.body = JSON.stringify(data);
     }
 
-    const res = await fetch(u.toString(), opts);
-    const ctype = res.headers.get("content-type") || "";
-    const payload = ctype.includes("application/json") ? await res.json() : await res.text();
+    try {
+      const res = await fetch(u.toString(), opts);
+      const ctype = res.headers.get("content-type") || "";
+      const payload = ctype.includes("application/json")
+        ? await res.json()
+        : await res.text();
 
-    if (!res.ok) {
-      const msg = typeof payload === "string"
-        ? payload
-        : payload?.message || `HTTP ${res.status}`;
-      throw new Error(msg);
+      if (!res.ok) {
+        const msg =
+          typeof payload === "string"
+            ? payload
+            : payload?.message || `HTTP ${res.status}`;
+        throw new Error(msg);
+      }
+      return payload;
+    } catch (e) {
+      log("API lỗi:", e.message);
+      return { status: "error", message: e.message };
     }
-    return payload;
   }
 
-  // ====== Greeting ======
-  let isUpdatingGreeting = false; // ✅ chống vòng lặp MutationObserver
-
+  // ===== Greeting =====
+  let isUpdatingGreeting = false;
   async function setGreeting() {
     if (isUpdatingGreeting) return;
     isUpdatingGreeting = true;
@@ -65,53 +71,44 @@
     }
 
     try {
-      // Ưu tiên lấy từ localStorage trước (đỡ gọi API nhiều)
       const cached = localStorage.getItem(KEYS.USER || "user");
       if (cached) {
         const u = JSON.parse(cached);
         const name = u.ho_ten || u.name || u.email || "bạn";
         el.textContent = `Xin chào, ${name} 👋`;
-        log("Hiển thị từ cache:", name);
         isUpdatingGreeting = false;
         return;
       }
 
-      // Nếu không có cache, gọi API me
       const me = await api("AUTH", "me", { method: "GET" });
       if (me?.status === "ok" && me.user) {
         const name = me.user.ho_ten || me.user.name || me.user.email || "bạn";
         el.textContent = `Xin chào, ${name} 👋`;
         localStorage.setItem(KEYS.USER || "user", JSON.stringify(me.user));
-        log("Hiển thị từ API:", name);
       } else {
         el.textContent = "Xin chào 👋";
       }
     } catch (e) {
-      log("setGreeting() lỗi hoặc chưa đăng nhập:", e.message);
+      log("setGreeting lỗi:", e.message);
       el.textContent = "Xin chào 👋";
     } finally {
-      // Chờ DOM ổn định trước khi observer chạy lại
       setTimeout(() => (isUpdatingGreeting = false), 300);
     }
   }
 
-  // ====== Active link ======
-  function currentHash() {
-    const h = window.location.hash || "";
-    if (h.startsWith("?#")) return "#" + h.slice(2);
-    return h || "#/";
-  }
-
-  function setActiveLink() {
-    const cur = currentHash();
+  // ===== Active link =====
+  function updateActiveLink() {
+    const cur = window.location.hash || "#/";
     document.querySelectorAll(".nav-link").forEach((a) => {
       const href = a.getAttribute("href") || "";
       const isActive = cur === href || (href !== "#/" && cur.startsWith(href));
       a.classList.toggle("active", isActive);
+      a.classList.toggle("text-primary", isActive);
+      a.classList.toggle("font-semibold", isActive);
     });
   }
 
-  // ====== Mobile nav ======
+  // ===== Mobile nav =====
   function bindMobileNav() {
     const btn = document.querySelector('[data-toggle="mobile-nav"]');
     const nav = document.getElementById("navMain");
@@ -124,7 +121,7 @@
     });
   }
 
-  // ====== Logout ======
+  // ===== Logout =====
   async function doLogout() {
     log("Đang logout...");
     try {
@@ -137,7 +134,6 @@
       localStorage.removeItem(KEYS.USER || "user");
     } catch (_) {}
 
-    // Đổi header sang guest
     if (typeof window.swapHeaderByRoleKey === "function") {
       await window.swapHeaderByRoleKey(null);
     } else {
@@ -155,11 +151,11 @@
       }
     }
 
-    // Điều hướng login
     window.location.hash = "#/login";
     if (typeof window.renderPage === "function") window.renderPage();
   }
 
+  // ===== Event bindings =====
   function bindLogoutDelegation() {
     document.addEventListener("click", (ev) => {
       const btn = ev.target.closest("#logoutBtn");
@@ -169,22 +165,21 @@
     });
   }
 
-  // ====== DOM observer ======
+  // ===== DOM watcher =====
   function watchHeaderChanges() {
     const mo = new MutationObserver(() => {
-      if (!isUpdatingGreeting && document.getElementById("userGreeting")) {
-        setGreeting(); // chỉ gọi lại nếu có phần tử và không đang cập nhật
-      }
-      setActiveLink();
+      if (!isUpdatingGreeting && document.getElementById("userGreeting")) setGreeting();
+      updateActiveLink();
+      bindMobileNav();
     });
     mo.observe(document.body, { childList: true, subtree: true });
   }
 
-  // ====== Bootstrap ======
+  // ===== Bootstrap =====
   function init() {
     log("Khởi tạo logout.js");
     setGreeting();
-    setActiveLink();
+    updateActiveLink();
     bindMobileNav();
     bindLogoutDelegation();
     watchHeaderChanges();
@@ -196,5 +191,5 @@
     init();
   }
 
-  window.addEventListener("hashchange", setActiveLink);
+  window.addEventListener("hashchange", updateActiveLink);
 })();
