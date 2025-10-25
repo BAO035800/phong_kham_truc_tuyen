@@ -8,10 +8,9 @@ class AuthController
     public function __construct()
     {
         $this->auth = new Auth();
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
     private function requireAdmin()
@@ -44,8 +43,30 @@ class AuthController
 
                 case 'login':
                     $user = $this->auth->login($data);
-                    echo json_encode(['message' => 'Đăng nhập thành công', 'user' => $user]);
+                    
+                    $role = strtolower($user['vai_tro'] ?? '');
+                    if ($role === 'bacsi') $role = 'doctor';
+                    elseif ($role === 'benhnhan') $role = 'patient';
+                    
+                    // 🔒 Lưu vào session
+                    $id = $user['id'] ?? $user['ma_nguoi_dung'] ?? $user['id_nguoi_dung'] ?? null;
+                    $email = $user['email'] ?? $user['ten_dang_nhap'] ?? null;
+
+                    $_SESSION['user'] = [
+                        'id' => $id,
+                        'name' => $user['ten_dang_nhap'] ?? $email,
+                        'email' => $email,
+                        'vai_tro' => $role
+                    ];
+
+
+                    
+                    echo json_encode([
+                        'message' => 'Đăng nhập thành công',
+                        'user' => $_SESSION['user']
+                    ]);
                     break;
+                    
 
                 case 'logout':
                     $this->auth->logout();

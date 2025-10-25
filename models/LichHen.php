@@ -23,8 +23,12 @@ class LichHen
             $ma_benh_nhan = $data['ma_benh_nhan'];
             $ma_bac_si = $data['ma_bac_si'];
             $ma_dich_vu = $data['ma_dich_vu'];
-            $ma_phong = $data['ma_phong'];
-            $thoi_gian = $data['thoi_gian'];
+            $ma_phong     = null; 
+            if (!empty($data['ngay']) && !empty($data['gio'])) {
+                $thoi_gian = $data['ngay'] . ' ' . $data['gio'] . ':00';
+            } else {
+                throw new Exception("Thiếu ngày hoặc giờ khám.");
+            }
             $ghi_chu = $data['ghi_chu'] ?? '';
 
             // 🔍 Lấy thông tin bệnh nhân
@@ -53,10 +57,10 @@ class LichHen
 
             // 🗂️ Thêm lịch mới với trạng thái CHO_XAC_NHAN_EMAIL
             $sql = "INSERT INTO lichhen 
-                (ma_benh_nhan, ma_bac_si, ma_dich_vu, ma_phong, thoi_gian, trang_thai, ghi_chu, xac_nhan_token)
-                VALUES (?, ?, ?, ?, ?, 'CHO_XAC_NHAN_EMAIL', ?, ?)";
+                (ma_benh_nhan, ma_bac_si, ma_dich_vu, thoi_gian, trang_thai, ghi_chu, xac_nhan_token)
+                VALUES (?, ?, ?, ?, 'CHO_XAC_NHAN_EMAIL', ?, ?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$ma_benh_nhan, $ma_bac_si, $ma_dich_vu, $ma_phong, $thoi_gian, $ghi_chu, $token]);
+            $stmt->execute([$ma_benh_nhan, $ma_bac_si, $ma_dich_vu, $thoi_gian, $ghi_chu, $token]);
 
             $ma_lich_hen = $this->conn->lastInsertId();
             $this->conn->commit();
@@ -167,11 +171,11 @@ class LichHen
         FROM lichhen lh
         JOIN bacsi bs ON lh.ma_bac_si = bs.ma_bac_si
         JOIN dichvu dv ON lh.ma_dich_vu = dv.ma_dich_vu
-        JOIN phong p ON lh.ma_phong = p.ma_phong
         WHERE lh.ma_benh_nhan = ?
           AND lh.trang_thai <> 'CHO_XAC_NHAN_EMAIL'
         ORDER BY lh.thoi_gian DESC
-    ");
+    "); 
+    // JOIN phong p ON lh.ma_phong = p.ma_phong
         $stmt->execute([$ma_benh_nhan]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

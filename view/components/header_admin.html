@@ -1,0 +1,89 @@
+<!-- HEADER (ADMIN) -->
+<header class="w-full sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-border shadow-sm">
+    <!-- Topbar -->
+    <div class="w-full bg-primary text-white text-sm">
+        <div class="container mx-auto px-4 flex items-center justify-between py-1.5">
+          <div class="flex items-center gap-2 font-medium">
+            <i class="fa-solid fa-user-doctor text-xs"></i>
+            <span id="adminGreeting"></span>
+          </div>
+    
+          <button id="logoutBtn"
+            class="flex items-center justify-center w-9 h-9 rounded-full hover:bg-white/20 transition"
+            title="Đăng xuất">
+            <i class="fa-solid fa-right-from-bracket text-sm"></i>
+          </button>
+        </div>
+      </div>
+    <!-- Main Navigation -->
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between py-3">
+        <!-- Brand -->
+        <a href="#/admin" class="flex items-center gap-3 group">
+          <div class="h-10 w-10 rounded-xl bg-primary50 text-primary grid place-content-center shadow-soft">
+            <i class="fa-solid fa-sitemap"></i>
+          </div>
+          <div class="leading-tight">
+            <div class="font-extrabold text-lg text-textmain group-hover:text-primary transition">
+              Bảng Điều Khiển Admin
+            </div>
+            <div class="text-textmuted text-xs tracking-wide">Phòng Khám</div>
+          </div>
+        </a>
+  
+        <!-- Mobile toggle -->
+        <button type="button"
+          class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border hover:bg-bgpage"
+          data-toggle="mobile-nav" aria-controls="navMain" aria-expanded="false" aria-label="Mở menu">
+          <i class="fa-solid fa-bars text-slate-700"></i>
+        </button>
+  
+        <!-- Navigation -->
+        <nav id="navMain" class="hidden lg:block">
+          <ul class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-1">
+            <li>
+              <a href="#/admin"
+                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
+                Tổng quan
+              </a>
+            </li>
+            <li>
+              <a href="#/admin/doctors"
+                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
+                Bác sĩ
+              </a>
+            </li>
+            <li>
+              <a href="#/admin/services"
+                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
+                Dịch vụ
+              </a>
+            </li>
+            <li>
+              <a href="#/admin/patients"
+                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
+                Bệnh nhân
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Underline hover/active effect -->
+  <style>
+    .nav-link::after{
+      content:"";
+      position:absolute;
+      left:16px; right:16px; bottom:6px;
+      height:2px; width:0%;
+      background-color:currentColor;
+      transition:width .22s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after{ width:calc(100% - 32px); }
+  </style>
+  
+
+  

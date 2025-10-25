@@ -1,0 +1,72 @@
+<!-- HEADER (Patient - Sticky, Small, Themed, No Scroll Effect) -->
+<header id="mainHeader"
+  class="fixed top-0 left-0 w-full z-50 bg-surface border-b border-border shadow-sm">
+  
+  <!-- Top bar -->
+  <div class="bg-primary text-white text-sm">
+    <div class="container mx-auto px-4 flex items-center justify-between py-2">
+      <span id="userGreeting" class="font-medium"></span>
+      <button id="logoutBtn"
+        class="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-white/20 transition">
+        <i class="fa-solid fa-right-from-bracket text-xs"></i>
+        <span>Đăng xuất</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main navigation (small & sticky) -->
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between py-2.5"> <!-- nhỏ gọn -->
+      <!-- Logo -->
+      <a href="#/" class="flex items-center gap-2">
+        <img src="/view/assets/img/logo.png"
+             onerror="this.onerror=null;this.src='https://picsum.photos/60?random=10';"
+             alt="Logo" class="h-8 w-8 rounded-full object-cover shadow-sm">
+        <div class="leading-tight">
+          <div class="font-bold text-base text-primary">Phòng Khám</div>
+          <div class="text-textmuted text-[11px] tracking-wide">Chăm sóc sức khỏe tận tâm</div>
+        </div>
+      </a>
+
+      <!-- Menu -->
+      <nav id="navMain" class="hidden lg:block font-sans">
+        <ul class="flex items-center gap-1 text-[15px] font-medium">
+          <li><a href="#/"           class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Trang chủ</a></li>
+          <li><a href="#/booking"    class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Đặt lịch</a></li>
+          <li><a href="#/schedule"class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Lịch hẹn</a></li>
+          <li><a href="#/doctors"    class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Bác sĩ</a></li>
+          <li><a href="#/contact"    class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Liên hệ</a></li>
+        </ul>
+      </nav>
+
+      <!-- Mobile toggle -->
+      <button type="button"
+        class="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border hover:bg-bgpage transition"
+        data-toggle="mobile-nav" aria-controls="navMain" aria-expanded="false" aria-label="Mở menu">
+        <i class="fa-solid fa-bars text-textmain"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Spacer tránh header che nội dung (cao theo header nhỏ) -->
+<div style="height: 96px;"></div>
+
+<style>
+  /* Underline effect */
+  .nav-link::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:3px;
+    height:2px; width:0%; background-color: currentColor;
+    transition: width .25s ease;
+  }
+  .nav-link:hover::after{ width:100%; }
+
+  /* Active state: giữ màu primary + gạch chân */
+  .nav-link.active{
+    color:#0096C7; /* primary */
+    font-weight:600;
+  }
+  .nav-link.active::after{ width:100%; }
+</style>
+

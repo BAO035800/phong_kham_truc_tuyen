@@ -57,4 +57,10 @@ class DichVu
         $stmt = $this->db->prepare("DELETE FROM dichvu WHERE ma_dich_vu = ?");
         return $stmt->execute([$id]);
     }
+    public function getByChuyenKhoa($ma_chuyen_khoa) {
+        $stmt = $this->db->prepare("SELECT * FROM dichvu WHERE ma_chuyen_khoa = ?");
+        $stmt->execute([$ma_chuyen_khoa]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 }

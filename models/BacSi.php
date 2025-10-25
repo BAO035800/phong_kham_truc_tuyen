@@ -60,4 +60,14 @@ class BacSi
         $stmt = $this->db->prepare("DELETE FROM bacsi WHERE ma_bac_si=?");
         return $stmt->execute([$id]);
     }
+    public function getTatCaBacSi() {
+        $stmt = $this->db->prepare("SELECT ma_bac_si, ho_ten, chuyen_khoa FROM bacsi");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getByChuyenKhoa($ma_chuyen_khoa) {
+        $stmt = $this->db->prepare("SELECT * FROM bacsi WHERE ma_chuyen_khoa = ?");
+        $stmt->execute([$ma_chuyen_khoa]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 }

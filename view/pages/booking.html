@@ -21,26 +21,31 @@
           </h2>
 
           <form id="bookingForm" class="space-y-4 text-sm" novalidate>
-            <!-- Họ tên -->
-            <!-- <div>
-              <label for="fullname" class="block font-semibold mb-1">Họ và tên</label>
-              <input id="fullname" type="text"
-                     class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
-                     placeholder="Nguyễn Văn A" required>
-            </div> -->
+
+            <!-- Chuyên khoa -->
+            <div>
+              <label for="specialtySelect" class="block font-semibold mb-1">Chọn chuyên khoa</label>
+              <select id="specialtySelect"
+                      class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none" required>
+                <option value="" selected disabled>-- Đang tải chuyên khoa... --</option>
+              </select>
+            </div>
+
+            <!-- Dịch vụ -->
+            <div>
+              <label for="serviceSelect" class="block font-semibold mb-1">Chọn dịch vụ</label>
+              <select id="serviceSelect"
+                      class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none" required>
+                <option value="" selected disabled>-- Chọn chuyên khoa trước --</option>
+              </select>
+            </div>
 
             <!-- Bác sĩ -->
             <div>
               <label for="doctorSelect" class="block font-semibold mb-1">Chọn bác sĩ</label>
               <select id="doctorSelect"
                       class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none" required>
-                <option value="" selected disabled>-- Chọn bác sĩ --</option>
-                <option value="doctor1">BS. Minh Trí — Nội tổng quát</option>
-                <option value="doctor2">BS. Thu Hà — Nhi khoa</option>
-                <option value="doctor3">BS. Anh Tú — TMH</option>
-                <option value="doctor4">BS. Hồng Sơn — Tim mạch</option>
-                <option value="doctor5">BS. Thanh Mai — Da liễu</option>
-                <option value="doctor6">BS. Quốc Bảo — Ngoại tổng quát</option>
+                <option value="" selected disabled>-- Chọn dịch vụ trước --</option>
               </select>
             </div>
 
@@ -65,7 +70,7 @@
               <label for="note" class="block font-semibold mb-1">Ghi chú (tuỳ chọn)</label>
               <textarea id="note" rows="2"
                         class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
-                        placeholder="Ví dụ: Tôi bị ho 2 ngày nay..."></textarea>
+                        placeholder="Ví dụ: Tôi bị đau họng 2 ngày nay..."></textarea>
               <p class="text-gray-500 mt-1 text-xs">* Bạn có thể mô tả ngắn triệu chứng để bác sĩ chuẩn bị tốt hơn.</p>
             </div>
 

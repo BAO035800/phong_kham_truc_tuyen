@@ -7,11 +7,10 @@ class NguoiDungController
 
     public function __construct()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $this->model = new NguoiDung();
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
     }
 
     public function handleRequest()
@@ -24,10 +23,49 @@ class NguoiDungController
             case 'GET':
                 echo json_encode($id ? $this->model->find($id) : $this->model->all());
                 break;
-            case 'POST':
-                $id = $this->model->create($data);
-                echo json_encode(['message' => 'Thêm người dùng thành công', 'id' => $id]);
-                break;
+                case 'POST':
+                    try {
+                        if (empty($data) || !isset($data['vai_tro'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Thiếu dữ liệu hoặc vai trò người dùng']);
+                            break;
+                        }
+                
+                        $role = strtoupper(trim($data['vai_tro']));
+                        $id = null;
+                
+                        switch ($role) {
+                            case 'BENHNHAN':
+                                $id = $this->model->createBenhNhan($data);
+                                echo json_encode([
+                                    'status'  => 'success',
+                                    'message' => 'Thêm bệnh nhân thành công',
+                                    'id'      => $id
+                                ]);
+                                break;
+                
+                            case 'BACSI':
+                                $id = $this->model->createBacSi($data);
+                                echo json_encode([
+                                    'status'  => 'success',
+                                    'message' => 'Thêm bác sĩ thành công',
+                                    'id'      => $id
+                                ]);
+                                break;
+                
+                            default:
+                                http_response_code(400);
+                                echo json_encode(['error' => 'Vai trò không hợp lệ. Chỉ chấp nhận BENHNHAN hoặc BACSI.']);
+                        }
+                    } catch (Exception $e) {
+                        http_response_code(500);
+                        echo json_encode([
+                            'status'  => 'error',
+                            'message' => 'Lỗi khi thêm người dùng: ' . $e->getMessage()
+                        ]);
+                    }
+                    break;
+                
             case 'PUT':
                 $this->model->update($id, $data);
                 echo json_encode(['message' => 'Cập nhật thành công']);

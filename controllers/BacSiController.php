@@ -7,12 +7,11 @@ class BacSiController
 
     public function __construct()
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $this->model = new BacSi();
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
     }
 
     public function handleRequest()
@@ -36,6 +35,16 @@ class BacSiController
             case 'DELETE':
                 $this->model->delete($id);
                 echo json_encode(['message' => 'Xóa bác sĩ thành công']);
+                break;
+            case 'listCongKhai':
+                $result = $this->model->getTatCaBacSi();
+                echo json_encode($result);
+                break;
+            case 'listByChuyenKhoa':
+                $ma_chuyen_khoa = $_GET['ma_chuyen_khoa'] ?? null;
+                if (!$ma_chuyen_khoa) throw new Exception("Thiếu mã chuyên khoa.");
+                $result = $this->model->getByChuyenKhoa($ma_chuyen_khoa);
+                echo json_encode($result);
                 break;
             default:
                 echo json_encode(['error' => 'Phương thức không hợp lệ']);

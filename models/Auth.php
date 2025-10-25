@@ -5,11 +5,20 @@ require_once __DIR__ . '/NguoiDung.php';
 class Auth
 {
     private NguoiDung $nguoiDung;
-
+    private PDO $conn;   
     public function __construct()
     {
+        // ✅ Khởi tạo kết nối CSDL
+        $db = new Database();
+        $this->conn = $db->getConnection();  // <--- dòng quan trọng nhất
+
+        // ✅ Khởi tạo model NguoiDung
         $this->nguoiDung = new NguoiDung();
-        session_start();
+
+        // ✅ Bắt đầu session nếu chưa có
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
     public function registerBenhNhan($data)
@@ -103,30 +112,27 @@ class Auth
 
 
 
-    public function login($data)
-    {
-        $identifier = $data['identifier'] ?? null;
-        $mat_khau = $data['mat_khau'] ?? null;
+    public function login($data) {
+    $email = $data['email'] ?? '';
+    $password = $data['mat_khau'] ?? '';
 
-        if (!$identifier || !$mat_khau) {
-            throw new Exception("Vui lòng nhập tên đăng nhập/email và mật khẩu.");
-        }
+    $stmt = $this->conn->prepare("SELECT * FROM nguoidung WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $user = $this->nguoiDung->findByUsernameOrEmail($identifier);
-
-        if (!$user || !password_verify($mat_khau, $user['mat_khau'])) {
-            throw new Exception("Tên đăng nhập/email hoặc mật khẩu không đúng.");
-        }
-
-        $_SESSION['user'] = [
-            'id' => $user['ma_nguoi_dung'],
-            'ten_dang_nhap' => $user['ten_dang_nhap'],
-            'email' => $user['email'],
-            'vai_tro' => $user['vai_tro']
-        ];
-
-        return $_SESSION['user'];
+    if (!$user) {
+        throw new Exception("Email không tồn tại.");
     }
+
+    if (!password_verify($password, $user['mat_khau'])) {
+        throw new Exception("Mật khẩu không đúng.");
+    }
+
+    // ✅ Trả về dữ liệu người dùng để controller dùng
+    return $user;
+}
+
+
 
     public function logout()
     {
