@@ -3,15 +3,17 @@
     <!-- Ảnh minh hoạ -->
     <div class="lg:col-span-6">
       <div class="relative bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
-        <img src="/view/assets/img/clinic.jpg"
+        <img 
              alt="Phòng khám"
              class="w-full h-[220px] sm:h-[300px] lg:h-[520px] object-cover"
              onerror="this.onerror=null;this.src='https://picsum.photos/1200/800?random=21';" />
-        <div class="absolute left-3 top-3 px-3 py-1 rounded-full bg-black/40 text-white text-xs">🩺 Phòng khám</div>
+        <div class="absolute left-3 top-3 px-3 py-1 rounded-full bg-black/40 text-white text-xs">
+          🩺 Phòng khám
+        </div>
       </div>
     </div>
 
-    <!-- Form -->
+    <!-- Form đặt lịch -->
     <div class="lg:col-span-6">
       <div class="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
         <div class="p-5 md:p-6">
@@ -21,26 +23,15 @@
           </h2>
 
           <form id="bookingForm" class="space-y-4 text-sm" novalidate>
-            <!-- Họ tên -->
-            <!-- <div>
-              <label for="fullname" class="block font-semibold mb-1">Họ và tên</label>
-              <input id="fullname" type="text"
-                     class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
-                     placeholder="Nguyễn Văn A" required>
-            </div> -->
 
             <!-- Bác sĩ -->
             <div>
               <label for="doctorSelect" class="block font-semibold mb-1">Chọn bác sĩ</label>
               <select id="doctorSelect"
-                      class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none" required>
+                      class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
+                      required>
                 <option value="" selected disabled>-- Chọn bác sĩ --</option>
-                <option value="doctor1">BS. Minh Trí — Nội tổng quát</option>
-                <option value="doctor2">BS. Thu Hà — Nhi khoa</option>
-                <option value="doctor3">BS. Anh Tú — TMH</option>
-                <option value="doctor4">BS. Hồng Sơn — Tim mạch</option>
-                <option value="doctor5">BS. Thanh Mai — Da liễu</option>
-                <option value="doctor6">BS. Quốc Bảo — Ngoại tổng quát</option>
+                <!-- booking.js sẽ tự động load danh sách -->
               </select>
             </div>
 
@@ -48,13 +39,15 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label for="date" class="block font-semibold mb-1">Ngày khám</label>
-                <input id="date" type="date"
-                       class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none" required>
+                <input id="date" type="date" 
+                       class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
+                       required />
               </div>
               <div>
                 <label for="timeSelect" class="block font-semibold mb-1">Giờ khám trống</label>
                 <select id="timeSelect"
-                        class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
+                        required>
                   <option value="" selected disabled>— Chọn bác sĩ & ngày trước —</option>
                 </select>
               </div>
@@ -66,7 +59,9 @@
               <textarea id="note" rows="2"
                         class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-sky-500 focus:outline-none"
                         placeholder="Ví dụ: Tôi bị ho 2 ngày nay..."></textarea>
-              <p class="text-gray-500 mt-1 text-xs">* Bạn có thể mô tả ngắn triệu chứng để bác sĩ chuẩn bị tốt hơn.</p>
+              <p class="text-gray-500 mt-1 text-xs">
+                * Bạn có thể mô tả ngắn triệu chứng để bác sĩ chuẩn bị tốt hơn.
+              </p>
             </div>
 
             <!-- Nút gửi -->
@@ -74,6 +69,8 @@
                     class="w-full bg-sky-500 text-white font-semibold py-2.5 rounded-lg hover:bg-sky-600 transition">
               ✅ Xác nhận đặt lịch
             </button>
+
+            <!-- Khu vực hiển thị trạng thái -->
             <p id="statusMsg" class="text-center text-gray-500 text-sm mt-2"></p>
           </form>
         </div>

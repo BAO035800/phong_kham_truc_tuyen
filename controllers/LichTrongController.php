@@ -7,85 +7,96 @@ class LichTrongController
 
     public function __construct()
     {
+        if (session_status() === PHP_SESSION_NONE) session_start();
         $this->model = new LichTrong();
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        // KHÔNG set header ở đây
     }
 
-    private function requireAdminAndBacSi()
+    private function getInput(): array
+    {
+        $ctype = $_SERVER['CONTENT_TYPE'] ?? '';
+        if (stripos($ctype, 'application/json') !== false) {
+            $raw = file_get_contents('php://input');
+            $d = json_decode($raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($d)) return $d;
+        }
+        return $_POST ?: [];
+    }
+
+    private function requireAdminAndBacSi(): void
     {
         if (!isset($_SESSION['user'])) {
             http_response_code(401);
-            echo json_encode(['error' => 'Bạn chưa đăng nhập']);
-            exit;
+            throw new Exception('Bạn chưa đăng nhập');
         }
-
         $role = $_SESSION['user']['vai_tro'] ?? null;
-
-        // 🔒 Chỉ cho phép ADMIN hoặc BACSI
-        if (!in_array($role, ['ADMIN', 'BACSI'])) {
+        if (!in_array($role, ['ADMIN','BACSI'], true)) {
             http_response_code(403);
-            echo json_encode(['error' => 'Chỉ ADMIN hoặc BÁC SĨ mới có quyền thực hiện thao tác này']);
-            exit;
+            throw new Exception('Chỉ ADMIN hoặc BÁC SĨ mới có quyền thực hiện thao tác này');
         }
     }
 
-
-    public function handleRequest()
+    public function handleRequest(): array
     {
         $action = $_GET['action'] ?? '';
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data   = $this->getInput();
 
         try {
             switch ($action) {
-                case 'POST':
+                case 'POST': { // giữ nguyên ý đồ cũ của bạn
                     $this->requireAdminAndBacSi();
-                    $result = $this->model->taoLichTrong($data);
-                    echo json_encode($result);
-                    break;
+                    $res = $this->model->taoLichTrong($data);
+                    http_response_code(201);
+                    return $res;
+                }
 
-                case 'PUT':
-                    $this->requireAdminAndBacSi();
-                    $id = $_GET['id'] ?? null;
-                    if (!$id) throw new Exception("Thiếu mã lịch trống.");
-                    $result = $this->model->capNhatLich($id, $data);
-                    echo json_encode($result);
-                    break;
-
-                case 'DELETE':
+                case 'PUT': {
                     $this->requireAdminAndBacSi();
                     $id = $_GET['id'] ?? null;
-                    if (!$id) throw new Exception("Thiếu mã lịch trống.");
-                    $result = $this->model->xoaLich($id);
-                    echo json_encode($result);
-                    break;
+                    if (!$id) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu mã lịch trống']; }
+                    $res = $this->model->capNhatLich($id, $data);
+                    http_response_code(200);
+                    return $res;
+                }
 
-                case 'listByBacSi':
-                    $ma_bac_si = $_GET['ma_bac_si'] ?? null;
-                    if (!$ma_bac_si) throw new Exception("Thiếu mã bác sĩ.");
-                    $result = $this->model->getByBacSi($ma_bac_si);
-                    echo json_encode($result);
-                    break;
+                case 'DELETE': {
+                    $this->requireAdminAndBacSi();
+                    $id = $_GET['id'] ?? null;
+                    if (!$id) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu mã lịch trống']; }
+                    $res = $this->model->xoaLich($id);
+                    http_response_code(200);
+                    return $res;
+                }
 
-                case 'listCongKhai':
+                case 'listByBacSi': {
                     $ma_bac_si = $_GET['ma_bac_si'] ?? null;
-                    if (!$ma_bac_si) throw new Exception("Thiếu mã bác sĩ.");
-                    $result = $this->model->getLichTrongCongKhai($ma_bac_si);
-                    echo json_encode($result);
-                    break;
-                case 'listTatCa':
-                    $result = $this->model->getTatCaLichTrong();
-                    echo json_encode($result);
-                    break;
+                    if (!$ma_bac_si) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu mã bác sĩ']; }
+                    $res = $this->model->getByBacSi($ma_bac_si);
+                    http_response_code(200);
+                    return ['status'=>'ok','data'=>$res];
+                }
+
+                case 'listCongKhai': {
+                    $ma_bac_si = $_GET['ma_bac_si'] ?? null;
+                    if (!$ma_bac_si) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu mã bác sĩ']; }
+                    $res = $this->model->getLichTrongCongKhai($ma_bac_si);
+                    http_response_code(200);
+                    return ['status'=>'ok','data'=>$res];
+                }
+
+                case 'listTatCa': {
+                    $res = $this->model->getTatCaLichTrong();
+                    http_response_code(200);
+                    return ['status'=>'ok','data'=>$res];
+                }
 
                 default:
-                    echo json_encode(['error' => 'Hành động không hợp lệ.']);
+                    http_response_code(404);
+                    return ['status'=>'error','message'=>'Hành động không hợp lệ'];
             }
         } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode(['error' => $e->getMessage()]);
+            if (http_response_code() < 400) http_response_code(400);
+            return ['status'=>'error','message'=>$e->getMessage()];
         }
     }
 }

@@ -7,67 +7,82 @@ class ChuyenKhoaController
 
     public function __construct()
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
         $this->model = new ChuyenKhoa();
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        // KHÔNG set header ở đây
     }
 
-    private function requireAdmin()
+    private function getInput(): array
+    {
+        $ctype = $_SERVER['CONTENT_TYPE'] ?? '';
+        if (stripos($ctype, 'application/json') !== false) {
+            $raw = file_get_contents('php://input');
+            $d = json_decode($raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($d)) return $d;
+        }
+        return $_POST ?: [];
+    }
+
+    private function getId(): ?int
+    {
+        if (!isset($_GET['id'])) return null;
+        $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+        return $id === false ? null : $id;
+    }
+
+    private function requireAdmin(): void
     {
         $user = $_SESSION['user'] ?? null;
-        if (!$user || $user['vai_tro'] !== 'ADMIN') {
+        if (!$user || ($user['vai_tro'] ?? '') !== 'ADMIN') {
             http_response_code(403);
-            echo json_encode(['error' => 'Chỉ ADMIN mới có quyền thực hiện thao tác này']);
-            exit;
+            throw new Exception('Chỉ ADMIN mới có quyền thực hiện thao tác này');
         }
     }
 
-    public function handleRequest()
+    public function handleRequest(): array
     {
-        $method = $_SERVER['REQUEST_METHOD'];
-        $id = $_GET['id'] ?? null;
-        $data = json_decode(file_get_contents('php://input'), true);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $id     = $this->getId();
+        $data   = $this->getInput();
 
         try {
             switch ($method) {
-                // 🟢 Xem danh sách hoặc chi tiết chuyên khoa
                 case 'GET':
-                    echo json_encode($id ? $this->model->find($id) : $this->model->all());
-                    break;
+                    http_response_code(200);
+                    if ($id !== null) {
+                        $row = $this->model->find($id);
+                        return $row ? ['status'=>'ok','data'=>$row]
+                                    : (http_response_code(404) || true) && ['status'=>'error','message'=>'Không tìm thấy'];
+                    }
+                    return ['status'=>'ok','data'=>$this->model->all()];
 
-                // 🟡 Thêm chuyên khoa (ADMIN)
                 case 'POST':
                     $this->requireAdmin();
-                    $id = $this->model->create($data);
-                    echo json_encode(['message' => 'Thêm chuyên khoa thành công', 'id' => $id]);
-                    break;
+                    $newId = $this->model->create($data);
+                    http_response_code(201);
+                    return ['status'=>'ok','message'=>'Thêm chuyên khoa thành công','id'=>$newId];
 
-                // 🟠 Sửa chuyên khoa (ADMIN)
                 case 'PUT':
                     $this->requireAdmin();
-                    if (!$id) throw new Exception("Thiếu ID chuyên khoa để cập nhật");
+                    if ($id === null) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu ID chuyên khoa để cập nhật']; }
                     $this->model->update($id, $data);
-                    echo json_encode(['message' => 'Cập nhật chuyên khoa thành công']);
-                    break;
+                    http_response_code(200);
+                    return ['status'=>'ok','message'=>'Cập nhật chuyên khoa thành công'];
 
-                // 🔴 Xóa chuyên khoa (ADMIN)
                 case 'DELETE':
                     $this->requireAdmin();
-                    if (!$id) throw new Exception("Thiếu ID chuyên khoa để xóa");
+                    if ($id === null) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu ID chuyên khoa để xóa']; }
                     $this->model->delete($id);
-                    echo json_encode(['message' => 'Xóa chuyên khoa thành công']);
-                    break;
+                    http_response_code(200);
+                    return ['status'=>'ok','message'=>'Xóa chuyên khoa thành công'];
 
                 default:
                     http_response_code(405);
-                    echo json_encode(['error' => 'Phương thức không hợp lệ']);
+                    return ['status'=>'error','message'=>'Phương thức không hợp lệ'];
             }
         } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode(['error' => $e->getMessage()]);
+            if (http_response_code() < 400) http_response_code(400);
+            return ['status'=>'error','message'=>$e->getMessage()];
         }
     }
 }

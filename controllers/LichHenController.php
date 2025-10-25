@@ -7,82 +7,127 @@ class LichHenController
 
     public function __construct()
     {
+        if (session_status() === PHP_SESSION_NONE) session_start();
         $this->model = new LichHen();
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
     }
-    private function requireAdminAndBacSi()
+
+    private function getInput(): array
+    {
+        $ctype = $_SERVER['CONTENT_TYPE'] ?? '';
+        if (stripos($ctype, 'application/json') !== false) {
+            $raw = file_get_contents('php://input');
+            $d = json_decode($raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($d)) return $d;
+        }
+        return $_POST ?: [];
+    }
+
+    private function requireAdminAndBacSi(): void
     {
         if (!isset($_SESSION['user'])) {
             http_response_code(401);
-            echo json_encode(['error' => 'Bạn chưa đăng nhập']);
-            exit;
+            throw new Exception('Bạn chưa đăng nhập');
         }
-
         $role = $_SESSION['user']['vai_tro'] ?? null;
-
-        // 🔒 Chỉ cho phép ADMIN hoặc BACSI
-        if (!in_array($role, ['ADMIN', 'BACSI'])) {
+        if (!in_array($role, ['ADMIN','BACSI'], true)) {
             http_response_code(403);
-            echo json_encode(['error' => 'Chỉ ADMIN hoặc BÁC SĨ mới có quyền thực hiện thao tác này']);
-            exit;
+            throw new Exception('Chỉ ADMIN hoặc BÁC SĨ mới có quyền thực hiện thao tác này');
         }
     }
 
-    public function handleRequest()
+    public function handleRequest(): array
     {
         $action = $_GET['action'] ?? '';
-        $data = json_decode(file_get_contents("php://input"), true);
+        $data   = $this->getInput();
 
         try {
             switch ($action) {
-                case 'datLich':
-                    $result = $this->model->datLich($data);
-                    echo json_encode($result);
-                    break;
+                case 'datLich': {
+    $d = $data;
 
-                case 'huyLich':
+    // 1) Chuẩn hoá ngày: cho phép dd/mm/yyyy
+    if (!empty($d['ngay']) && preg_match('#^\d{1,2}/\d{1,2}/\d{4}$#', $d['ngay'])) {
+        $dt = DateTime::createFromFormat('d/m/Y', $d['ngay']);
+        if ($dt) $d['ngay'] = $dt->format('Y-m-d');
+    }
+
+    // 2) Suy ra ma_benh_nhan từ session nếu FE không gửi
+    if (empty($d['ma_benh_nhan']) && !empty($_SESSION['user'])) {
+        $u = $_SESSION['user'];
+        if (!empty($u['ma_benh_nhan'])) {
+            $d['ma_benh_nhan'] = $u['ma_benh_nhan'];
+        } else {
+            $maNguoiDung = $u['ma_nguoi_dung'] ?? $u['id'] ?? null;
+            if ($maNguoiDung) {
+                $found = $this->model->findBenhNhanIdByUserId((int)$maNguoiDung);
+                if ($found) $d['ma_benh_nhan'] = $found;
+            }
+        }
+    }
+
+    if (empty($d['ma_benh_nhan'])) {
+        http_response_code(400);
+        return ['status' => 'error', 'message' => 'Thiếu hoặc không xác định được mã bệnh nhân'];
+    }
+    if (empty($d['ma_bac_si']) || empty($d['ngay']) || empty($d['gio'])) {
+        http_response_code(400);
+        return ['status'=>'error','message'=>'Thiếu thông tin bắt buộc (bác sĩ / ngày / giờ)'];
+    }
+
+    // 🔧 GHÉP thoi_gian cho đúng mô-típ model
+    // d['gio'] dạng HH:MM -> thêm :00 để thành HH:MM:SS
+    $d['thoi_gian'] = $d['ngay'] . ' ' . (strlen($d['gio']) === 5 ? ($d['gio'].':00') : $d['gio']);
+
+    // (tuỳ chọn) nếu FE không gửi ma_dich_vu / ma_phong, để model tự lấy từ slot 'lichtrong'
+    $d['ma_dich_vu'] = $d['ma_dich_vu'] ?? null;
+    $d['ma_phong']   = $d['ma_phong']   ?? null;
+
+    $res = $this->model->datLich($d);
+    http_response_code(200);
+    return $res;
+}
+
+
+                case 'huyLich': {
                     $id = $_GET['id'] ?? null;
-                    if (!$id) throw new Exception("Thiếu mã lịch hẹn.");
-                    $result = $this->model->huyLich($id);
-                    echo json_encode($result);
-                    break;
+                    if (!$id) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu mã lịch hẹn']; }
+                    $res = $this->model->huyLich($id);
+                    http_response_code(200);
+                    return $res;
+                }
 
-                case 'listByBenhNhan':
+                case 'listByBenhNhan': {
                     $ma_benh_nhan = $_GET['ma_benh_nhan'] ?? null;
-                    if (!$ma_benh_nhan) throw new Exception("Thiếu mã bệnh nhân.");
-                    $result = $this->model->getByBenhNhan($ma_benh_nhan);
-                    echo json_encode($result);
-                    break;
-                case 'xacNhanLich':
+                    if (!$ma_benh_nhan) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu mã bệnh nhân']; }
+                    $res = $this->model->getByBenhNhan($ma_benh_nhan);
+                    http_response_code(200);
+                    return ['status'=>'ok','data'=>$res];
+                }
+
+                case 'xacNhanLich': {
                     $this->requireAdminAndBacSi();
-
                     $ma_lich_hen = $data['ma_lich_hen'] ?? null;
-                    if (!$ma_lich_hen) {
-                        throw new Exception("Thiếu mã lịch hẹn.");
-                    }
+                    if (!$ma_lich_hen) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu mã lịch hẹn']; }
+                    $res = $this->model->xacNhanLich($ma_lich_hen);
+                    http_response_code(200);
+                    return $res;
+                }
 
-                    // ✅ Gọi model chỉ với mã lịch hẹn
-                    $result = $this->model->xacNhanLich($ma_lich_hen);
-                    echo json_encode($result);
-                    break;
-                case 'xacNhanQuaEmail':
+                case 'xacNhanQuaEmail': {
                     $token = $_GET['token'] ?? null;
-                    if (!$token) throw new Exception("Thiếu token xác nhận.");
-                    $result = $this->model->xacNhanQuaEmail($token);
-                    echo json_encode($result);
-                    break;
-
-
+                    if (!$token) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu token xác nhận']; }
+                    $res = $this->model->xacNhanQuaEmail($token);
+                    http_response_code(200);
+                    return $res;
+                }
 
                 default:
-                    echo json_encode(['error' => 'Hành động không hợp lệ']);
+                    http_response_code(404);
+                    return ['status'=>'error','message'=>'Hành động không hợp lệ'];
             }
         } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode(['error' => $e->getMessage()]);
+            if (http_response_code() < 400) http_response_code(400);
+            return ['status'=>'error','message'=>$e->getMessage()];
         }
     }
 }

@@ -1,5 +1,17 @@
-<section class="flex justify-center items-center min-h-[60vh]">
-  <div id="confirmMessage" class="text-gray-700 text-center text-lg">
-    ⏳ Đang xác nhận lịch hẹn của bạn...
+<!-- /view/pages/confirm.html -->
+<section class="max-w-lg mx-auto bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+  <h2 class="text-lg font-semibold mb-3">Xác nhận lịch hẹn</h2>
+  <div class="text-sm mb-3">
+    <div>Token:</div>
+    <code id="tokenBox" class="block bg-gray-100 p-2 rounded text-xs break-all"></code>
   </div>
+  <p id="confirmMsg" class="text-gray-600 mb-4">Đang xác nhận...</p>
+  <details class="mb-4">
+    <summary class="cursor-pointer text-sm text-gray-600">Chi tiết phản hồi</summary>
+    <pre id="rawBox" class="bg-gray-50 border border-gray-200 p-3 rounded text-xs overflow-auto"></pre>
+  </details>
+  <a id="backLink" href="#/schedule"
+     class="hidden inline-block px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600">
+    Về Lịch hẹn
+  </a>
 </section>

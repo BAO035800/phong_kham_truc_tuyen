@@ -1,5 +1,20 @@
 {
+    "name": "baomo/phong_kham_truc_tuyen",
+    "autoload": {
+        "psr-4": {
+            "Baomo\\PhongKhamTrucTuyen\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "BAO035800",
+            "email": "baomoren50@gmail.com"
+        }
+    ],
     "require": {
-        "phpmailer/phpmailer": "^7.0"
+        "phpmailer/phpmailer": "^7.0",
+        "league/oauth2-client": "^2.8",
+        "league/oauth2-google": "^4.0",
+        "psr/log": "^3.0"
     }
 }

@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Phòng Khám Trực Tuyến - Đặt lịch khám</title>
 
-    <!-- 🎨 Tailwind qua CDN -->
+    <!-- 🎨 Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- ⚙️ Cấu hình màu sắc -->
+    <!-- ⚙️ Tailwind theme -->
     <script>
       tailwind.config = {
         theme: {
@@ -22,83 +22,75 @@
               surface: "#FFFFFF",
               textmain: "#1E293B",
               border: "#E2E8F0",
-              textmuted: "#475569", 
-              bgpage: "#F1F5F9"
+              textmuted: "#475569",
+              bgpage: "#F1F5F9",
             },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-            boxShadow: {
-              card: "0 2px 8px rgba(0, 0, 0, 0.05)",
-            },
+            fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+            boxShadow: { card: "0 2px 8px rgba(0,0,0,.05)" },
           },
         },
       };
     </script>
 
     <!-- 🧩 Font Awesome -->
-    <link
-      href="./assets/font-awesome-6.6.0-pro-full-main/css/all.css"
-      rel="stylesheet"
-    />
+    <link href="./assets/font-awesome-6.6.0-pro-full-main/css/all.css" rel="stylesheet" />
 
-    <!-- 📅 FullCalendar -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.css"
-      rel="stylesheet"
-    />
-    <!-- 🌈 Animate On Scroll (AOS) -->
-    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/embla-carousel/embla.css">
-    <script src="https://unpkg.com/embla-carousel/embla.umd.js"></script>
+    <!-- 📅 FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.css" rel="stylesheet" />
+
+    <!-- 🌈 AOS -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+    <!-- Embla Carousel CSS (nếu cần dùng) -->
+    <link rel="stylesheet" href="https://unpkg.com/embla-carousel/embla.css" />
 
     <style>
-      /* Parallax effect cho Hero Section */
-      .parallax-bg {
-        background-attachment: fixed;
-        background-size: cover;
-        background-position: center;
-      }
+      .parallax-bg { background-attachment: fixed; background-size: cover; background-position: center; }
     </style>
-
   </head>
 
   <body class="bg-bgpage text-textmain font-sans">
     <div id="app" class="min-h-screen flex flex-col">
       <!-- Header -->
-      <header id="header" class="bg-surface shadow-sm">
-      </header>
+      <header id="header" class="bg-surface shadow-sm"></header>
 
-      <!-- Nội dung chính -->
-      <main id="view-root" aria-live="polite" class="container mx-auto px-6 py-10 grow">
-      </main>
+      <!-- Nội dung -->
+      <main id="view-root" aria-live="polite" class="container mx-auto px-6 py-10 grow"></main>
 
       <!-- Footer -->
-      <footer id="footer" class="bg-surface border-t border-border py-6 mt-8">
-      </footer>
+      <footer id="footer" class="bg-surface border-t border-border py-6 mt-8"></footer>
     </div>
 
-    <!-- 📅 FullCalendar JS -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
+    <!-- ===== Vendor JS (defer) ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js" defer></script>
+    <script src="https://unpkg.com/embla-carousel/embla.umd.js" defer></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js" defer></script>
 
-    <!-- ⚙️ App JS -->
-    <script src="./assets/js/app.js" defer></script>
-    <!-- 🌈 AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <script>
+   <!-- App Config & Core -->
+   <script src="./assets/js/config.js" defer></script>
+   <script src="./assets/js/logout.js" defer></script>
+   <script src="./assets/js/auth.js" defer></script>
+   
+   <!-- Page scripts -->
+   <script src="./assets/js/pages/login.js" defer></script>
+   <script src="./assets/js/pages/register.js" defer></script>
+   <script src="./assets/js/pages/booking.js" defer></script>
+   <script src="./assets/js/pages/confirm.js" defer></script>
+   
+   <!-- Router -->
+   <script src="./assets/js/app.js" defer></script>
+   
+
+    <!-- AOS init + refresh cho SPA -->
+    <script defer>
       document.addEventListener("DOMContentLoaded", () => {
-        AOS.init({
-          duration: 800,      // thời gian hiệu ứng (ms)
-          once: true,         // chỉ chạy 1 lần
-          easing: "ease-out", // mượt mà
-        });
+        if (window.AOS) {
+          AOS.init({ duration: 800, once: true, easing: "ease-out" });
+        }
       });
-
-      // Làm mới hiệu ứng mỗi khi thay đổi trang (SPA)
       window.addEventListener("hashchange", () => {
-        setTimeout(() => AOS.refresh(), 400);
+        setTimeout(() => window.AOS && AOS.refresh(), 400);
       });
     </script>
-
   </body>
 </html>

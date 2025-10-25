@@ -7,48 +7,70 @@ class BenhNhanController
 
     public function __construct()
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
         $this->model = new BenhNhan();
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        // KHÔNG set header ở đây
     }
 
-    public function handleRequest()
+    private function getInput(): array
     {
-        $method = $_SERVER['REQUEST_METHOD'];
-        $id = $_GET['id'] ?? null;
-        $data = json_decode(file_get_contents('php://input'), true);
+        $ctype = $_SERVER['CONTENT_TYPE'] ?? '';
+        if (stripos($ctype, 'application/json') !== false) {
+            $raw = file_get_contents('php://input');
+            $d = json_decode($raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($d)) return $d;
+        }
+        return $_POST ?: [];
+    }
+
+    private function getId(): ?int
+    {
+        if (!isset($_GET['id'])) return null;
+        $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+        return $id === false ? null : $id;
+    }
+
+    public function handleRequest(): array
+    {
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $id     = $this->getId();
+        $data   = $this->getInput();
 
         try {
             switch ($method) {
                 case 'GET':
-                    echo json_encode($id ? $this->model->find($id) : $this->model->all());
-                    break;
+                    http_response_code(200);
+                    if ($id !== null) {
+                        $row = $this->model->find($id);
+                        return $row ? ['status'=>'ok','data'=>$row]
+                                    : (http_response_code(404) || true) && ['status'=>'error','message'=>'Không tìm thấy'];
+                    }
+                    return ['status'=>'ok','data'=>$this->model->all()];
 
                 case 'POST':
-                    $id = $this->model->create($data);
-                    echo json_encode(['message' => 'Thêm bệnh nhân thành công', 'id' => $id]);
-                    break;
+                    $newId = $this->model->create($data);
+                    http_response_code(201);
+                    return ['status'=>'ok','message'=>'Thêm bệnh nhân thành công','id'=>$newId];
 
                 case 'PUT':
+                    if ($id === null) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu id']; }
                     $this->model->update($id, $data);
-                    echo json_encode(['message' => 'Cập nhật bệnh nhân thành công']);
-                    break;
+                    http_response_code(200);
+                    return ['status'=>'ok','message'=>'Cập nhật bệnh nhân thành công'];
 
                 case 'DELETE':
+                    if ($id === null) { http_response_code(400); return ['status'=>'error','message'=>'Thiếu id']; }
                     $this->model->delete($id);
-                    echo json_encode(['message' => 'Xóa bệnh nhân thành công']);
-                    break;
+                    http_response_code(200);
+                    return ['status'=>'ok','message'=>'Xóa bệnh nhân thành công'];
 
                 default:
                     http_response_code(405);
-                    echo json_encode(['error' => 'Phương thức không hợp lệ']);
+                    return ['status'=>'error','message'=>'Phương thức không hợp lệ'];
             }
         } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode(['error' => $e->getMessage()]);
+            if (http_response_code() < 400) http_response_code(400);
+            return ['status'=>'error','message'=>$e->getMessage()];
         }
     }
 }

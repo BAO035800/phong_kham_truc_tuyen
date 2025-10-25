@@ -230,4 +230,24 @@ class LichHen
             throw new Exception("Lỗi khi xác nhận lịch: " . $e->getMessage());
         }
     }
+   public function findBenhNhanIdByUserId(int $maNguoiDung): ?int
+{
+    // Ưu tiên theo đúng schema bạn đã dùng ở trên: "benhnhan"
+    $sql1 = "SELECT ma_benh_nhan FROM benhnhan WHERE ma_nguoi_dung = :uid LIMIT 1";
+    $stmt = $this->conn->prepare($sql1);
+    $stmt->execute([':uid' => $maNguoiDung]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row && isset($row['ma_benh_nhan'])) {
+        return (int)$row['ma_benh_nhan'];
+    }
+
+    // Fallback (nếu DB của bạn đặt tên bảng là "benh_nhan")
+    $sql2 = "SELECT ma_benh_nhan FROM benh_nhan WHERE ma_nguoi_dung = :uid LIMIT 1";
+    $stmt = $this->conn->prepare($sql2);
+    $stmt->execute([':uid' => $maNguoiDung]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row && isset($row['ma_benh_nhan']) ? (int)$row['ma_benh_nhan'] : null;
+}
+
+    
 }
