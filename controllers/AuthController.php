@@ -7,9 +7,11 @@ class AuthController
 
     public function __construct()
     {
-        // CORS + Content-Type đã làm ở public/index.php
+        // Chỉ bật session nếu chưa có (index.php đã start rồi)
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $this->auth = new Auth();
-        if (session_status() === PHP_SESSION_NONE) session_start();
     }
 
     /** Đọc input: ưu tiên JSON, fallback sang $_POST */
@@ -17,7 +19,7 @@ class AuthController
     {
         $ctype = $_SERVER['CONTENT_TYPE'] ?? '';
         if (stripos($ctype, 'application/json') !== false) {
-            $raw = file_get_contents('php://input');
+            $raw  = file_get_contents('php://input');
             $data = json_decode($raw, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
                 return $data;
@@ -41,59 +43,58 @@ class AuthController
         $action = $_GET['action'] ?? '';
         $data   = $this->getInput();
 
-        switch ($action) {
-            case 'registerBenhNhan': {
-                $res = $this->auth->registerBenhNhan($data);
-                // $res (từ model Auth) đã trả mảng status/message/user_id
-                http_response_code(200);
-                return $res;
-            }
-
-            case 'registerBacSi': {
-                $this->requireAdmin();
-                $res = $this->auth->registerBacSi($data);
-                http_response_code(200);
-                return $res;
-            }
-
-            case 'login': {
-                // Map linh hoạt: nhận email/password hoặc identifier/mat_khau
-                $mapped = [
-                    'identifier' => $data['identifier'] ?? ($data['email'] ?? null),
-                    'mat_khau'   => $data['mat_khau']   ?? ($data['password'] ?? null),
-                ];
-                if (!$mapped['identifier'] || !$mapped['mat_khau']) {
-                    http_response_code(400);
-                    return ['status' => 'error', 'message' => 'Thiếu thông tin đăng nhập'];
+        try {
+            switch ($action) {
+                case 'registerBenhNhan': {
+                    $res = $this->auth->registerBenhNhan($data);
+                    http_response_code(200);
+                    return $res;
                 }
 
-                try {
+                case 'registerBacSi': {
+                    $this->requireAdmin();
+                    $res = $this->auth->registerBacSi($data);
+                    http_response_code(200);
+                    return $res;
+                }
+
+                case 'login': {
+                    // Map linh hoạt: email/password hoặc identifier/mat_khau
+                    $mapped = [
+                        'identifier' => $data['identifier'] ?? ($data['email'] ?? null),
+                        'mat_khau'   => $data['mat_khau']   ?? ($data['password'] ?? null),
+                    ];
+                    if (!$mapped['identifier'] || !$mapped['mat_khau']) {
+                        http_response_code(400);
+                        return ['status' => 'error', 'message' => 'Thiếu thông tin đăng nhập'];
+                    }
+
                     $user = $this->auth->login($mapped);
                     http_response_code(200);
                     return ['status' => 'ok', 'message' => 'Đăng nhập thành công', 'user' => $user];
-                } catch (Exception $e) {
-                    http_response_code(401);
-                    return ['status' => 'error', 'message' => $e->getMessage()];
                 }
-            }
 
-            case 'logout': {
-                $this->auth->logout();
-                http_response_code(200);
-                return ['status' => 'ok', 'message' => 'Đã đăng xuất'];
-            }
+                case 'logout': {
+                    $this->auth->logout();
+                    http_response_code(200);
+                    return ['status' => 'ok', 'message' => 'Đã đăng xuất'];
+                }
 
-            case 'me': {
-                $user = $this->auth->currentUser();
-                http_response_code(200);
-                return $user ? ['status' => 'ok', 'user' => $user]
-                             : ['status' => 'error', 'message' => 'Chưa đăng nhập'];
-            }
+                case 'me': {
+                    $user = $this->auth->currentUser();
+                    http_response_code(200);
+                    return $user
+                        ? ['status' => 'ok', 'user' => $user]
+                        : ['status' => 'error', 'message' => 'Chưa đăng nhập'];
+                }
 
-            default: {
-                http_response_code(404);
-                return ['status' => 'error', 'message' => 'Hành động không hợp lệ'];
+                default:
+                    http_response_code(404);
+                    return ['status' => 'error', 'message' => 'Hành động không hợp lệ'];
             }
+        } catch (Exception $e) {
+            if (http_response_code() < 400) http_response_code(400);
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 }

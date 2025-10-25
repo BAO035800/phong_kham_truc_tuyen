@@ -9,7 +9,7 @@ class Auth
     public function __construct()
     {
         $this->nguoiDung = new NguoiDung();
-        session_start();
+        // session_start();
     }
 
     public function registerBenhNhan($data)
