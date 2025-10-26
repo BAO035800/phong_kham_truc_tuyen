@@ -161,24 +161,42 @@ class LichHen
     /**
      * 🔹 Lấy danh sách lịch hẹn theo bệnh nhân
      */
+    /**
+ * 🔹 Lấy danh sách lịch hẹn theo bệnh nhân
+ */
+    /**
+ * 🔹 Lấy danh sách lịch hẹn theo bệnh nhân
+ */
     public function getByBenhNhan($ma_benh_nhan)
     {
-        $stmt = $this->conn->prepare("
-        SELECT lh.*, 
-               bs.ho_ten AS ten_bac_si, 
-               dv.ten_dich_vu, 
-               p.ten_phong
-        FROM lichhen lh
-        JOIN bacsi bs ON lh.ma_bac_si = bs.ma_bac_si
-        JOIN dichvu dv ON lh.ma_dich_vu = dv.ma_dich_vu
-        WHERE lh.ma_benh_nhan = ?
-          AND lh.trang_thai <> 'CHO_XAC_NHAN_EMAIL'
-        ORDER BY lh.thoi_gian DESC
-    "); 
-    // JOIN phong p ON lh.ma_phong = p.ma_phong
-        $stmt->execute([$ma_benh_nhan]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "
+                SELECT 
+                    lh.ma_lich_hen,
+                    DATE(lh.thoi_gian) AS ngay_hen,
+                    TIME_FORMAT(lh.thoi_gian, '%H:%i') AS gio_hen,
+                    lh.trang_thai,
+                    lh.ghi_chu,
+                    bs.ho_ten AS ten_bac_si,
+                    dv.ten_dich_vu
+                FROM lichhen lh
+                JOIN bacsi bs ON lh.ma_bac_si = bs.ma_bac_si
+                JOIN dichvu dv ON lh.ma_dich_vu = dv.ma_dich_vu
+                WHERE lh.ma_benh_nhan = ?
+                AND lh.trang_thai <> 'CHO_XAC_NHAN_EMAIL'
+                ORDER BY lh.thoi_gian DESC
+            ";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$ma_benh_nhan]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            throw new Exception("Lỗi truy vấn getByBenhNhan: " . $e->getMessage());
+        }
     }
+
+
 
 
     /**
@@ -234,4 +252,44 @@ class LichHen
             throw new Exception("Lỗi khi xác nhận lịch: " . $e->getMessage());
         }
     }
+    /**
+ * 🔹 Lấy lịch hẹn theo bác sĩ và ngày
+ */
+public function getByBacSi($ma_bac_si, $ngay)
+{
+    $sql = "
+        SELECT 
+            lh.ma_lich_hen,
+            DATE(lh.thoi_gian) AS ngay_hen,
+            TIME_FORMAT(lh.thoi_gian, '%H:%i') AS gio_hen,
+            lh.trang_thai,
+            lh.ghi_chu,
+            bn.ho_ten AS ten_benh_nhan,
+            dv.ten_dich_vu
+        FROM lichhen lh
+        JOIN benhnhan bn ON lh.ma_benh_nhan = bn.ma_benh_nhan
+        JOIN dichvu dv ON lh.ma_dich_vu = dv.ma_dich_vu
+        WHERE lh.ma_bac_si = ?
+          AND DATE(lh.thoi_gian) = ?
+        ORDER BY lh.thoi_gian ASC
+    ";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$ma_bac_si, $ngay]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * 🔵 Cập nhật trạng thái lịch hẹn (bác sĩ)
+ */
+public function updateTrangThai($ma_lich_hen, $trang_thai)
+{
+    $stmt = $this->conn->prepare("
+        UPDATE lichhen 
+        SET trang_thai = ?, thoi_gian_xac_nhan = NOW()
+        WHERE ma_lich_hen = ?
+    ");
+    $stmt->execute([$trang_thai, $ma_lich_hen]);
+    return ['status' => 'success', 'message' => 'Cập nhật trạng thái thành công.'];
+}
+
 }

@@ -81,16 +81,22 @@
     <!-- 📅 FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
 
+    <!-- 1️⃣ Core Config (API & Auth) -->
     <script src="./assets/js/config.js" defer></script>
     <script src="./assets/js/auth.js" defer></script>
 
-    <!-- 🔐 Chức năng đăng nhập / đăng ký / đăng xuất -->
+    <!-- 2️⃣ Page Modules (các trang con) -->
+    <script src="./assets/js/pages/schedule.js" defer></script>
+    <script src="./assets/js/pages/booking.js" defer></script>
+    <script src="./assets/js/pages/doctor_dashboard.js" defer></script>
+    <script src="./assets/js/pages/doctor_availability.js" defer></script>
     <script src="./assets/js/pages/login.js" defer></script>
     <script src="./assets/js/pages/register.js" defer></script>
     <script src="./assets/js/pages/logout.js" defer></script>
-    <script src="./assets/js/pages/booking.js" defer></script>
-    <!-- 🧠 Ứng dụng chính (router + header/footer) -->
+
+    <!-- 3️⃣ App Router (luôn load CUỐI cùng) -->
     <script src="./assets/js/app.js" defer></script>
+
     <!-- 🌈 AOS JS -->
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
     <script>

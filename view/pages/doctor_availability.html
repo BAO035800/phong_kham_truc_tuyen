@@ -1,81 +1,58 @@
-<body class="bg-bgpage text-textmain">
-  <section class="py-16 bg-surface text-textmain">
-    <div class="container mx-auto px-4 max-w-5xl">
+<body class="bg-bgpage text-textmain font-sans">
+  <section class="py-16 bg-surface">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <!-- 🏷 Tiêu đề -->
       <header class="mb-8">
-        <h2 class="text-3xl font-bold text-primary">Lịch trống của bác sĩ</h2>
-        <p class="text-textmain/70">Thêm, sửa, xoá lịch <b>trống</b> theo từng ngày.</p>
+        <h2 class="text-3xl font-bold text-primary">Quản lý lịch trống</h2>
+        <p class="text-textmain/70">Thêm hoặc xoá lịch trống của bác sĩ.</p>
       </header>
 
-      <!-- Thanh công cụ nhỏ -->
-      <div class="mb-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
-          <div class="text-sm text-textmain/60 mb-1">Bác sĩ</div>
-          <div id="docName" class="font-semibold">BS. Nguyễn Văn An</div>
-        </div>
-        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
-          <div class="text-sm text-textmain/60 mb-1">Múi giờ</div>
-          <div>Asia/Bangkok (UTC+7)</div>
-        </div>
-        <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
-          <div class="text-sm text-textmain/60 mb-1">Hành động</div>
-          <div class="flex flex-wrap gap-2">
-            <button class="rounded-xl border border-border px-3 py-1.5 text-sm bg-bgpage text-textmain/50 cursor-not-allowed" disabled>Xoá toàn bộ</button>
-          </div>
-        </div>
+      <!-- 👨‍⚕️ Thông tin bác sĩ -->
+      <div id="doctor-info" class="mb-6 text-sm text-gray-600 font-medium">
+        Đang tải thông tin bác sĩ...
       </div>
 
-      <!-- Form (chỉ hiển thị, không hoạt động) -->
-      <div class="flex flex-wrap items-end gap-2 mb-5">
-        <div>
-          <label class="block text-xs text-textmain/60 mb-1">Ngày</label>
-          <select class="rounded-xl border border-border p-2 bg-bgpage text-textmain/50 cursor-not-allowed">
-            <option>Thứ hai</option><option>Thứ ba</option><option>Thứ tư</option>
-            <option>Thứ năm</option><option>Thứ sáu</option><option>Thứ bảy</option><option>Chủ nhật</option>
-          </select>
-        </div>
-        <div class="flex-1 min-w-[160px]">
-          <label class="block text-xs text-textmain/60 mb-1">Bắt đầu</label>
-          <input type="time" value="08:00" class="w-full rounded-xl border border-border p-2 bg-bgpage text-textmain/50">
-        </div>
-        <div class="flex-1 min-w-[160px]">
-          <label class="block text-xs text-textmain/60 mb-1">Kết thúc</label>
-          <input type="time" value="12:00" class="w-full rounded-xl border border-border p-2 bg-bgpage text-textmain/50">
-        </div>
-        <button class="rounded-xl bg-primary/60 text-white px-4 py-2 text-sm">Thêm lịch trống</button>
+      <!-- 🕒 Form thêm lịch -->
+      <form id="addForm" class="flex flex-wrap gap-3 mb-6">
+        <input type="date"
+               id="ngay"
+               class="border border-border rounded-xl p-2 flex-1 min-w-[160px]"
+               required />
+
+        <input type="time"
+               id="bat_dau"
+               class="border border-border rounded-xl p-2 min-w-[120px]"
+               required />
+
+        <input type="time"
+               id="ket_thuc"
+               class="border border-border rounded-xl p-2 min-w-[120px]"
+               required />
+
+        <button type="submit"
+                class="bg-primary text-white px-4 py-2 rounded-xl hover:bg-primary/80 transition">
+          + Thêm
+        </button>
+      </form>
+
+      <!-- 📅 Bảng lịch trống -->
+      <div class="overflow-x-auto rounded-2xl border border-border bg-white shadow-card">
+        <table class="min-w-full text-sm" id="tableLichTrong">
+          <thead class="bg-bgpage text-left text-textmain/70 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-2 font-medium">Ngày</th>
+              <th class="px-4 py-2 font-medium">Giờ bắt đầu</th>
+              <th class="px-4 py-2 font-medium">Giờ kết thúc</th>
+              <th class="px-4 py-2 font-medium text-right">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="lichTrongBody">
+            <tr>
+              <td colspan="4" class="px-4 py-4 text-center text-gray-500">Đang tải...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <!-- Lưới 7 ngày (dữ liệu cố định) -->
-      <!-- (giữ nguyên toàn bộ phần <section> của từng ngày ở đây) -->
-
-      <!-- BẢNG LỊCH RẢNH TƯỢNG TRƯNG (tĩnh) -->
-      <section class="mt-8">
-        <div class="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
-          <div class="px-4 py-3 border-b border-border flex items-center justify-between">
-            <h3 class="font-semibold">Bảng lịch rảnh (tượng trưng)</h3>
-            <span class="text-xs text-textmain/60">Tĩnh — không đồng bộ với lưới</span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-              <thead class="bg-bgpage">
-                <tr>
-                  <th class="text-left px-4 py-2 border-b border-border w-40">Ngày</th>
-                  <th class="text-left px-4 py-2 border-b border-border">Khung giờ trống</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td class="px-4 py-2 border-b border-border font-medium">Thứ hai</td><td class="px-4 py-2 border-b border-border">08:00–11:30, 13:30–16:30</td></tr>
-                <tr><td class="px-4 py-2 border-b border-border font-medium">Thứ ba</td><td class="px-4 py-2 border-b border-border">09:00–12:00, 14:00–17:00</td></tr>
-                <tr><td class="px-4 py-2 border-b border-border font-medium">Thứ tư</td><td class="px-4 py-2 border-b border-border">08:30–11:30</td></tr>
-                <tr><td class="px-4 py-2 border-b border-border font-medium">Thứ năm</td><td class="px-4 py-2 border-b border-border">08:00–12:00, 13:00–15:30</td></tr>
-                <tr><td class="px-4 py-2 border-b border-border font-medium">Thứ sáu</td><td class="px-4 py-2 border-b border-border">08:00–11:00, 13:30–16:00</td></tr>
-                <tr><td class="px-4 py-2 border-b border-border font-medium">Thứ bảy</td><td class="px-4 py-2 border-b border-border">08:00–11:00</td></tr>
-                <tr><td class="px-4 py-2 border-b border-border font-medium">Chủ nhật</td><td class="px-4 py-2 border-b border-border">—</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
     </div>
   </section>
 </body>

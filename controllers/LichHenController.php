@@ -20,15 +20,16 @@ class LichHenController
             exit;
         }
 
-        $role = $_SESSION['user']['vai_tro'] ?? null;
+        $role = strtolower($_SESSION['user']['vai_tro'] ?? '');
 
-        // 🔒 Chỉ cho phép ADMIN hoặc BACSI
-        if (!in_array($role, ['ADMIN', 'BACSI'])) {
+        // ✅ Chấp nhận cả 2 cách viết: tiếng Việt & tiếng Anh
+        if (!in_array($role, ['admin', 'bacsi', 'doctor'])) {
             http_response_code(403);
             echo json_encode(['error' => 'Chỉ ADMIN hoặc BÁC SĨ mới có quyền thực hiện thao tác này']);
             exit;
         }
     }
+
 
     public function handleRequest()
     {
@@ -73,8 +74,27 @@ class LichHenController
                     $result = $this->model->xacNhanQuaEmail($token);
                     echo json_encode($result);
                     break;
-
-
+                    case 'listByBacSi':
+                        $this->requireAdminAndBacSi();
+                    
+                        $ma_bac_si = $_GET['ma_bac_si'] ?? null;
+                        $ngay = $_GET['ngay'] ?? date('Y-m-d');
+                        if (!$ma_bac_si) throw new Exception("Thiếu mã bác sĩ.");
+                    
+                        $result = $this->model->getByBacSi($ma_bac_si, $ngay);
+                        echo json_encode($result);
+                        break;
+                    
+                    case 'updateTrangThai':
+                        $this->requireAdminAndBacSi();
+                    
+                        $ma_lich_hen = $data['ma_lich_hen'] ?? null;
+                        $trang_thai = $data['trang_thai'] ?? null;
+                        if (!$ma_lich_hen || !$trang_thai) throw new Exception("Thiếu mã lịch hoặc trạng thái.");
+                        $result = $this->model->updateTrangThai($ma_lich_hen, $trang_thai);
+                        echo json_encode($result);
+                        break;
+                    
 
                 default:
                     echo json_encode(['error' => 'Hành động không hợp lệ']);

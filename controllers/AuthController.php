@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/Auth.php';
+require_once __DIR__ . '/../config/Database.php';
 
 class AuthController
 {
@@ -13,17 +14,29 @@ class AuthController
         }
     }
 
+    /** Chuẩn hoá role về: admin | doctor | patient | guest */
+    private function normalizeRole($role)
+    {
+        $role = strtolower(trim($role));
+        return match ($role) {
+            'admin' => 'admin',
+            'bacsi', 'doctor' => 'doctor',
+            'benhnhan', 'patient' => 'patient',
+            default => 'guest',
+        };
+    }
+
+    /** Chỉ admin */
     private function requireAdmin()
     {
-        $user = $_SESSION['user'] ?? null;
-        if (!$user || $user['vai_tro'] !== 'ADMIN') {
+        $role = $this->normalizeRole($_SESSION['user']['vai_tro'] ?? '');
+        if ($role !== 'admin') {
             http_response_code(403);
             echo json_encode(['error' => 'Chỉ ADMIN mới có quyền thực hiện thao tác này']);
             exit;
         }
     }
-
-
+    
     public function handleRequest()
     {
         $action = $_GET['action'] ?? '';
@@ -35,6 +48,7 @@ class AuthController
                     $id = $this->auth->registerBenhNhan($data);
                     echo json_encode(['message' => 'Đăng ký thành công', 'id' => $id]);
                     break;
+
                 case 'registerBacSi':
                     $this->requireAdmin();
                     $id = $this->auth->registerBacSi($data);
@@ -43,30 +57,43 @@ class AuthController
 
                 case 'login':
                     $user = $this->auth->login($data);
-                    
-                    $role = strtolower($user['vai_tro'] ?? '');
-                    if ($role === 'bacsi') $role = 'doctor';
-                    elseif ($role === 'benhnhan') $role = 'patient';
-                    
-                    // 🔒 Lưu vào session
-                    $id = $user['id'] ?? $user['ma_nguoi_dung'] ?? $user['id_nguoi_dung'] ?? null;
-                    $email = $user['email'] ?? $user['ten_dang_nhap'] ?? null;
+                    if (!$user) {
+                        throw new Exception("Email hoặc mật khẩu không đúng");
+                    }
 
+                    // Chuẩn hoá vai trò
+                    $norm = $this->normalizeRole($user['vai_tro'] ?? '');
+
+                    // Trích xuất trường
+                    $id    = $user['id'] ?? $user['ma_nguoi_dung'] ?? $user['id_nguoi_dung'] ?? null;
+                    $email = $user['email'] ?? $user['ten_dang_nhap'] ?? null;
+                    $name  = $user['ten_dang_nhap'] ?? $user['ho_ten'] ?? $email;
+
+                    // Lưu session
                     $_SESSION['user'] = [
-                        'id' => $id,
-                        'name' => $user['ten_dang_nhap'] ?? $email,
-                        'email' => $email,
-                        'vai_tro' => $role
+                        'id'      => $id,
+                        'name'    => $name,
+                        'email'   => $email,
+                        'vai_tro' => $norm,   // <-- luôn: admin/doctor/patient
                     ];
 
+                    // Nếu là bác sĩ → map sang ma_bac_si thật
+                    if ($norm === 'doctor') {
+                        $pdo = (new Database())->getConnection();
+                        $stmt = $pdo->prepare("SELECT ma_bac_si FROM bacsi WHERE ma_nguoi_dung = ?");
+                        $stmt->execute([$id]);
+                        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            $_SESSION['user']['ma_bac_si'] = $row['ma_bac_si'];
+                        }
+                    }
 
-                    
+                    error_log("✅ SESSION SAU LOGIN: " . print_r($_SESSION['user'], true));
+
                     echo json_encode([
                         'message' => 'Đăng nhập thành công',
-                        'user' => $_SESSION['user']
+                        'user'    => $_SESSION['user'],
                     ]);
                     break;
-                    
 
                 case 'logout':
                     $this->auth->logout();
@@ -74,8 +101,15 @@ class AuthController
                     break;
 
                 case 'me':
-                    $user = $this->auth->currentUser();
-                    echo json_encode($user ?: ['message' => 'Chưa đăng nhập']);
+                case 'session':
+                    if (isset($_SESSION['user'])) {
+                        echo json_encode([
+                            'logged_in' => true,
+                            'user' => $_SESSION['user']
+                        ]);
+                    } else {
+                        echo json_encode(['logged_in' => false]);
+                    }
                     break;
 
                 default:

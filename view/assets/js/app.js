@@ -26,7 +26,7 @@ async function swapHeaderByRole(role) {
   await loadPartial("#header", headerUrlByRole(role));
   setupTailwindNav();
 
-  // ✅ setup các header tương ứng
+  // setup actions theo từng header
   setupPatientHeader();
   setupDoctorHeader();
   setupAdminHeader();
@@ -53,7 +53,7 @@ async function renderPage() {
   switch (hash.split("?")[0]) {
     case "#/login":
       await loadPage("./pages/login.html");
-      setupLoginPage(); // ✅ Gắn sự kiện login sau khi DOM render
+      setupLoginPage();
       break;
 
     case "#/register": await loadPage("./pages/register.html"); break;
@@ -62,17 +62,31 @@ async function renderPage() {
     case "#/doctors": await loadPage("./pages/doctors.html"); break;
     case "#/contact": await loadPage("./pages/contact.html"); break;
     case "#/services": await loadPage("./pages/services.html"); break;
-    case "#/doctor-dashboard": await loadPage("./pages/doctor_dashboard.html"); break;
+
+    case "#/doctor-dashboard":
+      await loadPage("./pages/doctor_dashboard.html");
+      break;
+
+    /* ✅ Gọi script sau khi trang Doctor Availability đã load */
+    case "#/doctor-availability":
+      await loadPage("./pages/doctor_availability.html");
+      if (typeof setupDoctorAvailability === "function") {
+        setupDoctorAvailability(); // gọi khi DOM đã sẵn sàng
+      } else {
+        console.warn("⚠️ Hàm setupDoctorAvailability chưa được load!");
+      }
+      break;
+
     case "#/statistics": await loadPage("./pages/statistics.html"); break;
     case "#/patients": await loadPage("./pages/patients.html"); break;
     case "#/settings": await loadPage("./pages/settings.html"); break;
-    case "#/doctor-availability": await loadPage("./pages/doctor_availability.html"); break;
+
     case "#/admin": await loadPage("./pages/admin_dashboard.html"); break;
     case "#/admin/doctors": await loadPage("./pages/admin_doctors.html"); break;
     case "#/admin/services": await loadPage("./pages/admin_services.html"); break;
     case "#/admin/patients": await loadPage("./pages/admin_patients.html"); break;
 
-    // ✅ Giữ nguyên phần xác nhận lịch hẹn
+    /* ✅ Trang xác nhận lịch hẹn */
     case "#/confirm":
       try {
         const res = await fetch("./pages/confirm.html?v=" + Date.now(), { cache: "no-store" });
@@ -126,15 +140,21 @@ function setupTailwindNav() {
   });
 }
 
-// ✅ Logout logic dùng chung
+/* ✅ Logout đồng bộ: xoá PHP session + JS session + đổi header + render login */
 async function logoutAndRedirect() {
-  await fetch("http://localhost:8000/index.php?path=auth&action=logout", {
-    credentials: "include",
-  });
-  window.sessionUser = null;
-  await swapHeaderByRole("guest");
-  window.location.hash = "#/login";
-  renderPage();
+  try {
+    await fetch("http://localhost:8000/index.php?path=auth&action=logout", {
+      credentials: "include",
+    });
+    window.sessionUser = null;
+    await swapHeaderByRole("guest");
+    window.location.hash = "#/login";
+    await renderPage();
+    showToast("👋 Bạn đã đăng xuất thành công", "success");
+  } catch (err) {
+    console.error("❌ Lỗi khi đăng xuất:", err);
+    showToast("Lỗi khi đăng xuất", "error");
+  }
 }
 
 function setupPatientHeader() {
@@ -172,19 +192,13 @@ async function initApp() {
 
   try {
     const res = await fetch("http://localhost:8000/index.php?path=session", {
-      credentials: "include", // ✅ gửi cookie PHPSESSID
+      credentials: "include",
     });
-
     const data = await res.json();
+
     let role = "guest";
-
     if (data.logged_in && data.user?.vai_tro) {
-      const rawRole = data.user.vai_tro.toLowerCase();
-      if (rawRole === "bacsi" || rawRole === "doctor") role = "doctor";
-      else if (rawRole === "benhnhan" || rawRole === "patient") role = "patient";
-      else if (rawRole === "admin") role = "admin";
-
-
+      role = (data.user.vai_tro || "guest").toLowerCase();
       window.sessionUser = data.user;
     } else {
       window.sessionUser = null;

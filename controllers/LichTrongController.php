@@ -13,6 +13,7 @@ class LichTrongController
         $this->model = new LichTrong();
     }
 
+    /** ✅ Chỉ cho phép ADMIN hoặc DOCTOR */
     private function requireAdminAndBacSi()
     {
         if (!isset($_SESSION['user'])) {
@@ -21,16 +22,13 @@ class LichTrongController
             exit;
         }
 
-        $role = $_SESSION['user']['vai_tro'] ?? null;
-
-        // 🔒 Chỉ cho phép ADMIN hoặc BACSI
-        if (!in_array($role, ['ADMIN', 'BACSI'])) {
+        $role = strtolower($_SESSION['user']['vai_tro'] ?? '');
+        if (!in_array($role, ['admin', 'doctor'])) {
             http_response_code(403);
             echo json_encode(['error' => 'Chỉ ADMIN hoặc BÁC SĨ mới có quyền thực hiện thao tác này']);
             exit;
         }
     }
-
 
     public function handleRequest()
     {
@@ -39,12 +37,14 @@ class LichTrongController
 
         try {
             switch ($action) {
+                // 🟢 Tạo mới lịch trống
                 case 'POST':
                     $this->requireAdminAndBacSi();
                     $result = $this->model->taoLichTrong($data);
                     echo json_encode($result);
                     break;
 
+                // 🟡 Cập nhật lịch trống
                 case 'PUT':
                     $this->requireAdminAndBacSi();
                     $id = $_GET['id'] ?? null;
@@ -53,6 +53,7 @@ class LichTrongController
                     echo json_encode($result);
                     break;
 
+                // 🔴 Xoá lịch trống
                 case 'DELETE':
                     $this->requireAdminAndBacSi();
                     $id = $_GET['id'] ?? null;
@@ -61,6 +62,7 @@ class LichTrongController
                     echo json_encode($result);
                     break;
 
+                // 📋 Lấy danh sách lịch trống theo bác sĩ
                 case 'listByBacSi':
                     $ma_bac_si = $_GET['ma_bac_si'] ?? null;
                     if (!$ma_bac_si) throw new Exception("Thiếu mã bác sĩ.");
@@ -68,12 +70,15 @@ class LichTrongController
                     echo json_encode($result);
                     break;
 
+                // 🌍 Lấy lịch trống công khai cho bệnh nhân xem
                 case 'listCongKhai':
                     $ma_bac_si = $_GET['ma_bac_si'] ?? null;
                     if (!$ma_bac_si) throw new Exception("Thiếu mã bác sĩ.");
                     $result = $this->model->getLichTrongCongKhai($ma_bac_si);
                     echo json_encode($result);
                     break;
+
+                // 🧾 Lấy toàn bộ lịch trống của tất cả bác sĩ
                 case 'listTatCa':
                     $result = $this->model->getTatCaLichTrong();
                     echo json_encode($result);
