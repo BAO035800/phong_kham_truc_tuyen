@@ -1,109 +1,71 @@
 <!-- view/pages/settings.html -->
-<section class="py-16 bg-surface text-textmain">
-    <div class="container mx-auto px-4 max-w-4xl">
-      <header class="mb-8 text-center" data-aos="fade-up">
-        <h2 class="text-3xl font-bold text-primary">Cài đặt tài khoản</h2>
-        <p class="text-textmain/70 mt-2">Quản lý thông tin cá nhân, bảo mật và tuỳ chọn hiển thị.</p>
-      </header>
-  
-      <!-- Thông tin tài khoản -->
-      <div class="bg-white rounded-2xl border border-border shadow-card p-6 mb-6" data-aos="fade-up" data-aos-delay="50">
-        <h3 class="text-lg font-semibold mb-4">Thông tin tài khoản</h3>
-        <form id="profileForm" class="grid md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm text-textmain/70 mb-1">Họ và tên</label>
-            <input id="stName" type="text" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
-          </div>
-          <div>
-            <label class="block text-sm text-textmain/70 mb-1">Email</label>
-            <input id="stEmail" type="email" class="w-full rounded-xl border border-border p-2 bg-slate-50 text-slate-500" disabled>
-          </div>
-          <div>
-            <label class="block text-sm text-textmain/70 mb-1">Vai trò</label>
-            <input id="stRole" type="text" class="w-full rounded-xl border border-border p-2 bg-slate-50 text-slate-500" disabled>
-          </div>
-          <div class="flex items-end">
-            <button class="rounded-xl bg-primary text-white px-4 py-2 hover:bg-primary/90" type="submit">
-              Lưu thông tin
-            </button>
-          </div>
-        </form>
-      </div>
-  
-      <!-- Bảo mật -->
-      <div class="bg-white rounded-2xl border border-border shadow-card p-6 mb-6" data-aos="fade-up" data-aos-delay="80">
-        <h3 class="text-lg font-semibold mb-4">Đổi mật khẩu</h3>
-        <form id="passwordForm" class="grid md:grid-cols-3 gap-4">
-          <input id="pwOld" type="password" placeholder="Mật khẩu hiện tại" class="rounded-xl border border-border p-2 focus:border-primary outline-none">
-          <input id="pwNew" type="password" placeholder="Mật khẩu mới" class="rounded-xl border border-border p-2 focus:border-primary outline-none">
-          <input id="pwNew2" type="password" placeholder="Nhập lại mật khẩu mới" class="rounded-xl border border-border p-2 focus:border-primary outline-none">
-          <div class="md:col-span-3 flex justify-end">
-            <button class="rounded-xl bg-primary text-white px-4 py-2 hover:bg-primary/90" type="submit">
-              Cập nhật mật khẩu
-            </button>
-          </div>
-        </form>
-        <p id="pwMsg" class="mt-2 text-sm"></p>
-      </div>
-  
-      <!-- Tuỳ chọn -->
-      <div class="bg-white rounded-2xl border border-border shadow-card p-6 mb-6" data-aos="fade-up" data-aos-delay="110">
-        <h3 class="text-lg font-semibold mb-4">Tuỳ chọn</h3>
-        <div class="grid md:grid-cols-2 gap-4">
-          <div class="flex items-center justify-between rounded-xl border border-border p-3">
-            <div>
-              <div class="font-medium">Thông báo</div>
-              <div class="text-sm text-textmain/60">Nhận thông báo về lịch hẹn và cập nhật.</div>
-            </div>
-            <label class="inline-flex items-center cursor-pointer">
-              <input id="optNotify" type="checkbox" class="peer sr-only">
-              <div class="w-11 h-6 bg-slate-200 rounded-full peer-checked:bg-primary relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></div>
-            </label>
-          </div>
-  
-          <div class="flex items-center justify-between rounded-xl border border-border p-3">
-            <div>
-              <div class="font-medium">Giao diện tối</div>
-              <div class="text-sm text-textmain/60">Bật/tắt chế độ nền tối.</div>
-            </div>
-            <label class="inline-flex items-center cursor-pointer">
-              <input id="optDark" type="checkbox" class="peer sr-only">
-              <div class="w-11 h-6 bg-slate-200 rounded-full peer-checked:bg-primary relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></div>
-            </label>
-          </div>
-  
-          <div class="rounded-xl border border-border p-3">
-            <label class="block text-sm text-textmain/70 mb-1">Ngôn ngữ</label>
-            <select id="optLang" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
-              <option value="vi">Tiếng Việt</option>
-              <option value="en">English</option>
-            </select>
-          </div>
-  
-          <div class="rounded-xl border border-border p-3">
-            <label class="block text-sm text-textmain/70 mb-1">Định dạng ngày giờ</label>
-            <select id="optDateFmt" class="w-full rounded-xl border border-border p-2 focus:border-primary outline-none">
-              <option value="vi-VN">dd/MM/yyyy (vi-VN)</option>
-              <option value="en-US">MM/dd/yyyy (en-US)</option>
-            </select>
-          </div>
+<section class="py-16 bg-gray-50 text-gray-800 min-h-screen">
+  <div class="container mx-auto px-4 md:px-6 lg:px-10 max-w-6xl">
+    <!-- Header -->
+    <header class="text-center mb-12" data-aos="fade-up">
+      <h2 class="text-4xl font-extrabold text-primary flex justify-center items-center gap-2">
+        <i class="fa-solid fa-gear text-primary"></i> Cài đặt tài khoản bác sĩ
+      </h2>
+      <p class="text-gray-500 mt-3 text-base">
+        Cập nhật thông tin cá nhân và bảo mật tài khoản của bạn.
+      </p>
+    </header>
+
+    <!-- Thông tin cá nhân -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-md p-8 mb-8" data-aos="fade-up">
+      <h3 class="text-lg font-semibold mb-5 flex items-center gap-2 text-sky-700">
+        <i class="fa-solid fa-user-doctor"></i> Thông tin cá nhân
+      </h3>
+      <form id="profileForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="col-span-1 md:col-span-1">
+          <label class="block text-sm text-gray-600 mb-1">Họ và tên</label>
+          <input id="stName" type="text" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
         </div>
-        <div class="mt-4 flex justify-end">
-          <button id="btnSavePrefs" class="rounded-xl bg-primary text-white px-4 py-2 hover:bg-primary/90">
-            Lưu tuỳ chọn
+        <div class="col-span-1 md:col-span-1">
+          <label class="block text-sm text-gray-600 mb-1">Email</label>
+          <input id="stEmail" type="email" class="w-full rounded-xl border border-gray-300 p-3 bg-gray-100 text-gray-500" disabled>
+        </div>
+        <div class="col-span-1 md:col-span-1">
+          <label class="block text-sm text-gray-600 mb-1">Trình độ</label>
+          <input id="stDegree" type="text" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+        </div>
+        <div class="col-span-1 md:col-span-1">
+          <label class="block text-sm text-gray-600 mb-1">Kinh nghiệm (năm)</label>
+          <input id="stExp" type="number" min="0" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+        </div>
+        <div class="col-span-1 md:col-span-2 lg:col-span-3">
+          <label class="block text-sm text-gray-600 mb-1">Mô tả chuyên môn</label>
+          <textarea id="stBio" rows="3" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none"></textarea>
+        </div>
+        <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end">
+          <button type="submit"
+            class="rounded-xl bg-primary text-white px-6 py-2.5 text-sm font-semibold hover:bg-primary/90 transition">
+            💾 Lưu thay đổi
           </button>
         </div>
-      </div>
-  
-      <!-- Hành động tài khoản -->
-      <div class="bg-white rounded-2xl border border-border shadow-card p-6" data-aos="fade-up" data-aos-delay="140">
-        <h3 class="text-lg font-semibold mb-4">Hành động</h3>
-        <div class="flex flex-wrap gap-3">
-          <a href="#/logout" class="rounded-xl border border-border px-4 py-2 hover:bg-bgpage">Đăng xuất</a>
-          <button id="btnDelete" class="rounded-xl bg-rose-600 text-white px-4 py-2 hover:bg-rose-500">Xoá tài khoản (demo)</button>
-        </div>
-        <p class="text-xs text-textmain/60 mt-3">* Lưu ý: Xoá tài khoản ở đây chỉ là mô phỏng (demo). Tích hợp thật sẽ gọi API BE.</p>
-      </div>
+      </form>
     </div>
-  </section>
-  
+
+    <!-- Đổi mật khẩu -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-md p-8 mb-8" data-aos="fade-up" data-aos-delay="100">
+      <h3 class="text-lg font-semibold mb-5 flex items-center gap-2 text-sky-700">
+        <i class="fa-solid fa-lock"></i> Đổi mật khẩu
+      </h3>
+      <form id="passwordForm" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <input id="pwOld" type="password" placeholder="Mật khẩu hiện tại"
+          class="rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+        <input id="pwNew" type="password" placeholder="Mật khẩu mới"
+          class="rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+        <input id="pwNew2" type="password" placeholder="Nhập lại mật khẩu mới"
+          class="rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+        <div class="md:col-span-3 flex justify-end">
+          <button type="submit"
+            class="rounded-xl bg-primary text-white px-6 py-2.5 text-sm font-semibold hover:bg-primary/90 transition">
+            🔄 Cập nhật mật khẩu
+          </button>
+        </div>
+      </form>
+      <p id="pwMsg" class="mt-3 text-sm text-gray-600"></p>
+    </div>
+  </div>
+</section>

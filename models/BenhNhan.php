@@ -10,26 +10,56 @@ class BenhNhan
         $this->db = Database::getConnection();
     }
 
-    // 🟢 Lấy danh sách tất cả bệnh nhân
+    // 🟢 Lấy tất cả bệnh nhân + loại (mới/cũ)
     public function all(): array
     {
-        $stmt = $this->db->query("SELECT * FROM benhnhan ORDER BY ma_benh_nhan DESC");
-        return $stmt->fetchAll();
+        $sql = "
+            SELECT 
+                b.*, 
+                CASE 
+                    WHEN COUNT(l.ma_lich_hen) > 0 THEN 'CU' 
+                    ELSE 'MOI' 
+                END AS loai_benh_nhan
+            FROM benhnhan b
+            LEFT JOIN lichhen l 
+                ON b.ma_benh_nhan = l.ma_benh_nhan 
+                AND l.trang_thai = 'HOAN_THANH'
+            GROUP BY b.ma_benh_nhan
+            ORDER BY b.ma_benh_nhan DESC
+        ";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // 🟢 Lấy chi tiết theo ID
+    // 🟢 Lấy chi tiết bệnh nhân theo ID + loại
     public function find($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM benhnhan WHERE ma_benh_nhan = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch();
+        $sql = "
+            SELECT 
+                b.*, 
+                CASE 
+                    WHEN COUNT(l.ma_lich_hen) > 0 THEN 'CU' 
+                    ELSE 'MOI' 
+                END AS loai_benh_nhan
+            FROM benhnhan b
+            LEFT JOIN lichhen l 
+                ON b.ma_benh_nhan = l.ma_benh_nhan 
+                AND l.trang_thai = 'HOAN_THANH'
+            WHERE b.ma_benh_nhan = :id
+            GROUP BY b.ma_benh_nhan
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // 🟢 Thêm bệnh nhân mới
     public function create($data): int
     {
-        $sql = "INSERT INTO benhnhan (ho_ten, ngay_sinh, gioi_tinh, so_dien_thoai, email, dia_chi, ma_nguoi_dung)
-                VALUES (:ho_ten, :ngay_sinh, :gioi_tinh, :sdt, :email, :dia_chi, :userId)";
+        $sql = "
+            INSERT INTO benhnhan (ho_ten, ngay_sinh, gioi_tinh, so_dien_thoai, email, dia_chi, ma_nguoi_dung)
+            VALUES (:ho_ten, :ngay_sinh, :gioi_tinh, :sdt, :email, :dia_chi, :userId)
+        ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             ':ho_ten' => $data['ho_ten'],
@@ -38,7 +68,7 @@ class BenhNhan
             ':sdt' => $data['so_dien_thoai'] ?? null,
             ':email' => $data['email'] ?? null,
             ':dia_chi' => $data['dia_chi'] ?? null,
-            ':userId' => $data['ma_nguoi_dung']
+            ':userId' => $data['ma_nguoi_dung'] ?? null
         ]);
         return (int)$this->db->lastInsertId();
     }
@@ -46,14 +76,17 @@ class BenhNhan
     // 🟡 Cập nhật thông tin bệnh nhân
     public function update($id, $data): bool
     {
-        $sql = "UPDATE benhnhan SET 
-                    ho_ten = :ho_ten,
-                    ngay_sinh = :ngay_sinh,
-                    gioi_tinh = :gioi_tinh,
-                    so_dien_thoai = :sdt,
-                    email = :email,
-                    dia_chi = :dia_chi
-                WHERE ma_benh_nhan = :id";
+        $sql = "
+            UPDATE benhnhan 
+            SET 
+                ho_ten = :ho_ten,
+                ngay_sinh = :ngay_sinh,
+                gioi_tinh = :gioi_tinh,
+                so_dien_thoai = :sdt,
+                email = :email,
+                dia_chi = :dia_chi
+            WHERE ma_benh_nhan = :id
+        ";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':ho_ten' => $data['ho_ten'] ?? null,

@@ -22,7 +22,13 @@ class BenhNhanController
         try {
             switch ($method) {
                 case 'GET':
-                    echo json_encode($id ? $this->model->find($id) : $this->model->all());
+                    if ($id) {
+                        $benhNhan = $this->model->find($id);
+                        echo json_encode($benhNhan);
+                    } else {
+                        $benhNhans = $this->model->all();
+                        echo json_encode($benhNhans);
+                    }
                     break;
 
                 case 'POST':
@@ -31,11 +37,17 @@ class BenhNhanController
                     break;
 
                 case 'PUT':
+                    if (!$id) {
+                        throw new Exception('Thiếu ID bệnh nhân để cập nhật');
+                    }
                     $this->model->update($id, $data);
                     echo json_encode(['message' => 'Cập nhật bệnh nhân thành công']);
                     break;
 
                 case 'DELETE':
+                    if (!$id) {
+                        throw new Exception('Thiếu ID bệnh nhân để xóa');
+                    }
                     $this->model->delete($id);
                     echo json_encode(['message' => 'Xóa bệnh nhân thành công']);
                     break;

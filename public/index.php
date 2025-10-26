@@ -50,7 +50,6 @@ require_once __DIR__ . '/../controllers/LichTrongController.php';
 
 
 
-
 /* ✅ Ghi log kiểm tra khi chạy PHP Server */
 error_log("✅ PHP đang chạy từ: " . __DIR__);
 error_log("✅ Đang require: " . realpath(__DIR__ . '/../controllers/AuthController.php'));
@@ -108,16 +107,16 @@ switch ($path) {
         $controller = new LichTrongController();
         $controller->handleRequest();
         break;
-        case 'session':
-            if (isset($_SESSION['user'])) {
-                echo json_encode([
-                    'logged_in' => true,
-                    'user' => $_SESSION['user']
-                ]);
-            } else {
-                echo json_encode(['logged_in' => false]);
-            }
-            break;
+    case 'session':
+        if (isset($_SESSION['user'])) {
+            echo json_encode([
+                'logged_in' => true,
+                'user' => $_SESSION['user']
+            ]);
+        } else {
+            echo json_encode(['logged_in' => false]);
+        }
+        break;
 
 
 
