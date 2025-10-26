@@ -1,50 +1,34 @@
-<section class="py-10 bg-bgpage text-textmain">
-    <div class="container px-4 max-w-6xl">
-      <!-- Title bar -->
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 class="text-2xl font-bold">Quản lý bác sĩ</h1>
-          <p class="text-textmuted text-sm">Thêm/Sửa/Xoá hồ sơ bác sĩ</p>
-        </div>
-        <a href="#/admin" class="px-3 py-2 text-sm border border-border rounded-xl bg-white hover:bg-bgpage shadow-soft">Tổng quan</a>
-      </div>
-  
-      <!-- Form -->
-      <div class="p-4 rounded-xl border border-border bg-white shadow-card mb-5">
-        <form id="formDoctor" class="grid md:grid-cols-5 gap-3">
-          <input name="id" class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" placeholder="ID (VD: D003)" />
-          <input name="name" class="border border-border rounded-xl p-2 md:col-span-2 focus:outline-none focus:border-primary" placeholder="Tên bác sĩ" />
-          <input name="email" class="border border-border rounded-xl p-2 md:col-span-2 focus:outline-none focus:border-primary" placeholder="Email" />
-          <input name="specialty" class="border border-border rounded-xl p-2 md:col-span-2 focus:outline-none focus:border-primary" placeholder="Chuyên khoa" />
-          <select name="status" class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary">
-            <option value="active">active</option>
-            <option value="inactive">inactive</option>
-          </select>
-          <div class="flex items-center gap-2">
-            <button class="px-4 py-2 bg-primary text-white rounded-xl shadow-soft hover:shadow-card">Lưu</button>
-            <button type="button" id="btnDoctorReset" class="px-4 py-2 border border-border rounded-xl bg-white hover:bg-bgpage">Reset</button>
-          </div>
-        </form>
-      </div>
-  
-      <!-- Table -->
-      <div class="overflow-x-auto rounded-xl border border-border bg-white shadow-soft">
-        <table class="min-w-full text-sm">
-          <thead class="bg-primary50 text-textmain/80">
-            <tr>
-              <th class="px-3 py-2 text-left">ID</th>
-              <th class="px-3 py-2 text-left">Tên</th>
-              <th class="px-3 py-2 text-left">Email</th>
-              <th class="px-3 py-2 text-left">Chuyên khoa</th>
-              <th class="px-3 py-2 text-left">Trạng thái</th>
-              <th class="px-3 py-2 text-left">Hành động</th>
-            </tr>
-          </thead>
-          <tbody id="tblDoctorsBody" class="[&>tr:nth-child(even)]:bg-slate-50/50">
-            <!-- app.js sẽ render -->
-          </tbody>
-        </table>
+<section id="admin-doctor-section" class="py-10 bg-bgpage text-textmain">
+  <div class="container px-4 max-w-6xl">
+    <!-- Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-bold">Danh sách bác sĩ</h1>
+        <p class="text-textmuted text-sm">Chỉ xem thông tin, không thể chỉnh sửa</p>
       </div>
     </div>
-  </section>
-  
+
+    <!-- Search -->
+    <div class="mb-5 flex flex-wrap items-center gap-2">
+      <input id="doctorSearch" placeholder="🔍 Tìm kiếm theo tên, chuyên khoa, trình độ..."
+        class="border border-border rounded-xl p-2 flex-1 focus:outline-none focus:border-primary" />
+      <button id="btnClearSearch"
+        class="px-3 py-2 border border-border rounded-xl bg-white hover:bg-bgpage shadow-soft">Xóa tìm</button>
+    </div>
+
+    <!-- Loading -->
+    <div id="doctor-loading" class="hidden text-center py-10 text-gray-500">
+      Đang tải danh sách bác sĩ...
+    </div>
+
+    <!-- Empty -->
+    <div id="doctor-empty" class="hidden text-center py-10 text-gray-500">
+      Không có dữ liệu bác sĩ.
+    </div>
+
+    <!-- Table -->
+    <div id="doctor-view" class="overflow-x-auto rounded-xl border border-border bg-white shadow-soft">
+      <!-- admin_doctor.js sẽ render -->
+    </div>
+  </div>
+</section>

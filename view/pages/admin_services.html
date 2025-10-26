@@ -1,48 +1,113 @@
-<section class="py-10 bg-bgpage text-textmain">
-    <div class="container px-4 max-w-6xl">
-      <!-- Title bar -->
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 class="text-2xl font-bold">Quản lý dịch vụ</h1>
-          <p class="text-textmuted text-sm">Tạo & cấu hình dịch vụ khám</p>
+<section id="admin-service-section" class="py-10 bg-bgpage text-textmain">
+  <div class="container px-4 max-w-[95%] mx-auto">
+    <!-- Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-bold">Quản lý dịch vụ</h1>
+        <p class="text-textmuted text-sm">Tạo, sửa và xóa dịch vụ khám bệnh</p>
+      </div>
+      <a href="#/admin"
+        class="px-3 py-2 text-sm border border-border rounded-xl bg-white hover:bg-bgpage shadow-soft">
+        Tổng quan
+      </a>
+    </div>
+
+    <!-- Form -->
+    <div class="p-4 rounded-xl border border-border bg-white shadow-card mb-5">
+      <form id="formService" class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        <!-- ID hidden -->
+        <input type="hidden" name="id" />
+
+        <!-- Tên dịch vụ -->
+        <input
+          name="name"
+          class="border border-border rounded-xl p-2 md:col-span-2 focus:outline-none focus:border-primary"
+          placeholder="Tên dịch vụ"
+          required
+        />
+
+        <!-- Giá dịch vụ -->
+        <input
+          name="price"
+          type="number"
+          min="0"
+          class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary"
+          placeholder="Giá dịch vụ (VNĐ)"
+          required
+        />
+
+        <!-- Chuyên khoa -->
+        <select
+          name="specialty"
+          class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary"
+        >
+          <option value="">-- Chọn chuyên khoa --</option>
+        </select>
+
+        <!-- Nút lưu và reset -->
+        <div class="flex items-center justify-center gap-2">
+          <button
+            id="btnServiceSave"
+            type="submit"
+            class="px-4 py-2 bg-primary text-white rounded-xl shadow-soft hover:shadow-card transition"
+          >
+            Lưu
+          </button>
+          <button
+            type="button"
+            id="btnServiceReset"
+            class="px-4 py-2 border border-border rounded-xl bg-white hover:bg-bgpage transition"
+          >
+            Reset
+          </button>
         </div>
-        <a href="#/admin" class="px-3 py-2 text-sm border border-border rounded-xl bg-white hover:bg-bgpage shadow-soft">Tổng quan</a>
-      </div>
-  
-      <!-- Form -->
-      <div class="p-4 rounded-xl border border-border bg-white shadow-card mb-5">
-        <form id="formService" class="grid md:grid-cols-5 gap-3">
-          <input name="id" class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" placeholder="ID (VD: S010)" />
-          <input name="name" class="border border-border rounded-xl p-2 md:col-span-2 focus:outline-none focus:border-primary" placeholder="Tên dịch vụ" />
-          <input name="price" type="number" min="0" class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" placeholder="Giá" />
-          <label class="inline-flex items-center gap-2 px-3">
-            <input name="active" type="checkbox" class="rounded border-border" />
-            <span class="text-sm">Active?</span>
-          </label>
-          <div class="flex items-center gap-2">
-            <button class="px-4 py-2 bg-primary text-white rounded-xl shadow-soft hover:shadow-card">Lưu</button>
-            <button type="button" id="btnServiceReset" class="px-4 py-2 border border-border rounded-xl bg-white hover:bg-bgpage">Reset</button>
-          </div>
-        </form>
-      </div>
-  
-      <!-- Table -->
-      <div class="overflow-x-auto rounded-xl border border-border bg-white shadow-soft">
-        <table class="min-w-full text-sm">
-          <thead class="bg-primary50 text-textmain/80">
-            <tr>
-              <th class="px-3 py-2 text-left">ID</th>
-              <th class="px-3 py-2 text-left">Tên</th>
-              <th class="px-3 py-2 text-left">Giá</th>
-              <th class="px-3 py-2 text-left">Trạng thái</th>
-              <th class="px-3 py-2 text-left">Hành động</th>
-            </tr>
-          </thead>
-          <tbody id="tblServicesBody" class="[&>tr:nth-child(even)]:bg-slate-50/50">
-            <!-- app.js sẽ render -->
-          </tbody>
-        </table>
+      </form>
+    </div>
+
+    <!-- Loading -->
+    <div id="service-loading" class="hidden text-center py-10 text-gray-500">
+      Đang tải danh sách dịch vụ...
+    </div>
+
+    <!-- Empty -->
+    <div id="service-empty" class="hidden text-center py-10 text-gray-500">
+      Không có dữ liệu dịch vụ.
+    </div>
+
+    <!-- Table -->
+    <div
+      id="service-view"
+      class="overflow-x-auto w-full rounded-xl border border-border bg-white shadow-soft"
+    >
+      <!-- admin_services.js sẽ render ở đây -->
+    </div>
+  </div>
+
+  <!-- 🗑️ Modal xác nhận xóa -->
+  <div
+    id="deleteModal"
+    class="fixed inset-0 bg-black/15 hidden items-center justify-center z-50 backdrop-blur-[1px]"
+  >
+    <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+      <h2 class="text-lg font-semibold mb-3 text-gray-800">Xóa dịch vụ</h2>
+      <p class="text-gray-600 mb-5">
+        Bạn có chắc chắn muốn xóa dịch vụ
+        <span id="deleteServiceName" class="font-semibold text-red-600"></span>?
+      </p>
+      <div class="flex justify-end gap-3">
+        <button
+          id="cancelDelete"
+          class="px-4 py-2 border border-border rounded-lg hover:bg-gray-100"
+        >
+          Hủy
+        </button>
+        <button
+          id="confirmDelete"
+          class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        >
+          Xóa
+        </button>
       </div>
     </div>
-  </section>
-  
+  </div>
+</section>

@@ -164,4 +164,19 @@ class NguoiDung
         $stmt = $this->db->prepare("DELETE FROM nguoidung WHERE ma_nguoi_dung = ?");
         return $stmt->execute([$id]);
     }
+    public function createAdmin($data)
+{
+    $stmt = $this->db->prepare("
+        INSERT INTO nguoidung (ho_ten, email, mat_khau, vai_tro, ten_dang_nhap, ngay_tao)
+        VALUES (?, ?, ?, 'ADMIN', ?, NOW())
+    ");
+    $stmt->execute([
+        $data['ho_ten'],
+        $data['email'],
+        password_hash($data['password'], PASSWORD_DEFAULT),
+        $data['ten_dang_nhap']
+    ]);
+    return $this->db->lastInsertId();
+}
+
 }

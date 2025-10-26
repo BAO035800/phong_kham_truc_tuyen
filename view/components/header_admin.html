@@ -1,89 +1,81 @@
-<!-- HEADER (ADMIN) -->
-<header class="w-full sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-border shadow-sm">
-    <!-- Topbar -->
-    <div class="w-full bg-primary text-white text-sm">
-        <div class="container mx-auto px-4 flex items-center justify-between py-1.5">
-          <div class="flex items-center gap-2 font-medium">
-            <i class="fa-solid fa-user-doctor text-xs"></i>
-            <span id="adminGreeting"></span>
-          </div>
-    
-          <button id="logoutBtn"
-            class="flex items-center justify-center w-9 h-9 rounded-full hover:bg-white/20 transition"
-            title="Đăng xuất">
-            <i class="fa-solid fa-right-from-bracket text-sm"></i>
-          </button>
-        </div>
-      </div>
-    <!-- Main Navigation -->
-    <div class="container mx-auto px-4">
-      <div class="flex items-center justify-between py-3">
-        <!-- Brand -->
-        <a href="#/admin" class="flex items-center gap-3 group">
-          <div class="h-10 w-10 rounded-xl bg-primary50 text-primary grid place-content-center shadow-soft">
-            <i class="fa-solid fa-sitemap"></i>
-          </div>
-          <div class="leading-tight">
-            <div class="font-extrabold text-lg text-textmain group-hover:text-primary transition">
-              Bảng Điều Khiển Admin
-            </div>
-            <div class="text-textmuted text-xs tracking-wide">Phòng Khám</div>
-          </div>
-        </a>
-  
-        <!-- Mobile toggle -->
-        <button type="button"
-          class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border hover:bg-bgpage"
-          data-toggle="mobile-nav" aria-controls="navMain" aria-expanded="false" aria-label="Mở menu">
-          <i class="fa-solid fa-bars text-slate-700"></i>
+<!-- ================================
+📁 header_admin.html (giữ "Bảng Điều Khiển Admin")
+================================ -->
+<header class="w-full bg-white border-b border-gray-200 shadow-sm">
+  <!-- Topbar -->
+  <div class="w-full bg-primary text-white text-sm">
+    <div class="container mx-auto px-4 flex items-center justify-end py-1.5">
+      <div class="flex items-center gap-3">
+        <span id="adminGreeting" class="font-medium">Xin chào, Admin 👋</span>
+        <button id="logoutBtnAdmin" class="flex items-center gap-2 hover:text-secondary transition">
+          <i class="fa-solid fa-right-from-bracket text-xs"></i><span>Đăng xuất</span>
         </button>
-  
-        <!-- Navigation -->
-        <nav id="navMain" class="hidden lg:block">
-          <ul class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-1">
-            <li>
-              <a href="#/admin"
-                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
-                Tổng quan
-              </a>
-            </li>
-            <li>
-              <a href="#/admin/doctors"
-                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
-                Bác sĩ
-              </a>
-            </li>
-            <li>
-              <a href="#/admin/services"
-                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
-                Dịch vụ
-              </a>
-            </li>
-            <li>
-              <a href="#/admin/patients"
-                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
-                Bệnh nhân
-              </a>
-            </li>
-          </ul>
-        </nav>
       </div>
     </div>
-  </header>
-  
-  <!-- Underline hover/active effect -->
-  <style>
-    .nav-link::after{
-      content:"";
-      position:absolute;
-      left:16px; right:16px; bottom:6px;
-      height:2px; width:0%;
-      background-color:currentColor;
-      transition:width .22s ease;
-    }
-    .nav-link:hover::after,
-    .nav-link.active::after{ width:calc(100% - 32px); }
-  </style>
-  
+  </div>
 
-  
+  <!-- Main Nav -->
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between py-3">
+      <!-- Brand giữ nguyên -->
+      <a href="#/home" class="flex items-center gap-3">
+      </a>
+
+      <!-- Toggle -->
+      <button type="button" class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border hover:bg-slate-50"
+        data-toggle="mobile-nav" aria-controls="mobileMenu" aria-expanded="false" aria-label="Mở menu">
+        <i class="fa-solid fa-bars text-slate-700"></i>
+      </button>
+
+      <!-- Desktop menu -->
+      <nav id="navMain" class="hidden lg:block">
+        <ul class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-1">
+          <li><a href="#/" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative" >Trang chủ</a></li>
+          <li><a href="#/admin/doctors" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Bác sĩ</a></li>
+          <li><a href="#/admin/services" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Dịch vụ</a></li>
+          <li><a href="#/admin/specialties" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Chuyên khoa</a></li>
+          <li><a href="#/admin/patients" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Bệnh nhân</a></li>
+          <li><a href="#/admin/user" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Người dùng</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+
+<div id="menuOverlay" class="fixed inset-0 hidden opacity-0 transition-opacity duration-400 z-40 bg-black/40 backdrop-blur-sm"></div>
+
+<div id="mobileMenu" class="fixed top-0 right-0 h-full w-full bg-white shadow-xl transform translate-x-full transition-transform duration-400 z-50 flex flex-col lg:hidden">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-primary text-white">
+    <div class="flex items-center gap-2"><i class="fa-solid fa-bars-staggered"></i><span class="font-semibold text-lg">Menu</span></div>
+    <button id="closeMenuBtn" class="text-white hover:text-gray-200 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+  </div>
+
+  <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200 bg-primary/5">
+    <img src="/view/assets/img/user.png" alt="Avatar" class="w-10 h-10 rounded-full object-cover shadow-sm">
+    <div><p class="font-semibold text-gray-800">Xin chào, Admin 👋</p><p class="text-sm text-gray-500">Tài khoản quản trị</p></div>
+  </div>
+
+  <nav class="flex-1 px-6 py-6 space-y-5">
+   
+    <a href="#/admin/doctors" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-user-doctor text-primary w-5 text-center"></i>Bác sĩ</a>
+    <a href="#/admin/services" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-list text-primary w-5 text-center"></i>Dịch vụ</a>
+    <a href="#/admin/specialties" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-stethoscope text-primary w-5 text-center"></i>Chuyên khoa</a>
+    <a href="#/admin/patients" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-people-group text-primary w-5 text-center"></i>Bệnh nhân</a>
+    <a href="#/admin/user" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-user text-primary w-5 text-center"></i>Người dùng</a>  
+  </nav>
+
+  <div class="border-t border-gray-2 00 px-6 py-5">
+    <button id="logoutBtnAdminMobile" class="flex items-center gap-3 text-lg text-gray-600 hover:text-rose-600 transition w-full">
+      <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>Đăng xuất
+    </button>
+  </div>
+</div>
+
+<style>
+  .nav-link::after{content:"";position:absolute;left:0;right:0;bottom:3px;height:2px;width:0%;background-color:currentColor;transition:width .25s ease;}
+  .nav-link:hover::after,.nav-link.active::after{width:100%;}
+  #mobileMenu{will-change:transform,opacity;transition:transform .4s cubic-bezier(.4,0,.2,1);}
+  #mobileMenu.show{transform:translateX(0);}
+  #menuOverlay.show{display:block;opacity:1;}
+</style>

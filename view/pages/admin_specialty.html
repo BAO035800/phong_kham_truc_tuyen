@@ -1,0 +1,69 @@
+<section id="admin-specialty-section" class="py-10 bg-bgpage text-textmain">
+    <div class="container px-4 max-w-6xl">
+      <!-- Header -->
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold">Quản lý chuyên khoa</h1>
+          <p class="text-textmuted text-sm">Thêm, sửa hoặc xóa thông tin chuyên khoa</p>
+        </div>
+      </div>
+  
+      <!-- Form -->
+      <div class="p-4 rounded-xl border border-border bg-white shadow-card mb-5">
+        <form id="formSpecialty" class="grid md:grid-cols-3 gap-3">
+          <input type="hidden" name="id" />
+          <input name="ten_chuyen_khoa" placeholder="Tên chuyên khoa" required
+            class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary md:col-span-1" />
+          <input name="mo_ta" placeholder="Mô tả chuyên khoa"
+            class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary md:col-span-1" />
+          <div class="flex items-center gap-2">
+            <button id="btnSaveSpecialty" type="submit"
+              class="px-4 py-2 bg-primary text-white rounded-xl shadow-soft hover:shadow-card">Lưu</button>
+            <button type="button" id="btnResetSpecialty"
+              class="px-4 py-2 border border-border rounded-xl bg-white hover:bg-bgpage">Reset</button>
+          </div>
+        </form>
+      </div>
+  
+      <!-- Search -->
+      <div class="mb-4 flex flex-wrap items-center gap-2">
+        <input id="specialtySearch"
+          class="border border-border rounded-xl p-2 flex-1 focus:outline-none focus:border-primary"
+          placeholder="🔍 Tìm kiếm chuyên khoa..." />
+        <button id="btnClearSearch"
+          class="px-3 py-2 border border-border rounded-xl bg-white hover:bg-bgpage shadow-soft">Xóa tìm</button>
+      </div>
+  
+      <!-- Loading -->
+      <div id="specialty-loading" class="hidden text-center py-10 text-gray-500">
+        Đang tải danh sách chuyên khoa...
+      </div>
+  
+      <!-- Empty -->
+      <div id="specialty-empty" class="hidden text-center py-10 text-gray-500">
+        Không có dữ liệu chuyên khoa.
+      </div>
+  
+      <!-- Table -->
+      <div id="specialty-view" class="overflow-x-auto rounded-xl border border-border bg-white shadow-soft"></div>
+    </div>
+  
+    <!-- Modal Xóa -->
+    <div id="deleteSpecialtyModal"
+      class="fixed inset-0 bg-black/20 hidden items-center justify-center z-50 backdrop-blur-sm">
+      <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+        <h2 class="text-lg font-semibold mb-3 text-gray-800">Xóa chuyên khoa</h2>
+        <p class="text-gray-600 mb-5">
+          Bạn có chắc chắn muốn xóa chuyên khoa
+          <span id="deleteSpecialtyName" class="font-semibold text-red-600"></span>?
+        </p>
+        <div class="flex justify-end gap-3">
+          <button id="cancelDelete"
+            class="px-4 py-2 border border-border rounded-lg hover:bg-gray-100">Hủy</button>
+          <button id="confirmDelete"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Xóa</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  

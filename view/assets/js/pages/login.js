@@ -48,9 +48,9 @@ function setupLoginPage() {
 
         // Điều hướng dứt khoát
         if (role === "admin") {
-          window.location.hash = "#/admin";
+          window.location.hash = "#/";
         } else if (role === "doctor") {
-          window.location.hash = "#/doctor-dashboard";
+          window.location.hash = "#/";
         } else {
           window.location.hash = "#/"; // patient hoặc guest
         }

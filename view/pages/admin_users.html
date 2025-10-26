@@ -1,0 +1,73 @@
+<section id="admin-user-section" class="py-10 bg-bgpage text-textmain">
+    <div class="container px-4 max-w-6xl">
+      <!-- Header -->
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold">Quản lý tài khoản</h1>
+          <p class="text-textmuted text-sm">Tạo, quản lý và phân quyền tài khoản hệ thống</p>
+        </div>
+        <a href="#/admin"
+          class="px-3 py-2 text-sm border border-border rounded-xl bg-white hover:bg-bgpage shadow-soft">
+          Tổng quan
+        </a>
+      </div>
+  
+      <!-- Form -->
+      <div class="p-4 rounded-xl border border-border bg-white shadow-card mb-5">
+        <form id="formUser" class="grid md:grid-cols-5 gap-3">
+          <input type="text" name="ho_ten" placeholder="Họ tên" required
+            class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" />
+          <input type="email" name="email" placeholder="Email" required
+            class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" />
+          <input type="password" name="password" placeholder="Mật khẩu" required
+            class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" />
+          <select name="vai_tro"
+            class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary">
+            <option value="">-- Chọn vai trò --</option>
+            <option value="ADMIN">Admin</option>
+            <option value="BACSI">Bác sĩ</option>
+            <option value="BENHNHAN">Bệnh nhân</option>
+          </select>
+          <button type="submit"
+            class="px-4 py-2 bg-primary text-white rounded-xl shadow-soft hover:shadow-card">Lưu</button>
+        </form>
+      </div>
+  
+      <!-- Search -->
+      <div class="flex flex-wrap items-center justify-between mb-4 gap-3">
+        <input id="userSearch" type="text"
+          placeholder="🔍 Tìm kiếm theo họ tên, email hoặc vai trò..."
+          class="w-full md:w-1/2 border border-border rounded-xl p-2 focus:outline-none focus:border-primary shadow-sm" />
+        <button id="btnClearSearch"
+          class="px-3 py-2 text-sm border border-border rounded-xl bg-white hover:bg-bgpage">Xóa tìm</button>
+      </div>
+  
+      <!-- Loading -->
+      <div id="user-loading" class="hidden text-center py-10 text-gray-500">Đang tải danh sách...</div>
+      <div id="user-empty" class="hidden text-center py-10 text-gray-500">Không có người dùng.</div>
+  
+      <!-- Table -->
+      <div id="user-view" class="overflow-x-auto rounded-xl border border-border bg-white shadow-soft"></div>
+    </div>
+  
+    <!-- Modal Xóa -->
+    <!-- Modal Xóa (đã làm nhẹ và ít mờ hơn) -->
+<div id="deleteUserModal"
+class="fixed inset-0 bg-black/5 hidden items-center justify-center z-50 backdrop-blur-[0.5px] transition-all duration-200">
+<div class="bg-white rounded-lg shadow-lg p-5 max-w-sm w-full mx-4 border border-gray-200 scale-95 hover:scale-100 transition-transform duration-200">
+  <h2 class="text-base font-semibold mb-2 text-gray-800">Xóa tài khoản</h2>
+  <p class="text-gray-600 text-sm mb-4">
+    Bạn có chắc chắn muốn xóa tài khoản
+    <span id="deleteUserName" class="font-semibold text-red-600"></span>?
+  </p>
+  <div class="flex justify-end gap-2">
+    <button id="cancelDelete"
+      class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-100 transition">Hủy</button>
+    <button id="confirmDelete"
+      class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition">Xóa</button>
+  </div>
+</div>
+</div>
+
+  </section>
+  

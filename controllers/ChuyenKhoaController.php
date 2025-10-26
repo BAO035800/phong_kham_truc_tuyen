@@ -14,14 +14,15 @@ class ChuyenKhoaController
     }
 
     private function requireAdmin()
-    {
-        $user = $_SESSION['user'] ?? null;
-        if (!$user || $user['vai_tro'] !== 'ADMIN') {
-            http_response_code(403);
-            echo json_encode(['error' => 'Chỉ ADMIN mới có quyền thực hiện thao tác này']);
-            exit;
-        }
+{
+    $user = $_SESSION['user'] ?? null;
+    if (!$user || strtoupper($user['vai_tro']) !== 'ADMIN') {
+        http_response_code(403);
+        echo json_encode(['error' => 'Chỉ ADMIN mới có quyền thực hiện thao tác này']);
+        exit;
     }
+}
+
 
     public function handleRequest()
     {

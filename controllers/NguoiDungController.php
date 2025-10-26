@@ -52,7 +52,15 @@ class NguoiDungController
                                     'id'      => $id
                                 ]);
                                 break;
-                
+                            case 'ADMIN':
+                                    $id = $this->model->createAdmin($data);
+                                    echo json_encode([
+                                        'status'  => 'success',
+                                        'message' => 'Thêm admin thành công',
+                                        'id'      => $id
+                                    ]);
+                                    break;
+                                
                             default:
                                 http_response_code(400);
                                 echo json_encode(['error' => 'Vai trò không hợp lệ. Chỉ chấp nhận BENHNHAN hoặc BACSI.']);

@@ -1,75 +1,80 @@
-<!-- HEADER (BÁC SĨ) -->
+<!-- ================================
+📁 header_doctor.html (giống patient)
+================================ -->
 <header class="w-full bg-white border-b border-gray-200 shadow-sm">
-    <div class="w-full bg-primary text-white text-sm">
-      <div class="container mx-auto px-4 flex items-center justify-between py-1.5">
-        <div class="flex items-center gap-2 font-medium">
-          <i class="fa-solid fa-user-doctor text-xs"></i>
-          <span id="doctorGreeting"></span>
+  <!-- Topbar -->
+  <div class="w-full bg-primary text-white text-sm">
+    <div class="container mx-auto px-4 flex items-center justify-end py-1.5">
+      <div class="flex items-center gap-3">
+        <span id="doctorGreeting" class="font-medium">Xin chào, Bác sĩ <span class="font-semibold">[Tên]</span> 👋</span>
+        <button id="logoutBtnDoctor" class="flex items-center gap-2 hover:text-secondary transition">
+          <i class="fa-solid fa-right-from-bracket text-xs"></i><span>Đăng xuất</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Nav -->
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between py-3">
+      <a href="#/doctor-dashboard" class="flex items-center gap-3">
+        <div class="leading-tight">
+          <div class="font-bold text-lg text-primary">Bảng Điều Khiển Bác Sĩ</div>
+          <div class="text-slate-500 text-xs tracking-wide">Phòng Khám</div>
         </div>
-  
-        <button id="logoutBtnDoctor"
-          class="flex items-center justify-center w-9 h-9 rounded-full hover:bg-white/20 transition"
-          title="Đăng xuất">
-          <i class="fa-solid fa-right-from-bracket text-sm"></i>
-        </button>
-      </div>
+      </a>
+
+      <button type="button" class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border hover:bg-slate-50"
+        data-toggle="mobile-nav" aria-controls="mobileMenu" aria-expanded="false" aria-label="Mở menu">
+        <i class="fa-solid fa-bars text-slate-700"></i>
+      </button>
+
+      <nav id="navMain" class="hidden lg:block">
+        <ul class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-1">
+          <li><a href="#/" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Trang chủ</a></li>
+          <li><a href="#/doctor-dashboard" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Lịch hôm nay</a></li>
+          <li><a href="#/patients" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Bệnh nhân</a></li>
+          <li><a href="#/doctor-availability" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Lịch rảnh</a></li>
+          <li><a href="#/settings" class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative">Cài đặt</a></li>
+        </ul>
+      </nav>
     </div>
-  
-    <div class="container mx-auto px-4">
-      <div class="flex items-center justify-between py-3">
-        <a href="#/doctor-dashboard" class="flex items-center gap-3">
-          <div class="leading-tight">
-            <div class="font-bold text-lg text-primary">Bảng Điều Khiển Bác Sĩ</div>
-            <div class="text-slate-500 text-xs tracking-wide">Phòng Khám</div>
-          </div>
-        </a>
-  
-        <button type="button"
-          class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border hover:bg-slate-50"
-          data-toggle="mobile-nav" aria-controls="navMain" aria-expanded="false" aria-label="Mở menu">
-          <i class="fa-solid fa-bars text-slate-700"></i>
-        </button>
-  
-        <nav id="navMain" class="hidden lg:block">
-          <ul class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-1">
-            <li><a href="#" class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative"> Trang chủ</a></li>
-            <li><a href="#/doctor-dashboard" class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">Lịch hôm nay</a></li>
-            <li><a href="#/patients" class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">Bệnh nhân</a></li>
-            <li>
-              <a href="#/doctor-availability"
-                 class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">
-                Lịch rảnh
-              </a>
-            </li>
-            <li><a href="#/settings" class="nav-link block px-3 py-2 text-slate-700 hover:text-primary transition relative">Cài đặt</a></li>
-          </ul>
-        </nav>
-      </div>
-    </div>
-  </header>  
-  <!-- CSS -->
-  <style>
-  @keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  .animate-gradient {
-    background-size: 200% auto;
-    animation: gradientMove 5s ease infinite;
-  }
-  .nav-link::after {
-    content: "";
-    position: absolute;
-    left: 0; right: 0; bottom: 3px;
-    height: 2px;
-    width: 0%;
-    background-color: currentColor;
-    transition: width 0.25s ease;
-  }
-  .nav-link:hover::after, .nav-link.active::after {
-    width: 100%;
-  }
-  </style>
-  
-  
+  </div>
+</header>
+
+
+<div id="menuOverlay" class="fixed inset-0 hidden opacity-0 transition-opacity duration-400 z-40 bg-black/40 backdrop-blur-sm"></div>
+
+<div id="mobileMenu" class="fixed top-0 right-0 h-full w-full bg-white shadow-xl transform translate-x-full transition-transform duration-400 z-50 flex flex-col lg:hidden">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-primary text-white">
+    <div class="flex items-center gap-2"><i class="fa-solid fa-bars-staggered"></i><span class="font-semibold text-lg">Menu</span></div>
+    <button id="closeMenuBtn" class="text-white hover:text-gray-200 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+  </div>
+
+  <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200 bg-primary/5">
+    <img src="/view/assets/img/user.png" alt="Avatar" class="w-10 h-10 rounded-full object-cover shadow-sm">
+    <div><p class="font-semibold text-gray-800">Xin chào, Bác sĩ 👋</p><p class="text-sm text-gray-500">Tài khoản bác sĩ</p></div>
+  </div>
+
+  <nav class="flex-1 px-6 py-6 space-y-5">
+    <a href="#/" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-house text-primary w-5 text-center"></i>Trang chủ</a>
+    <a href="#/doctor-dashboard" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-calendar-day text-primary w-5 text-center"></i>Lịch hôm nay</a>
+    <a href="#/patients" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-people-group text-primary w-5 text-center"></i>Bệnh nhân</a>
+    <a href="#/doctor-availability" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-clock text-primary w-5 text-center"></i>Lịch rảnh</a>
+    <a href="#/settings" class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"><i class="fa-solid fa-gear text-primary w-5 text-center"></i>Cài đặt</a>
+  </nav>
+
+  <div class="border-t border-gray-200 px-6 py-5">
+    <button id="logoutBtnDoctorMobile" class="flex items-center gap-3 text-lg text-gray-600 hover:text-rose-600 transition w-full">
+      <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>Đăng xuất
+    </button>
+  </div>
+</div>
+
+<style>
+  .nav-link::after{content:"";position:absolute;left:0;right:0;bottom:3px;height:2px;width:0%;background-color:currentColor;transition:width .25s ease;}
+  .nav-link:hover::after,.nav-link.active::after{width:100%;}
+  #mobileMenu{will-change:transform,opacity;transition:transform .4s cubic-bezier(.4,0,.2,1);}
+  #mobileMenu.show{transform:translateX(0);}
+  #menuOverlay.show{display:block;opacity:1;}
+</style>

@@ -1,72 +1,215 @@
-<!-- HEADER (Patient - Sticky, Small, Themed, No Scroll Effect) -->
-<header id="mainHeader"
-  class="fixed top-0 left-0 w-full z-50 bg-surface border-b border-border shadow-sm">
-  
-  <!-- Top bar -->
-  <div class="bg-primary text-white text-sm">
-    <div class="container mx-auto px-4 flex items-center justify-between py-2">
-      <span id="userGreeting" class="font-medium"></span>
-      <button id="logoutBtn"
-        class="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-white/20 transition">
-        <i class="fa-solid fa-right-from-bracket text-xs"></i>
-        <span>Đăng xuất</span>
-      </button>
+<!-- ================================
+📁 header_patient.html (Chuẩn màu & bố cục giống header_guest)
+================================ -->
+<header class="w-full bg-white border-b border-gray-200 shadow-sm">
+  <!-- 🔹 Topbar -->
+  <div class="w-full bg-primary text-white text-sm">
+    <div class="container mx-auto px-4 flex items-center justify-end py-1.5">
+      <div class="flex items-center gap-3">
+        <span id="userGreeting" class="font-medium">Xin chào, Bảo 👋</span>
+        <button id="logoutBtn"
+          class="flex items-center gap-2 hover:text-secondary transition">
+          <i class="fa-solid fa-right-from-bracket text-xs"></i>
+          <span>Đăng xuất</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Main navigation (small & sticky) -->
+  <!-- 🔹 Thanh điều hướng chính -->
   <div class="container mx-auto px-4">
-    <div class="flex items-center justify-between py-2.5"> <!-- nhỏ gọn -->
+    <div class="flex items-center justify-between py-3">
       <!-- Logo -->
-      <a href="#/" class="flex items-center gap-2">
-        <img src="/view/assets/img/logo.png"
-             onerror="this.onerror=null;this.src='https://picsum.photos/60?random=10';"
-             alt="Logo" class="h-8 w-8 rounded-full object-cover shadow-sm">
+      <a href="#/" class="flex items-center gap-3">
         <div class="leading-tight">
-          <div class="font-bold text-base text-primary">Phòng Khám</div>
-          <div class="text-textmuted text-[11px] tracking-wide">Chăm sóc sức khỏe tận tâm</div>
+          <div class="font-bold text-lg text-primary">Phòng Khám</div>
+          <div class="text-slate-500 text-xs tracking-wide">
+            Chăm sóc sức khỏe tận tâm
+          </div>
         </div>
       </a>
 
-      <!-- Menu -->
+      <!-- Toggle menu (mobile) -->
+      <button
+        type="button"
+        class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border hover:bg-slate-50"
+        data-toggle="mobile-nav"
+        aria-controls="mobileMenu"
+        aria-expanded="false"
+        aria-label="Mở menu"
+      >
+        <i class="fa-solid fa-bars text-slate-700"></i>
+      </button>
+
+      <!-- Menu desktop -->
       <nav id="navMain" class="hidden lg:block font-sans">
-        <ul class="flex items-center gap-1 text-[15px] font-medium">
-          <li><a href="#/"           class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Trang chủ</a></li>
-          <li><a href="#/booking"    class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Đặt lịch</a></li>
-          <li><a href="#/schedule"class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Lịch hẹn</a></li>
-          <li><a href="#/doctors"    class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Bác sĩ</a></li>
-          <li><a href="#/contact"    class="nav-link px-3 py-2 text-textmain relative hover:text-primary">Liên hệ</a></li>
+        <ul class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-1">
+          <li>
+            <a
+              href="#/"
+              class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative"
+            >
+              Trang chủ
+            </a>
+          </li>
+          <li>
+            <a
+              href="#/booking"
+              class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative"
+            >
+             Đặt lịch
+            </a>
+          </li>
+          <li>
+            <a
+              href="#/schedule"
+              class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative"
+            >
+            Lịch hẹn
+            </a>
+          </li>
+          <li>
+            <a
+              href="#/doctors"
+              class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative"
+            >
+            Bác sĩ
+            </a>
+          </li>
+          <li>
+            <a
+              href="#/contact"
+              class="nav-link px-3 py-2 text-slate-700 hover:text-primary transition relative"
+            >
+            Liên hệ
+            </a>
+          </li>
         </ul>
       </nav>
-
-      <!-- Mobile toggle -->
-      <button type="button"
-        class="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border hover:bg-bgpage transition"
-        data-toggle="mobile-nav" aria-controls="navMain" aria-expanded="false" aria-label="Mở menu">
-        <i class="fa-solid fa-bars text-textmain"></i>
-      </button>
     </div>
   </div>
 </header>
 
-<!-- Spacer tránh header che nội dung (cao theo header nhỏ) -->
-<div style="height: 96px;"></div>
+<!-- Spacer tránh header che nội dung -->
+<div style="height: 100px;"></div>
 
+<!-- 🔹 Overlay -->
+<div
+  id="menuOverlay"
+  class="fixed inset-0 hidden opacity-0 transition-opacity duration-400 z-40 bg-black/40 backdrop-blur-sm"
+></div>
+
+<!-- 🔹 Menu mobile -->
+<div
+  id="mobileMenu"
+  class="fixed top-0 right-0 h-full w-full bg-white shadow-xl transform translate-x-full transition-transform duration-400 z-50 flex flex-col lg:hidden"
+>
+  <!-- Header menu -->
+  <div
+    class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-primary text-white"
+  >
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-bars-staggered"></i>
+      <span class="font-semibold text-lg">Menu</span>
+    </div>
+    <button id="closeMenuBtn" class="text-white hover:text-gray-200 transition">
+      <i class="fa-solid fa-xmark text-2xl"></i>
+    </button>
+  </div>
+
+  <!-- Thông tin người dùng -->
+  <div
+    class="flex items-center gap-3 px-6 py-4 border-b border-gray-200 bg-primary/5"
+  >
+    <img
+      src="/view/assets/img/user.png"
+      alt="Avatar"
+      class="w-10 h-10 rounded-full object-cover shadow-sm"
+    />
+    <div>
+      <p class="font-semibold text-gray-800">Xin chào 👋</p>
+      <p class="text-sm text-gray-500">Khách hàng thân thiết</p>
+    </div>
+  </div>
+
+  <!-- Danh sách liên kết -->
+  <nav class="flex-1 px-6 py-6 space-y-5">
+    <a
+      href="#/"
+      class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"
+    >
+      <i class="fa-solid fa-house text-primary w-5 text-center"></i>Trang chủ
+    </a>
+    <a
+      href="#/booking"
+      class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"
+    >
+      <i class="fa-solid fa-calendar-check text-primary w-5 text-center"></i
+      >Đặt lịch
+    </a>
+    <a
+      href="#/schedule"
+      class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"
+    >
+      <i class="fa-solid fa-clock text-primary w-5 text-center"></i>Lịch hẹn
+    </a>
+    <a
+      href="#/doctors"
+      class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"
+    >
+      <i class="fa-solid fa-user-doctor text-primary w-5 text-center"></i>Bác sĩ
+    </a>
+    <a
+      href="#/contact"
+      class="flex items-center gap-3 text-lg text-gray-800 hover:text-primary transition"
+    >
+      <i class="fa-solid fa-phone text-primary w-5 text-center"></i>Liên hệ
+    </a>
+  </nav>
+
+  <!-- Đăng xuất -->
+  <div class="border-t border-gray-200 px-6 py-5">
+    <button
+      id="logoutBtnMobile"
+      class="flex items-center gap-3 text-lg text-gray-600 hover:text-rose-600 transition w-full"
+    >
+      <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>Đăng xuất
+    </button>
+  </div>
+</div>
+
+<!-- ================================
+📜 CSS
+================================ -->
 <style>
-  /* Underline effect */
-  .nav-link::after{
-    content:"";
-    position:absolute; left:0; right:0; bottom:3px;
-    height:2px; width:0%; background-color: currentColor;
-    transition: width .25s ease;
+  /* Hiệu ứng underline */
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 3px;
+    height: 2px;
+    width: 0%;
+    background-color: currentColor;
+    transition: width 0.25s ease;
   }
-  .nav-link:hover::after{ width:100%; }
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
 
-  /* Active state: giữ màu primary + gạch chân */
-  .nav-link.active{
-    color:#0096C7; /* primary */
-    font-weight:600;
+  /* Hiệu ứng trượt menu mobile */
+  #mobileMenu {
+    will-change: transform, opacity;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .nav-link.active::after{ width:100%; }
+  #mobileMenu.show {
+    transform: translateX(0);
+  }
+
+  #menuOverlay.show {
+    display: block;
+    opacity: 1;
+  }
 </style>
-
