@@ -64,7 +64,6 @@
         <table class="min-w-full text-sm">
           <thead class="bg-primary50 text-textmain/80">
             <tr>
-              <th class="px-3 py-2 text-left">Mã BS</th>
               <th class="px-3 py-2 text-left">Họ tên</th>
               <th class="px-3 py-2 text-left">Chuyên khoa</th>
               <th class="px-3 py-2 text-left">Trình độ</th>
@@ -77,7 +76,6 @@
               .map(
                 (d) => `
                 <tr>
-                  <td class="px-3 py-2">${d.ma_bac_si}</td>
                   <td class="px-3 py-2">${d.ho_ten || "-"}</td>
                   <td class="px-3 py-2">${getSpecialtyName(d.ma_chuyen_khoa)}</td>
                   <td class="px-3 py-2">${d.trinh_do || "-"}</td>
@@ -87,6 +85,7 @@
               )
               .join("")}
           </tbody>
+
         </table>`;
     }
 
