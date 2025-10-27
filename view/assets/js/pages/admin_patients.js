@@ -44,7 +44,6 @@
         <table class="min-w-full text-sm">
           <thead class="bg-primary50 text-textmain/80">
             <tr>
-              <th class="px-3 py-2 text-left">Mã BN</th>
               <th class="px-3 py-2 text-left">Họ tên</th>
               <th class="px-3 py-2 text-left">Ngày sinh</th>
               <th class="px-3 py-2 text-left">Giới tính</th>
@@ -59,7 +58,6 @@
               .map(
                 (p) => `
                 <tr>
-                  <td class="px-3 py-2">${p.ma_benh_nhan}</td>
                   <td class="px-3 py-2">${p.ho_ten}</td>
                   <td class="px-3 py-2">${p.ngay_sinh || "-"}</td>
                   <td class="px-3 py-2">${p.gioi_tinh || "-"}</td>
