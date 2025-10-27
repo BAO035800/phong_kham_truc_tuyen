@@ -1,4 +1,17 @@
 async function setupSchedulePage() {
+  // 🔍 Chờ đến khi phần tử #schedule-view xuất hiện (fix lỗi load trễ)
+  const observer = new MutationObserver(() => {
+    const view = document.getElementById("schedule-view");
+    if (view) {
+      observer.disconnect();
+      initSchedulePage(); // Gọi khởi tạo khi DOM đã sẵn sàng
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+async function initSchedulePage() {
   setTimeout(async () => {
     const view = document.getElementById("schedule-view");
     const loading = document.getElementById("schedule-loading");
@@ -40,7 +53,8 @@ async function setupSchedulePage() {
           "GET"
         );
         console.log("📅 Dữ liệu lịch hẹn:", res);
-        if (!Array.isArray(res) || res.length === 0) return showEmpty("Chưa có lịch hẹn nào.");
+        if (!Array.isArray(res) || res.length === 0)
+          return showEmpty("Chưa có lịch hẹn nào.");
         allSchedules = res;
         renderSchedules();
       } catch (err) {

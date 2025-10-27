@@ -3,9 +3,42 @@
     <!-- Header -->
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h1 class="text-2xl font-bold">Danh sách bác sĩ</h1>
-        <p class="text-textmuted text-sm">Chỉ xem thông tin, không thể chỉnh sửa</p>
+        <h1 class="text-2xl font-bold">Quản lý bác sĩ</h1>
+        <p class="text-textmuted text-sm">Thêm và xem danh sách bác sĩ hệ thống</p>
       </div>
+    </div>
+
+    <!-- 🩺 Form thêm bác sĩ -->
+    <div class="p-4 rounded-xl border border-border bg-white shadow-card mb-5">
+      <form id="formDoctor" class="grid md:grid-cols-5 gap-3">
+        <input type="text" name="ho_ten" placeholder="Họ tên bác sĩ" required
+          class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" />
+        <input type="email" name="email" placeholder="Email" required
+          class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" />
+        <input type="password" name="mat_khau" placeholder="Mật khẩu" required
+          class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" />
+
+        <select name="ma_chuyen_khoa" id="selectChuyenKhoa"
+          class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" required>
+          <option value="">-- Chọn chuyên khoa --</option>
+        </select>
+
+        <input type="text" name="trinh_do" placeholder="Trình độ"
+          class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" />
+
+        <input type="number" name="kinh_nghiem" min="0" placeholder="Kinh nghiệm (năm)"
+          class="border border-border rounded-xl p-2 focus:outline-none focus:border-primary" />
+
+        <textarea name="mo_ta" rows="2" placeholder="Mô tả (tùy chọn)"
+          class="md:col-span-5 border border-border rounded-xl p-2 focus:outline-none focus:border-primary"></textarea>
+
+        <div class="md:col-span-5 flex justify-end gap-3 mt-2">
+          <button type="reset"
+            class="px-4 py-2 border border-border rounded-xl bg-white hover:bg-bgpage">Hủy</button>
+          <button type="submit"
+            class="px-4 py-2 bg-primary text-white rounded-xl shadow-soft hover:shadow-card">Lưu</button>
+        </div>
+      </form>
     </div>
 
     <!-- Search -->
@@ -27,8 +60,7 @@
     </div>
 
     <!-- Table -->
-    <div id="doctor-view" class="overflow-x-auto rounded-xl border border-border bg-white shadow-soft">
-      <!-- admin_doctor.js sẽ render -->
-    </div>
+    <div id="doctor-view" class="overflow-x-auto rounded-xl border border-border bg-white shadow-soft"></div>
   </div>
 </section>
+

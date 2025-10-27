@@ -144,16 +144,44 @@
       }"><span class="size-1.5 rounded-full bg-current"></span>${name[st] || st}</span>`;
     }
   
-    /* 6️⃣ Hành động */
+    /* 6️⃣ Hành động 
+         - Ở "Chờ xác nhận": có Hủy (bên trái) và Xác nhận (bên phải)
+         - Qua "Đã xác nhận": chỉ còn Hoàn tất
+    */
     function renderActions(s) {
-      if (s.trang_thai === "CHO_XAC_NHAN")
-        return `<button class="action-btn bg-sky-500 text-white px-3 py-1.5 text-xs rounded-lg"
-                data-id="${s.ma_lich_hen}" data-act="DA_XAC_NHAN">Xác nhận</button>`;
-      if (s.trang_thai === "DA_XAC_NHAN")
-        return `<button class="action-btn bg-emerald-600 text-white px-3 py-1.5 text-xs rounded-lg"
-                data-id="${s.ma_lich_hen}" data-act="HOAN_THANH">Hoàn tất</button>`;
-      if (s.trang_thai === "HOAN_THANH")
+      // Chờ xác nhận: hiển thị Hủy (trái) + Xác nhận (phải)
+      if (s.trang_thai === "CHO_XAC_NHAN") {
+        return `
+          <div class="flex gap-2 justify-end">
+            <button class="action-btn bg-red-500 text-white px-3 py-1.5 text-xs rounded-lg"
+                    data-id="${s.ma_lich_hen}" data-act="DA_HUY">
+              Hủy
+            </button>
+            <button class="action-btn bg-sky-500 text-white px-3 py-1.5 text-xs rounded-lg"
+                    data-id="${s.ma_lich_hen}" data-act="DA_XAC_NHAN">
+              Xác nhận
+            </button>
+          </div>`;
+      }
+  
+      // Đã xác nhận: chỉ có "Hoàn tất"
+      if (s.trang_thai === "DA_XAC_NHAN") {
+        return `
+          <button class="action-btn bg-emerald-600 text-white px-3 py-1.5 text-xs rounded-lg"
+                  data-id="${s.ma_lich_hen}" data-act="HOAN_THANH">
+            Hoàn tất
+          </button>`;
+      }
+  
+      // Hoàn tất hoặc đã hủy → không có nút thao tác
+      if (s.trang_thai === "HOAN_THANH") {
         return `<span class="text-xs text-gray-500">✅ Đã xong</span>`;
+      }
+  
+      if (s.trang_thai === "DA_HUY") {
+        return `<span class="text-xs text-gray-400">❌ Đã hủy</span>`;
+      }
+  
       return "";
     }
   
@@ -164,12 +192,25 @@
   
       const ma_lich = btn.dataset.id;
       const act = btn.dataset.act;
+  
+      if (act === "DA_HUY") {
+        showToast("⛔ Đang hủy lịch hẹn...", "warning");
+      }
+  
       try {
         const res = await apiRequest(`${API_BASE_URL}?path=lichhen&action=updateTrangThai`, "POST", {
           ma_lich_hen: ma_lich,
           trang_thai: act,
         });
-        showToast(res.message || "Đã cập nhật lịch", "success");
+  
+        if (act === "DA_HUY") {
+          showToast(res.message || "Lịch hẹn đã được hủy!", "danger");
+        } else if (act === "HOAN_THANH") {
+          showToast("✅ Đã hoàn tất khám!", "success");
+        } else if (act === "DA_XAC_NHAN") {
+          showToast("📋 Đã xác nhận lịch hẹn!", "info");
+        }
+  
         fetchDoctorSchedule(selectedDate);
       } catch (err) {
         console.error("❌ Lỗi cập nhật:", err);

@@ -94,7 +94,6 @@ class Auth
                 'so_dien_thoai'   => $data['so_dien_thoai'] ?? '',
                 'dia_chi'         => $data['dia_chi'] ?? '',
                 'ma_chuyen_khoa'  => $data['ma_chuyen_khoa'] ?? null,
-                'ma_chi_nhanh'    => $data['ma_chi_nhanh'] ?? null,
                 'trinh_do'        => $data['trinh_do'] ?? '',
                 'kinh_nghiem'     => $data['kinh_nghiem'] ?? 0,
                 'mo_ta'           => $data['mo_ta'] ?? ''

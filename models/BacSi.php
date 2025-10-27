@@ -26,21 +26,40 @@ class BacSi
 
     // 🟢 Thêm bác sĩ mới
     public function create($data)
-    {
-        $sql = "INSERT INTO bacsi (ma_nguoi_dung, ma_chuyen_khoa, ma_chi_nhanh, ho_ten, trinh_do, kinh_nghiem, mo_ta)
-                VALUES (:userId, :ck, :cn, :ho_ten, :trinh_do, :kn, :mo_ta)";
+{
+    try {
+        $sql = "INSERT INTO bacsi (
+                    ma_nguoi_dung,
+                    ma_chuyen_khoa,
+                    ho_ten,
+                    trinh_do,
+                    kinh_nghiem,
+                    mo_ta
+                )
+                VALUES (
+                    :ma_nguoi_dung,
+                    :ma_chuyen_khoa,
+                    :ho_ten,
+                    :trinh_do,
+                    :kinh_nghiem,
+                    :mo_ta
+                )";
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':userId' => $data['ma_nguoi_dung'],
-            ':ck' => $data['ma_chuyen_khoa'] ?? null,
-            ':cn' => $data['ma_chi_nhanh'] ?? null,
-            ':ho_ten' => $data['ho_ten'],
-            ':trinh_do' => $data['trinh_do'] ?? null,
-            ':kn' => $data['kinh_nghiem'] ?? null,
-            ':mo_ta' => $data['mo_ta'] ?? null
+            ':ma_nguoi_dung'  => $data['ma_nguoi_dung'],
+            ':ma_chuyen_khoa' => $data['ma_chuyen_khoa'] ?? null,
+            ':ho_ten'         => $data['ho_ten'] ?? '',
+            ':trinh_do'       => $data['trinh_do'] ?? null,
+            ':kinh_nghiem'    => $data['kinh_nghiem'] ?? null,
+            ':mo_ta'          => $data['mo_ta'] ?? null
         ]);
+
         return (int) $this->db->lastInsertId();
+    } catch (Exception $e) {
+        throw new Exception("Lỗi khi thêm bác sĩ: " . $e->getMessage());
     }
+}
 
     // 🟡 Cập nhật thông tin bác sĩ
     public function update($id, $data)

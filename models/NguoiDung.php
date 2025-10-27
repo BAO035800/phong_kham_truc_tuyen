@@ -13,7 +13,11 @@ class NguoiDung
     /* 🟢 Lấy tất cả người dùng */
     public function all(): array
     {
-        $stmt = $this->db->query("SELECT ma_nguoi_dung, ten_dang_nhap, email, vai_tro, ngay_tao FROM nguoidung ORDER BY ma_nguoi_dung DESC");
+        $stmt = $this->db->query("
+            SELECT ma_nguoi_dung, ten_dang_nhap, email, vai_tro, ngay_tao 
+            FROM nguoidung 
+            ORDER BY ma_nguoi_dung DESC
+        ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -55,30 +59,37 @@ class NguoiDung
             $this->db->beginTransaction();
 
             // 1️⃣ Tạo người dùng
-            $sqlUser = "INSERT INTO nguoidung (ten_dang_nhap, email, mat_khau, vai_tro)
-                        VALUES (:ten, :email, :mat_khau, :vai_tro)";
+            $sqlUser = "
+                INSERT INTO nguoidung (ten_dang_nhap, email, mat_khau, vai_tro)
+                VALUES (:ten, :email, :mat_khau, :vai_tro)
+            ";
             $stmtUser = $this->db->prepare($sqlUser);
             $stmtUser->execute([
-                ':ten'      => $data['ten_dang_nhap'],
+                ':ten'      => $data['ten_dang_nhap'] ?? ($data['email'] ? explode('@', $data['email'])[0] : 'user_' . time()),
                 ':email'    => $data['email'],
-                ':mat_khau' => password_hash($data['mat_khau'], PASSWORD_BCRYPT),
+                ':mat_khau' => password_hash($data['mat_khau'] ?? $data['password'], PASSWORD_BCRYPT),
                 ':vai_tro'  => $data['vai_tro'] ?? 'BENHNHAN'
             ]);
 
             $userId = (int)$this->db->lastInsertId();
 
             // 2️⃣ Tạo thông tin bệnh nhân
-            $sqlPatient = "INSERT INTO benhnhan (ho_ten, ngay_sinh, gioi_tinh, so_dien_thoai, email, dia_chi, ma_nguoi_dung)
-                           VALUES (:ho_ten, :ngay_sinh, :gioi_tinh, :so_dien_thoai, :email, :dia_chi, :ma_nguoi_dung)";
+            $sqlPatient = "
+                INSERT INTO benhnhan 
+                (ho_ten, ngay_sinh, gioi_tinh, loai_benh_nhan, so_dien_thoai, email, dia_chi, ma_nguoi_dung)
+                VALUES 
+                (:ho_ten, :ngay_sinh, :gioi_tinh, :loai_benh_nhan, :so_dien_thoai, :email, :dia_chi, :ma_nguoi_dung)
+            ";
             $stmtPatient = $this->db->prepare($sqlPatient);
             $stmtPatient->execute([
-                ':ho_ten'        => $data['ho_ten'] ?? '',
-                ':ngay_sinh'     => $data['ngay_sinh'] ?? null,
-                ':gioi_tinh'     => $data['gioi_tinh'] ?? 'Khác',
-                ':so_dien_thoai' => $data['so_dien_thoai'] ?? '',
-                ':email'         => $data['email'] ?? '',
-                ':dia_chi'       => $data['dia_chi'] ?? '',
-                ':ma_nguoi_dung' => $userId
+                ':ho_ten'         => $data['ho_ten'] ?? '',
+                ':ngay_sinh'      => $data['ngay_sinh'] ?? null,
+                ':gioi_tinh'      => $data['gioi_tinh'] ?? 'Khác',
+                ':loai_benh_nhan' => $data['loai_benh_nhan'] ?? 'MOI',
+                ':so_dien_thoai'  => $data['so_dien_thoai'] ?? '',
+                ':email'          => $data['email'] ?? '',
+                ':dia_chi'        => $data['dia_chi'] ?? '',
+                ':ma_nguoi_dung'  => $userId
             ]);
 
             $this->db->commit();
@@ -91,64 +102,99 @@ class NguoiDung
 
     /* 👨‍⚕️ Tạo tài khoản BÁC SĨ */
     public function createBacSi($data): int
+{
+    try {
+        $this->db->beginTransaction();
+
+        // 1️⃣ Tạo người dùng (bảng nguoidung)
+        $sqlUser = "
+            INSERT INTO nguoidung (ten_dang_nhap, email, mat_khau, vai_tro)
+            VALUES (:ten, :email, :mat_khau, :vai_tro)
+        ";
+        $stmtUser = $this->db->prepare($sqlUser);
+        $stmtUser->execute([
+            ':ten'      => $data['ten_dang_nhap'] ?? ($data['email'] ? explode('@', $data['email'])[0] : 'bacsi_' . time()),
+            ':email'    => $data['email'],
+            ':mat_khau' => password_hash($data['mat_khau'] ?? $data['password'], PASSWORD_BCRYPT),
+            ':vai_tro'  => $data['vai_tro'] ?? 'BACSI'
+        ]);
+
+        $userId = (int)$this->db->lastInsertId();
+
+        // 2️⃣ Tạo bác sĩ (bảng bacsi)
+        $sqlDoctor = "
+            INSERT INTO bacsi (
+                ma_nguoi_dung, 
+                ma_chuyen_khoa, 
+                ho_ten, 
+                trinh_do, 
+                kinh_nghiem, 
+                mo_ta
+            ) 
+            VALUES (
+                :ma_nguoi_dung, 
+                :ma_chuyen_khoa, 
+                :ho_ten, 
+                :trinh_do, 
+                :kinh_nghiem, 
+                :mo_ta
+            )
+        ";
+        $stmtDoctor = $this->db->prepare($sqlDoctor);
+        $stmtDoctor->execute([
+            ':ma_nguoi_dung'  => $userId,
+            ':ma_chuyen_khoa' => $data['ma_chuyen_khoa'],
+            ':ho_ten'         => $data['ho_ten'],
+            ':trinh_do'       => $data['trinh_do'] ?? null,
+            ':kinh_nghiem'    => $data['kinh_nghiem'] ?? null,
+            ':mo_ta'          => $data['mo_ta'] ?? null
+        ]);
+
+        $this->db->commit();
+        return $userId;
+    } catch (Exception $e) {
+        $this->db->rollBack();
+        throw new Exception("Lỗi khi tạo người dùng & bác sĩ: " . $e->getMessage());
+    }
+}
+
+
+    /* 🧱 Tạo tài khoản ADMIN */
+    public function createAdmin($data): int
     {
-        try {
-            $this->db->beginTransaction();
-
-            // 1️⃣ Tạo người dùng
-            $sqlUser = "INSERT INTO nguoidung (ten_dang_nhap, email, mat_khau, vai_tro)
-                        VALUES (:ten, :email, :mat_khau, :vai_tro)";
-            $stmtUser = $this->db->prepare($sqlUser);
-            $stmtUser->execute([
-                ':ten'      => $data['ten_dang_nhap'],
-                ':email'    => $data['email'],
-                ':mat_khau' => password_hash($data['mat_khau'], PASSWORD_BCRYPT),
-                ':vai_tro'  => $data['vai_tro'] ?? 'BACSI'
-            ]);
-
-            $userId = (int)$this->db->lastInsertId();
-
-            // 2️⃣ Tạo thông tin bác sĩ
-            $sqlDoctor = "INSERT INTO bacsi (ma_nguoi_dung, ma_chuyen_khoa, ma_chi_nhanh, ho_ten, trinh_do, kinh_nghiem, mo_ta)
-                          VALUES (:ma_nguoi_dung, :ma_chuyen_khoa, :ma_chi_nhanh, :ho_ten, :trinh_do, :kinh_nghiem, :mo_ta)";
-            $stmtDoctor = $this->db->prepare($sqlDoctor);
-            $stmtDoctor->execute([
-                ':ma_nguoi_dung' => $userId,
-                ':ma_chuyen_khoa' => $data['ma_chuyen_khoa'] ?? null,
-                ':ma_chi_nhanh'   => $data['ma_chi_nhanh'] ?? null,
-                ':ho_ten'         => $data['ho_ten'] ?? '',
-                ':trinh_do'       => $data['trinh_do'] ?? '',
-                ':kinh_nghiem'    => $data['kinh_nghiem'] ?? 0,
-                ':mo_ta'          => $data['mo_ta'] ?? ''
-            ]);
-
-            $this->db->commit();
-            return $userId;
-        } catch (Exception $e) {
-            $this->db->rollBack();
-            throw new Exception("Lỗi khi tạo người dùng & bác sĩ: " . $e->getMessage());
-        }
+        $stmt = $this->db->prepare("
+            INSERT INTO nguoidung (ten_dang_nhap, email, mat_khau, vai_tro, ngay_tao)
+            VALUES (:ten, :email, :mk, 'ADMIN', NOW())
+        ");
+        $stmt->execute([
+            ':ten' => $data['ten_dang_nhap'] ?? ($data['email'] ? explode('@', $data['email'])[0] : 'admin_' . time()),
+            ':email' => $data['email'],
+            ':mk' => password_hash($data['mat_khau'] ?? $data['password'], PASSWORD_DEFAULT)
+        ]);
+        return (int)$this->db->lastInsertId();
     }
 
     /* 🟡 Cập nhật thông tin hoặc đổi mật khẩu */
     public function update($id, $data): bool
     {
-        // 🔒 Nếu có yêu cầu đổi mật khẩu
-        if (!empty($data['mat_khau'])) {
-            $hashed = password_hash($data['mat_khau'], PASSWORD_BCRYPT);
-            $stmt = $this->db->prepare("UPDATE nguoidung SET mat_khau = :mk WHERE ma_nguoi_dung = :id");
+        if (!empty($data['mat_khau']) || !empty($data['password'])) {
+            $hashed = password_hash($data['mat_khau'] ?? $data['password'], PASSWORD_BCRYPT);
+            $stmt = $this->db->prepare("
+                UPDATE nguoidung SET mat_khau = :mk WHERE ma_nguoi_dung = :id
+            ");
             return $stmt->execute([
                 ':mk' => $hashed,
                 ':id' => $id
             ]);
         }
 
-        // ⚙️ Nếu chỉ cập nhật thông tin cơ bản
-        $sql = "UPDATE nguoidung SET 
-                    ten_dang_nhap = COALESCE(:ten, ten_dang_nhap),
-                    email = COALESCE(:email, email),
-                    vai_tro = COALESCE(:vai_tro, vai_tro)
-                WHERE ma_nguoi_dung = :id";
+        $sql = "
+            UPDATE nguoidung SET 
+                ten_dang_nhap = COALESCE(:ten, ten_dang_nhap),
+                email = COALESCE(:email, email),
+                vai_tro = COALESCE(:vai_tro, vai_tro)
+            WHERE ma_nguoi_dung = :id
+        ";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':ten' => $data['ten_dang_nhap'] ?? null,
@@ -164,19 +210,20 @@ class NguoiDung
         $stmt = $this->db->prepare("DELETE FROM nguoidung WHERE ma_nguoi_dung = ?");
         return $stmt->execute([$id]);
     }
-    public function createAdmin($data)
-{
-    $stmt = $this->db->prepare("
-        INSERT INTO nguoidung (ho_ten, email, mat_khau, vai_tro, ten_dang_nhap, ngay_tao)
-        VALUES (?, ?, ?, 'ADMIN', ?, NOW())
-    ");
-    $stmt->execute([
-        $data['ho_ten'],
-        $data['email'],
-        password_hash($data['password'], PASSWORD_DEFAULT),
-        $data['ten_dang_nhap']
-    ]);
-    return $this->db->lastInsertId();
-}
 
+    /* 🧩 Dành cho trường hợp tạo user đơn giản (ví dụ admin thêm tài khoản) */
+    public function createSimpleUser($data): int
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO nguoidung (ten_dang_nhap, email, mat_khau, vai_tro, ngay_tao)
+            VALUES (:ten, :email, :mk, :role, NOW())
+        ");
+        $stmt->execute([
+            ':ten' => $data['ten_dang_nhap'] ?? ($data['email'] ? explode('@', $data['email'])[0] : 'user_' . time()),
+            ':email' => $data['email'],
+            ':mk' => password_hash($data['mat_khau'] ?? $data['password'], PASSWORD_BCRYPT),
+            ':role' => strtoupper($data['vai_tro'] ?? 'BENHNHAN')
+        ]);
+        return (int)$this->db->lastInsertId();
+    }
 }

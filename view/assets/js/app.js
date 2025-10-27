@@ -69,6 +69,8 @@ async function renderPage() {
       "#/admin/patients",
       "#/admin/specialties", // ✅ thêm route chuyên khoa
       "#/admin/user",
+      '#/confirm',
+
     ],
     doctor: [
       "#/",
@@ -76,6 +78,7 @@ async function renderPage() {
       "#/doctor-availability",
       "#/patients",
       "#/settings",
+      '#/confirm',
     ],
     patient: [
       "#/",
@@ -84,6 +87,7 @@ async function renderPage() {
       "#/contact",
       "#/settings",
       "#/doctors",
+      '#/confirm',
     ],
     guest: [
       "#/",
@@ -92,6 +96,7 @@ async function renderPage() {
       "#/doctors",
       "#/contact",
       "#/services",
+      '#/confirm',
     ],
   };
 

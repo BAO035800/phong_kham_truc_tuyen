@@ -1,71 +1,23 @@
-<!-- view/pages/doctors.html -->
 <section class="py-16 bg-surface text-textmain">
-    <div class="container mx-auto px-4">
-      <header class="text-center mb-10" data-aos="fade-up">
-        <h2 class="text-3xl font-bold text-primary">Đội ngũ bác sĩ</h2>
-        <p class="text-textmain/70 max-w-2xl mx-auto mt-2">
-          Đội ngũ chuyên gia tận tâm, giàu kinh nghiệm, luôn sẵn sàng đồng hành cùng sức khỏe của bạn.
-        </p>
-      </header>
-  
-      <!-- Danh sách bác sĩ -->
-      <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" data-aos="fade-up" data-aos-delay="100">
-        <!-- Bác sĩ 1 -->
-        <div class="p-6 bg-white rounded-xl shadow-card hover:-translate-y-1 transition">
-          <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=500&q=80"
-               alt="Bác sĩ" class="w-28 h-28 mx-auto rounded-full object-cover mb-4 shadow-md">
-          <h3 class="font-semibold text-lg text-center">BS. Nguyễn Văn Minh</h3>
-          <p class="text-sm text-textmain/70 text-center mb-2">Chuyên khoa Nội tổng quát</p>
-          <p class="text-xs text-textmain/60 text-center mb-4">15 năm kinh nghiệm</p>
-          <div class="text-center">
-            <a href="#/booking" class="inline-block bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm">
-              <i class="fa-solid fa-calendar-check mr-2"></i>Đặt lịch
-            </a>
-          </div>
-        </div>
-  
-        <!-- Bác sĩ 2 -->
-        <div class="p-6 bg-white rounded-xl shadow-card hover:-translate-y-1 transition" data-aos-delay="150">
-          <img src="https://images.unsplash.com/photo-1606813902773-3b4084e2d9e0?auto=format&fit=crop&w=500&q=80"
-               alt="Bác sĩ" class="w-28 h-28 mx-auto rounded-full object-cover mb-4 shadow-md">
-          <h3 class="font-semibold text-lg text-center">BS. Trần Thị Hương</h3>
-          <p class="text-sm text-textmain/70 text-center mb-2">Chuyên khoa Nhi</p>
-          <p class="text-xs text-textmain/60 text-center mb-4">10 năm kinh nghiệm</p>
-          <div class="text-center">
-            <a href="#/booking" class="inline-block bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm">
-              <i class="fa-solid fa-calendar-check mr-2"></i>Đặt lịch
-            </a>
-          </div>
-        </div>
-  
-        <!-- Bác sĩ 3 -->
-        <div class="p-6 bg-white rounded-xl shadow-card hover:-translate-y-1 transition" data-aos-delay="200">
-          <img src="https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=500&q=80"
-               alt="Bác sĩ" class="w-28 h-28 mx-auto rounded-full object-cover mb-4 shadow-md">
-          <h3 class="font-semibold text-lg text-center">BS. Phạm Đức Long</h3>
-          <p class="text-sm text-textmain/70 text-center mb-2">Chuyên khoa Tim mạch</p>
-          <p class="text-xs text-textmain/60 text-center mb-4">18 năm kinh nghiệm</p>
-          <div class="text-center">
-            <a href="#/booking" class="inline-block bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm">
-              <i class="fa-solid fa-calendar-check mr-2"></i>Đặt lịch
-            </a>
-          </div>
-        </div>
-  
-        <!-- Bác sĩ 4 -->
-        <div class="p-6 bg-white rounded-xl shadow-card hover:-translate-y-1 transition" data-aos-delay="250">
-          <img src="https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=500&q=80"
-               alt="Bác sĩ" class="w-28 h-28 mx-auto rounded-full object-cover mb-4 shadow-md">
-          <h3 class="font-semibold text-lg text-center">BS. Lê Thu Hà</h3>
-          <p class="text-sm text-textmain/70 text-center mb-2">Chuyên khoa Da liễu</p>
-          <p class="text-xs text-textmain/60 text-center mb-4">12 năm kinh nghiệm</p>
-          <div class="text-center">
-            <a href="#/booking" class="inline-block bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm">
-              <i class="fa-solid fa-calendar-check mr-2"></i>Đặt lịch
-            </a>
-          </div>
-        </div>
-      </div>
+  <div class="container mx-auto px-4">
+    <header class="text-center mb-10" data-aos="fade-up">
+      <h2 class="text-3xl font-bold text-primary">Đội ngũ bác sĩ</h2>
+      <p class="text-textmain/70 max-w-2xl mx-auto mt-2">
+        Đội ngũ chuyên gia tận tâm, giàu kinh nghiệm, luôn sẵn sàng đồng hành cùng sức khỏe của bạn.
+      </p>
+    </header>
+
+    <!-- Danh sách bác sĩ -->
+    <div id="doctor-list" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" data-aos="fade-up" data-aos-delay="100"></div>
+
+    <!-- Loading -->
+    <div id="doctor-loading" class="hidden text-center py-10 text-gray-500">
+      Đang tải danh sách bác sĩ...
     </div>
-  </section>
-  
+
+    <!-- Empty -->
+    <div id="doctor-empty" class="hidden text-center py-10 text-gray-500">
+      Không tìm thấy bác sĩ nào.
+    </div>
+  </div>
+</section>
