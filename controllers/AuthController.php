@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/Auth.php';
+require_once __DIR__ . '/../models/BenhNhan.php';
 require_once __DIR__ . '/../config/Database.php';
 
 class AuthController
@@ -36,7 +37,7 @@ class AuthController
             exit;
         }
     }
-    
+
     public function handleRequest()
     {
         $action = $_GET['action'] ?? '';
@@ -61,29 +62,34 @@ class AuthController
                         throw new Exception("Email hoặc mật khẩu không đúng");
                     }
 
-                    // Chuẩn hoá vai trò
                     $norm = $this->normalizeRole($user['vai_tro'] ?? '');
-
-                    // Trích xuất trường
-                    $id    = $user['id'] ?? $user['ma_nguoi_dung'] ?? $user['id_nguoi_dung'] ?? null;
-                    $email = $user['email'] ?? $user['ten_dang_nhap'] ?? null;
+                    $id    = $user['id'] ?? $user['ma_nguoi_dung'] ?? null;
+                    $email = $user['email'] ?? null;
                     $name  = $user['ten_dang_nhap'] ?? $user['ho_ten'] ?? $email;
 
-                    // Lưu session
                     $_SESSION['user'] = [
                         'id'      => $id,
                         'name'    => $name,
                         'email'   => $email,
-                        'vai_tro' => $norm,   // <-- luôn: admin/doctor/patient
+                        'vai_tro' => $norm,
                     ];
 
-                    // Nếu là bác sĩ → map sang ma_bac_si thật
+                    // Nếu là bác sĩ → lấy mã bác sĩ thật
                     if ($norm === 'doctor') {
                         $pdo = (new Database())->getConnection();
                         $stmt = $pdo->prepare("SELECT ma_bac_si FROM bacsi WHERE ma_nguoi_dung = ?");
                         $stmt->execute([$id]);
                         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             $_SESSION['user']['ma_bac_si'] = $row['ma_bac_si'];
+                        }
+                    }
+
+                    // ✅ Nếu là bệnh nhân → lấy mã bệnh nhân thật
+                    if ($norm === 'patient') {
+                        $benhNhanModel = new BenhNhan();
+                        $benhNhan = $benhNhanModel->findByNguoiDung($id);
+                        if ($benhNhan) {
+                            $_SESSION['user']['ma_benh_nhan'] = $benhNhan['ma_benh_nhan'];
                         }
                     }
 

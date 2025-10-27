@@ -88,6 +88,7 @@ async function renderPage() {
       "#/settings",
       "#/doctors",
       '#/confirm',
+      '#/settings-patient',
     ],
     guest: [
       "#/",
@@ -161,7 +162,10 @@ async function renderPage() {
       await loadPage("./pages/settings.html");
       if (typeof setupSettingsPage === "function") setupSettingsPage();
       break;
-
+    case "#/settings-patient":
+      await loadPage("./pages/settings_patient.html");
+      if (typeof setupPatientSettingsPage === "function") setupPatientSettingsPage();
+      break;
     // ----- Admin -----
     case "#/admin/doctors":
       await loadPage("./pages/admin_doctors.html");

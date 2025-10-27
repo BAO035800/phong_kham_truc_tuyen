@@ -1,0 +1,91 @@
+<section class="py-16 bg-gray-50 text-gray-800 min-h-screen">
+    <div class="container mx-auto px-4 md:px-6 lg:px-10 max-w-6xl">
+      <!-- Header -->
+      <header class="text-center mb-12" data-aos="fade-up">
+        <h2 class="text-4xl font-extrabold text-primary flex justify-center items-center gap-2">
+          <i class="fa-solid fa-gear text-primary"></i> Cài đặt tài khoản bệnh nhân
+        </h2>
+        <p class="text-gray-500 mt-3 text-base">
+          Cập nhật thông tin cá nhân và bảo mật tài khoản của bạn.
+        </p>
+      </header>
+  
+      <!-- Thông tin cá nhân -->
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-md p-8 mb-8" data-aos="fade-up">
+        <h3 class="text-lg font-semibold mb-5 flex items-center gap-2 text-sky-700">
+          <i class="fa-solid fa-user"></i> Thông tin cá nhân
+        </h3>
+        <form id="patientForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Họ và tên</label>
+            <input id="ptName" type="text" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+          </div>
+  
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Ngày sinh</label>
+            <input id="ptBirth" type="date" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+          </div>
+  
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Giới tính</label>
+            <select id="ptGender" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+              <option value="">-- Chọn giới tính --</option>
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+  
+          <!-- 🔒 Loại bệnh nhân chỉ hiển thị, không được chỉnh -->
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Loại bệnh nhân</label>
+            <input id="ptType" type="text" class="w-full rounded-xl border border-gray-300 p-3 bg-gray-100 text-gray-500" disabled>
+          </div>
+  
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Số điện thoại</label>
+            <input id="ptPhone" type="text" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+          </div>
+  
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Email</label>
+            <input id="ptEmail" type="email" class="w-full rounded-xl border border-gray-300 p-3 bg-gray-100 text-gray-500" disabled>
+          </div>
+  
+          <div class="col-span-1 md:col-span-2 lg:col-span-3">
+            <label class="block text-sm text-gray-600 mb-1">Địa chỉ</label>
+            <textarea id="ptAddress" rows="3" class="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none"></textarea>
+          </div>
+  
+          <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end">
+            <button type="submit" class="rounded-xl bg-primary text-white px-6 py-2.5 text-sm font-semibold hover:bg-primary/90 transition">
+              💾 Lưu thay đổi
+            </button>
+          </div>
+        </form>
+      </div>
+  
+      <!-- Đổi mật khẩu -->
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-md p-8" data-aos="fade-up" data-aos-delay="100">
+        <h3 class="text-lg font-semibold mb-5 flex items-center gap-2 text-sky-700">
+          <i class="fa-solid fa-lock"></i> Đổi mật khẩu
+        </h3>
+        <form id="passwordForm" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <input id="pwOld" type="password" placeholder="Mật khẩu hiện tại"
+            class="rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+          <input id="pwNew" type="password" placeholder="Mật khẩu mới"
+            class="rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+          <input id="pwNew2" type="password" placeholder="Nhập lại mật khẩu mới"
+            class="rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-primary outline-none">
+          <div class="md:col-span-3 flex justify-end">
+            <button type="submit"
+              class="rounded-xl bg-primary text-white px-6 py-2.5 text-sm font-semibold hover:bg-primary/90 transition">
+              🔄 Cập nhật mật khẩu
+            </button>
+          </div>
+        </form>
+        <p id="pwMsg" class="mt-3 text-sm text-gray-600"></p>
+      </div>
+    </div>
+  </section>
+  

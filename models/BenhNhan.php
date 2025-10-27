@@ -88,13 +88,21 @@ class BenhNhan
             WHERE ma_benh_nhan = :id
         ";
         $stmt = $this->db->prepare($sql);
+
+        // ✅ Chuyển giá trị rỗng thành NULL an toàn cho SQL
+        $ngaySinh = empty($data['ngay_sinh']) ? null : $data['ngay_sinh'];
+        $sdt = empty($data['so_dien_thoai']) ? null : $data['so_dien_thoai'];
+        $email = empty($data['email']) ? null : $data['email'];
+        $diaChi = empty($data['dia_chi']) ? null : $data['dia_chi'];
+        $gioiTinh = $data['gioi_tinh'] ?? 'Khác';
+
         return $stmt->execute([
             ':ho_ten' => $data['ho_ten'] ?? null,
-            ':ngay_sinh' => $data['ngay_sinh'] ?? null,
-            ':gioi_tinh' => $data['gioi_tinh'] ?? null,
-            ':sdt' => $data['so_dien_thoai'] ?? null,
-            ':email' => $data['email'] ?? null,
-            ':dia_chi' => $data['dia_chi'] ?? null,
+            ':ngay_sinh' => $ngaySinh,
+            ':gioi_tinh' => $gioiTinh,
+            ':sdt' => $sdt,
+            ':email' => $email,
+            ':dia_chi' => $diaChi,
             ':id' => $id
         ]);
     }
@@ -104,5 +112,13 @@ class BenhNhan
     {
         $stmt = $this->db->prepare("DELETE FROM benhnhan WHERE ma_benh_nhan = ?");
         return $stmt->execute([$id]);
+    }
+
+    // 🟢 Thêm mới: Lấy thông tin bệnh nhân theo mã người dùng
+    public function findByNguoiDung($maNguoiDung)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM benhnhan WHERE ma_nguoi_dung = ?");
+        $stmt->execute([$maNguoiDung]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
