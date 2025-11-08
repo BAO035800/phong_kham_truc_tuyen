@@ -1,2 +1,2 @@
-php -S localhost:8000 -t public
+php -S local8000host: -t public
 http://localhost:8000/index.php?path=chinhanh

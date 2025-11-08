@@ -39,6 +39,11 @@ class LichHenController
         try {
             switch ($action) {
                 case 'datLich':
+                     error_log("📩 Dữ liệu nhận từ client: " . file_get_contents("php://input"));
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (!$data) {
+        throw new Exception("❌ Không nhận được dữ liệu JSON từ client.");
+    }
                     $result = $this->model->datLich($data);
                     echo json_encode($result);
                     break;

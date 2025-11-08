@@ -147,9 +147,11 @@ async function setupBookingPage() {
         try {
           const data = await apiRequest(`${API_BASE_URL}?path=session`, "GET");
           console.log("🧾 Session hiện tại:", data);
-          if (data.logged_in && data.user?.id) {
-            ma_benh_nhan = data.user.id;
-          } else {
+          if (data.logged_in && data.user?.ma_benh_nhan) {
+  ma_benh_nhan = data.user.ma_benh_nhan;
+}
+
+          else {
             showToast("⚠️ Bạn cần đăng nhập để đặt lịch", "warning");
             window.location.hash = "#/login";
             return;

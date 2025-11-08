@@ -31,13 +31,14 @@ async function initSchedulePage() {
     /* 1️⃣ Kiểm tra session đăng nhập */
     try {
       const session = await apiRequest(`${API_BASE_URL}?path=session`, "GET");
-      if (!session.logged_in || !session.user?.id) {
-        showToast("⚠️ Vui lòng đăng nhập để xem lịch hẹn", "warning");
-        window.location.hash = "#/login";
-        return;
-      }
-      maBenhNhan = session.user.id;
-      console.log("👤 Bệnh nhân ID:", maBenhNhan);
+if (!session.logged_in || !session.user?.ma_benh_nhan) {
+  showToast("⚠️ Vui lòng đăng nhập để xem lịch hẹn", "warning");
+  window.location.hash = "#/login";
+  return;
+}
+maBenhNhan = session.user.ma_benh_nhan;
+console.log("👤 Mã bệnh nhân:", maBenhNhan);
+
     } catch (err) {
       console.error("❌ Lỗi lấy session:", err);
       showToast("Không thể xác thực người dùng", "error");

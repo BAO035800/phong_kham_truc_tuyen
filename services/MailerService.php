@@ -14,8 +14,8 @@ class MailerService
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'Thang10072005@gmail.com'; // ✅ Gmail thật
-            $mail->Password = 'gnoj kmsw evai jwer';      // ✅ App Password
+            $mail->Username = 'nguyentue14102005@gmail.com'; // ✅ Gmail thật
+            $mail->Password = 'pspa fkdm jnfj djwv';      // ✅ App Password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 

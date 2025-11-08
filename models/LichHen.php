@@ -79,10 +79,15 @@ class LichHen
                 'message' => 'Lịch hẹn đã được tạo. Vui lòng kiểm tra email để xác nhận.',
                 'ma_lich_hen' => $ma_lich_hen
             ];
-        } catch (Exception $e) {
+                } catch (Exception $e) {
             $this->conn->rollBack();
+
+            // 🧠 Ghi log lỗi chi tiết để xem lý do thật sự
+            error_log("❌ Lỗi chi tiết trong datLich(): " . $e->getMessage());
+
             throw new Exception("Lỗi khi đặt lịch: " . $e->getMessage());
         }
+
     }
 
 
