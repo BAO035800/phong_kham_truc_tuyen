@@ -79,37 +79,71 @@
     }
   
     /* 4️⃣ Thêm lịch trống */
-    addForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-  
-      const ngay = document.getElementById("ngay").value;
-      const bat_dau = document.getElementById("bat_dau").value;
-      const ket_thuc = document.getElementById("ket_thuc").value;
-  
-      if (!ngay || !bat_dau || !ket_thuc) {
-        showToast("⚠️ Vui lòng nhập đủ thông tin", "warning");
-        return;
-      }
-  
-      // ✅ Chuẩn hoá thời gian
-      const thoi_gian_bat_dau = `${ngay} ${bat_dau}:00`;
-      const thoi_gian_ket_thuc = `${ngay} ${ket_thuc}:00`;
-  
-      try {
-        const res = await apiRequest(`${API_BASE_URL}?path=lichtrong&action=POST`, "POST", {
-          ma_bac_si: maBacSi,
-          thoi_gian_bat_dau,
-          thoi_gian_ket_thuc,
+    /* 4️⃣ Thêm lịch trống */
+addForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const ngay = document.getElementById("ngay").value;
+  const bat_dau = document.getElementById("bat_dau").value;
+  const ket_thuc = document.getElementById("ket_thuc").value;
+
+  if (!ngay || !bat_dau || !ket_thuc) {
+    showToast("⚠️ Vui lòng nhập đủ thông tin", "warning");
+    return;
+  }
+
+  // ✅ Chuẩn hoá thời gian đầu vào
+  const thoi_gian_bat_dau = `${ngay} ${bat_dau}:00`;
+  const thoi_gian_ket_thuc = `${ngay} ${ket_thuc}:00`;
+
+  // ⚙️ Thời lượng mỗi slot (phút)
+  const SLOT_DURATION = 60; // bạn có thể đổi thành 15, 20, 60... tùy nhu cầu
+
+  // 🧩 Hàm tạo các khung giờ con
+  function generateTimeSlots(start, end, stepMinutes) {
+    const slots = [];
+    let current = new Date(start);
+    const endTime = new Date(end);
+
+    while (current < endTime) {
+      const next = new Date(current.getTime() + stepMinutes * 60000);
+      if (next <= endTime) {
+        slots.push({
+          thoi_gian_bat_dau: current.toISOString().slice(0, 19).replace("T", " "),
+          thoi_gian_ket_thuc: next.toISOString().slice(0, 19).replace("T", " "),
         });
-  
-        showToast(res.message || "✅ Đã thêm lịch trống!", "success");
-        addForm.reset();
-        loadLichTrong();
-      } catch (err) {
-        console.error("❌ Lỗi thêm lịch:", err);
-        showToast("Không thể thêm lịch", "error");
       }
-    });
+      current = next;
+    }
+    return slots;
+  }
+
+  try {
+    const slots = generateTimeSlots(thoi_gian_bat_dau, thoi_gian_ket_thuc, SLOT_DURATION);
+    console.log("📅 Các khung giờ được tạo:", slots);
+
+    if (slots.length === 0) {
+      showToast("⚠️ Khoảng thời gian quá ngắn để chia khung giờ!", "warning");
+      return;
+    }
+
+    // 📨 Gửi từng slot lên server
+    for (const slot of slots) {
+      await apiRequest(`${API_BASE_URL}?path=lichtrong&action=POST`, "POST", {
+        ma_bac_si: maBacSi,
+        ...slot,
+      });
+    }
+
+    showToast(`✅ Đã thêm ${slots.length} khung giờ trống!`, "success");
+    addForm.reset();
+    loadLichTrong();
+  } catch (err) {
+    console.error("❌ Lỗi thêm lịch:", err);
+    showToast("Không thể thêm lịch", "error");
+  }
+});
+
   
     /* 5️⃣ Xoá lịch trống */
     tableBody.addEventListener("click", async (e) => {
