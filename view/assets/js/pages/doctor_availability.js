@@ -100,23 +100,42 @@ addForm.addEventListener("submit", async (e) => {
   const SLOT_DURATION = 60; // bạn có thể đổi thành 15, 20, 60... tùy nhu cầu
 
   // 🧩 Hàm tạo các khung giờ con
-  function generateTimeSlots(start, end, stepMinutes) {
-    const slots = [];
-    let current = new Date(start);
-    const endTime = new Date(end);
+  // 🧩 Hàm tạo các khung giờ con (không bị lệch múi giờ)
+function generateTimeSlots(startStr, endStr, stepMinutes) {
+  const slots = [];
 
-    while (current < endTime) {
-      const next = new Date(current.getTime() + stepMinutes * 60000);
-      if (next <= endTime) {
-        slots.push({
-          thoi_gian_bat_dau: current.toISOString().slice(0, 19).replace("T", " "),
-          thoi_gian_ket_thuc: next.toISOString().slice(0, 19).replace("T", " "),
-        });
-      }
-      current = next;
+  // Parse thủ công tránh timezone shift
+  const [startDate, startTime] = startStr.split(" ");
+  const [startYear, startMonth, startDay] = startDate.split("-").map(Number);
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+
+  const [endDate, endTime] = endStr.split(" ");
+  const [endYear, endMonth, endDay] = endDate.split("-").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
+
+  // Tạo Date theo local time (không UTC)
+  let current = new Date(startYear, startMonth - 1, startDay, startHour, startMinute);
+  const endTimeObj = new Date(endYear, endMonth - 1, endDay, endHour, endMinute);
+
+  while (current < endTimeObj) {
+    const next = new Date(current.getTime() + stepMinutes * 60000);
+    if (next <= endTimeObj) {
+      slots.push({
+        thoi_gian_bat_dau: formatDateTime(current),
+        thoi_gian_ket_thuc: formatDateTime(next),
+      });
     }
-    return slots;
+    current = next;
   }
+  return slots;
+}
+
+// 👉 Helper để format "YYYY-MM-DD HH:mm:ss"
+function formatDateTime(d) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+}
+
 
   try {
     const slots = generateTimeSlots(thoi_gian_bat_dau, thoi_gian_ket_thuc, SLOT_DURATION);
