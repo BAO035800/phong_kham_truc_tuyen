@@ -26,7 +26,7 @@ class ChuyenKhoa
     }
 
     // 🟡 Thêm chuyên khoa
-    public function create($data): int
+  public function create($data): int
     {
         $sql = "INSERT INTO chuyenkhoa (ten_chuyen_khoa, mo_ta)
                 VALUES (:ten, :mo_ta)";
@@ -37,6 +37,8 @@ class ChuyenKhoa
         ]);
         return (int)$this->db->lastInsertId();
     }
+
+
 
     // 🟠 Cập nhật chuyên khoa
     public function update($id, $data): bool

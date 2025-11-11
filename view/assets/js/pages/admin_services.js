@@ -74,40 +74,43 @@
 
     /* 3️⃣ Render bảng (đã bỏ cột Mã DV) */
     function renderServices() {
-      console.log("🧩 [renderServices] Render bảng dịch vụ:", allServices.length);
-      if (!allServices.length) return showEmpty("Không có dịch vụ.");
+  console.log("🧩 [renderServices] Render bảng dịch vụ:", allServices.length);
+  if (!allServices.length) return showEmpty("Không có dịch vụ.");
 
-      empty.classList.add("hidden");
+  empty.classList.add("hidden");
 
-      view.innerHTML = `
-        <table class="min-w-full text-sm">
-          <thead class="bg-primary50 text-textmain/80">
+  view.innerHTML = `
+    <table class="min-w-full text-sm">
+      <thead class="bg-primary50 text-textmain/80">
+        <tr>
+          <th class="px-3 py-2 text-left">Tên dịch vụ</th>
+          <th class="px-3 py-2 text-left">Mô tả</th>
+          <th class="px-3 py-2 text-left">Giá (VNĐ)</th>
+          <th class="px-3 py-2 text-left">Chuyên khoa</th>
+          <th class="px-3 py-2 text-left">Hành động</th>
+        </tr>
+      </thead>
+      <tbody class="[&>tr:nth-child(even)]:bg-slate-50/50">
+        ${allServices
+          .map(
+            (s) => `
             <tr>
-              <th class="px-3 py-2 text-left">Tên dịch vụ</th>
-              <th class="px-3 py-2 text-left">Giá (VNĐ)</th>
-              <th class="px-3 py-2 text-left">Chuyên khoa</th>
-              <th class="px-3 py-2 text-left">Hành động</th>
-            </tr>
-          </thead>
-          <tbody class="[&>tr:nth-child(even)]:bg-slate-50/50">
-            ${allServices
-              .map(
-                (s) => `
-                <tr>
-                  <td class="px-3 py-2">${s.ten_dich_vu}</td>
-                  <td class="px-3 py-2">${Number(s.gia_dich_vu).toLocaleString("vi-VN")}</td>
-                  <td class="px-3 py-2">${getSpecialtyName(s.ma_chuyen_khoa)}</td>
-                  <td class="px-3 py-2">
-                    <button data-act="edit" data-id="${s.ma_dich_vu}" class="text-blue-600 hover:underline">Sửa</button> |
-                    <button data-act="delete" data-id="${s.ma_dich_vu}" class="text-red-600 hover:underline">Xóa</button>
-                  </td>
-                </tr>`
-              )
-              .join("")}
-          </tbody>
-        </table>
-      `;
+              <td class="px-3 py-2">${s.ten_dich_vu}</td>
+              <td class="px-3 py-2">${s.mo_ta || "-"}</td>
+              <td class="px-3 py-2">${Number(s.gia_dich_vu).toLocaleString("vi-VN")}</td>
+              <td class="px-3 py-2">${s.ten_chuyen_khoa || getSpecialtyName(s.ma_chuyen_khoa)}</td>
+              <td class="px-3 py-2">
+                <button data-act="edit" data-id="${s.ma_dich_vu}" class="text-blue-600 hover:underline">Sửa</button> |
+                <button data-act="delete" data-id="${s.ma_dich_vu}" class="text-red-600 hover:underline">Xóa</button>
+              </td>
+            </tr>`
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
     }
+
 
     function getSpecialtyName(id) {
       const s = allSpecialties.find(
@@ -116,84 +119,102 @@
       return s ? s.ten_chuyen_khoa : "-";
     }
 
-    /* 4️⃣ Submit form */
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(form).entries());
-      const payload = {
-        ten_dich_vu: data.name.trim(),
-        gia_dich_vu: Number(data.price),
-        ma_chuyen_khoa: data.specialty || null,
-      };
+    /* 4️⃣ Submit form (chỉ gắn 1 lần) */
+    if (!form.dataset.boundSubmit) {
+      form.dataset.boundSubmit = "true";
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form).entries());
+        const payload = {
+          ten_dich_vu: data.name.trim(),
+          mo_ta: data.desc?.trim() || null,
+          gia_dich_vu: Number(data.price),
+          ma_chuyen_khoa: data.specialty || null,
+        };
 
-      console.log("📤 [formSubmit] Payload:", payload);
+        console.log("📤 [formSubmit] Payload:", payload);
 
-      try {
-        if (data.id) {
-          await apiRequest(`${API_BASE_URL}?path=dichvu&id=${data.id}`, "PUT", payload);
-          showToast("✅ Cập nhật dịch vụ thành công!", "success");
-        } else {
-          await apiRequest(`${API_BASE_URL}?path=dichvu`, "POST", payload);
-          showToast("✅ Thêm dịch vụ thành công!", "success");
+        try {
+          if (data.id) {
+            await apiRequest(`${API_BASE_URL}?path=dichvu&id=${data.id}`, "PUT", payload);
+            showToast("✅ Cập nhật dịch vụ thành công!", "success");
+          } else {
+            await apiRequest(`${API_BASE_URL}?path=dichvu`, "POST", payload);
+            showToast("✅ Thêm dịch vụ thành công!", "success");
+          }
+          form.reset();
+          fetchServices();
+        } catch (err) {
+          console.error("❌ [formSubmit] Lỗi khi lưu dịch vụ:", err);
+          showToast("Không thể lưu dịch vụ", "error");
         }
-        form.reset();
-        fetchServices();
-      } catch (err) {
-        console.error("❌ [formSubmit] Lỗi khi lưu dịch vụ:", err);
-        showToast("Không thể lưu dịch vụ", "error");
-      }
-    });
+      });
+    }
 
-    /* 5️⃣ Reset */
-    btnReset?.addEventListener("click", () => form.reset());
+    /* 5️⃣ Reset (chỉ gắn 1 lần) */
+    if (btnReset && !btnReset.dataset.boundClick) {
+      btnReset.dataset.boundClick = "true";
+      btnReset.addEventListener("click", () => form.reset());
+    }
 
-    /* 6️⃣ Sửa / Xóa */
-    view.addEventListener("click", (e) => {
-      const btn = e.target.closest("button[data-act]");
-      if (!btn) return;
+    /* 6️⃣ Sửa / Xóa (chỉ gắn 1 lần) */
+    if (!view.dataset.boundClick) {
+      view.dataset.boundClick = "true";
+      view.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-act]");
+        if (!btn) return;
 
-      const act = btn.dataset.act;
-      const id = btn.dataset.id;
+        const act = btn.dataset.act;
+        const id = btn.dataset.id;
 
-      if (act === "edit") {
-        const s = allServices.find((x) => String(x.ma_dich_vu) === String(id));
-        if (!s) return;
-        form.id.value = s.ma_dich_vu;
-        form.name.value = s.ten_dich_vu;
-        form.price.value = s.gia_dich_vu;
-        form.specialty.value = s.ma_chuyen_khoa || "";
-        form.scrollIntoView({ behavior: "smooth" });
-      }
+        if (act === "edit") {
+          const s = allServices.find((x) => String(x.ma_dich_vu) === String(id));
+          if (!s) return;
+          form.id.value = s.ma_dich_vu;
+          form.name.value = s.ten_dich_vu;
+          form.price.value = s.gia_dich_vu;
+          form.specialty.value = s.ma_chuyen_khoa || "";
+          form.desc.value = s.mo_ta || ""; // 👈 thêm dòng này
+          form.scrollIntoView({ behavior: "smooth" });
+        }
 
-      if (act === "delete") {
-        const s = allServices.find((x) => String(x.ma_dich_vu) === String(id));
-        if (!s) return;
-        deleteTarget = s;
-        modalName.textContent = s.ten_dich_vu;
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-      }
-    });
 
-    /* 7️⃣ Modal */
-    btnCancel?.addEventListener("click", () => {
-      modal.classList.add("hidden");
-      deleteTarget = null;
-    });
+        if (act === "delete") {
+          const s = allServices.find((x) => String(x.ma_dich_vu) === String(id));
+          if (!s) return;
+          deleteTarget = s;
+          modalName.textContent = s.ten_dich_vu;
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+        }
+      });
+    }
 
-    btnConfirm?.addEventListener("click", async () => {
-      if (!deleteTarget) return;
-      try {
-        await apiRequest(`${API_BASE_URL}?path=dichvu&id=${deleteTarget.ma_dich_vu}`, "DELETE");
-        showToast("🗑️ Đã xóa dịch vụ", "success");
-        deleteTarget = null;
+    /* 7️⃣ Modal (chỉ gắn 1 lần mỗi nút) */
+    if (btnCancel && !btnCancel.dataset.boundClick) {
+      btnCancel.dataset.boundClick = "true";
+      btnCancel.addEventListener("click", () => {
         modal.classList.add("hidden");
-        fetchServices();
-      } catch (err) {
-        console.error("❌ [modalConfirm] Lỗi khi xóa:", err);
-        showToast("Không thể xóa dịch vụ", "error");
-      }
-    });
+        deleteTarget = null;
+      });
+    }
+
+    if (btnConfirm && !btnConfirm.dataset.boundClick) {
+      btnConfirm.dataset.boundClick = "true";
+      btnConfirm.addEventListener("click", async () => {
+        if (!deleteTarget) return;
+        try {
+          await apiRequest(`${API_BASE_URL}?path=dichvu&id=${deleteTarget.ma_dich_vu}`, "DELETE");
+          showToast("🗑️ Đã xóa dịch vụ", "success");
+          deleteTarget = null;
+          modal.classList.add("hidden");
+          fetchServices();
+        } catch (err) {
+          console.error("❌ [modalConfirm] Lỗi khi xóa:", err);
+          showToast("Không thể xóa dịch vụ", "error");
+        }
+      });
+    }
 
     function toggleLoading(show) {
       loading?.classList.toggle("hidden", !show);
